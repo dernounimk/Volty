@@ -24,9 +24,9 @@ app.use(cors({
   origin: [
     "https://zoubir-trends.vercel.app",
     "http://localhost:5173",
-    "http://localhost:3000", // أضيف للتنمية
+    "http://localhost:3000",
   ],
-  credentials: true, // غير إلى true إذا كنت تستخدم cookies/authentication
+  credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
 }));
@@ -48,41 +48,156 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/reviews", reviewRoutes);
 
-// ===== endpoints للفحص =====
+// ===== endpoints محسنة للفحص والمراقبة =====
 app.get("/api/health", (req, res) => {
   res.status(200).json({ 
     success: true,
     status: "OK", 
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
-    database: mongoose.connection.readyState === 1 ? "Connected" : "Disconnected"
+    database: mongoose.connection.readyState === 1 ? "Connected" : "Disconnected",
+    uptime: process.uptime() + " seconds"
+  });
+});
+
+// endpoint جديد لفحص الحالة المفصلة
+app.get("/api/status", (req, res) => {
+  try {
+    const dbStatus = mongoose.connection.readyState;
+    const dbStatusText = 
+      dbStatus === 1 ? "Connected" :
+      dbStatus === 2 ? "Connecting" :
+      dbStatus === 3 ? "Disconnecting" : "Disconnected";
+    
+    const memoryUsage = process.memoryUsage();
+    
+    res.status(200).json({ 
+      success: true,
+      status: "Server is running optimally",
+      timestamp: new Date().toISOString(),
+      server: {
+        environment: process.env.NODE_ENV,
+        uptime: Math.round(process.uptime()) + " seconds",
+        nodeVersion: process.version
+      },
+      database: {
+        status: dbStatusText,
+        readyState: dbStatus
+      },
+      memory: {
+        used: Math.round(memoryUsage.heapUsed / 1024 / 1024) + " MB",
+        total: Math.round(memoryUsage.heapTotal / 1024 / 1024) + " MB",
+        rss: Math.round(memoryUsage.rss / 1024 / 1024) + " MB"
+      },
+      performance: {
+        cpuUsage: process.cpuUsage(),
+        platform: process.platform
+      }
+    });
+  } catch (error) {
+    console.error("Status endpoint error:", error);
+    res.status(500).json({ 
+      success: false,
+      message: "Error checking server status",
+      error: error.message
+    });
+  }
+});
+
+// endpoint أساسي للجذر
+app.get("/", (req, res) => {
+  res.json({ 
+    success: true,
+    message: "🚀 Zoubir Trends API is running successfully!",
+    version: "1.0.0",
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: "/api/health",
+      status: "/api/status",
+      documentation: "Available at /api/docs"
+    }
   });
 });
 
 // ===== خدمة الـ frontend =====
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
-  app.get("*", (req, res) => {
+  
+  // خدمة frontend لجميع المسارات غير API
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith('/api/')) {
+      return next();
+    }
     res.sendFile(path.resolve(__dirname, "../frontend/dist/index.html"));
   });
 }
 
-// ===== معالجة الأخطاء =====
+// ===== معالجة الأخطاء محسنة =====
 app.use((err, req, res, next) => {
-  console.error("Global error handler:", err);
+  console.error("🚨 Global error handler:", err);
+  
+  // تسجيل الخطأ بشكل مفصل
+  console.error(`Error Details:
+    Method: ${req.method}
+    URL: ${req.url}
+    IP: ${req.ip}
+    Timestamp: ${new Date().toISOString()}
+    Error Stack: ${err.stack}
+  `);
+  
   res.status(500).json({ 
     success: false,
-    message: "Internal server error"
+    message: "Internal server error",
+    ...(process.env.NODE_ENV === 'development' && { error: err.message })
   });
 });
 
-// ===== تشغيل السيرفر =====
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`✅ Server running on port ${PORT}`);
-  console.log(`🌐 CORS enabled for: ${[
-    "https://zoubir-trends.vercel.app",
-    "http://localhost:5173",
-    "http://localhost:3000",
-  ].join(", ")}`);
+// معالجة المسارات غير الموجودة
+app.use("*", (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "API endpoint not found",
+    requestedUrl: req.originalUrl,
+    availableEndpoints: [
+      "/api/health",
+      "/api/status", 
+      "/api/auth",
+      "/api/products",
+      "/api/orders"
+    ]
+  });
+});
+
+// ===== تشغيل السيرفر مع معالجة أفضل =====
+const server = app.listen(PORT, "0.0.0.0", () => {
+  console.log(`
+✨ ============================================ ✨
+🚀 Zoubir Trends Server Started Successfully!
+📡 Port: ${PORT}
+🌍 Environment: ${process.env.NODE_ENV}
+📊 Database: Connecting...
+✨ ============================================ ✨
+  `);
+  
+  // الاتصال بقاعدة البيانات بعد بدء السيرفر
   connectDB();
+});
+
+// معالجة إغلاق السيرفر بشكل أنيق
+process.on('SIGTERM', () => {
+  console.log('🔄 SIGTERM received, shutting down gracefully');
+  server.close(() => {
+    console.log('✅ Process terminated');
+    mongoose.connection.close();
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('🔄 SIGINT received, shutting down gracefully');
+  server.close(() => {
+    console.log('✅ Process terminated');
+    mongoose.connection.close();
+    process.exit(0);
+  });
 });
