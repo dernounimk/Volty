@@ -2,74 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =========================================================
+   🎨 VOLTY NEW BRAND COLORS
+   ========================================================= */
+
 :root {
-  --color-bg: #000000; /* خلفية سوداء */
-  --color-bg-gray: #1a1a1a; /* رمادي غامق */
-  --color-bg-opacity: #000000f2;
-  --color-text: #faa72a; /* ذهبي فاتح للنصوص */
-  --color-text-secondary: #ffffff; /* أبيض للنصوص الثانوية */
-  --color-border: #ffb341; /* ذهبي كلاسيك للحدود */
-  --color-accent: #ffb341; /* لون مميز ذهبي مشرق */
-  --color-accent-hover: #ffaa29; /* ذهبي أغمق عند التحويم */
-  --color-on-accent: #000000; /* نص أسود فوق الذهبي */
-  --color-accent-transparent: #ffb341cc;
+  /* خلفيات */
+  --color-bg: #ffffff; /* أبيض */
+  --color-bg-gray: #f5f5f5; /* رمادي فاتح */
+  --color-bg-opacity: #ffffffee;
+
+  /* نصوص */
+  --color-text: #2c2f33; /* رمادي غامق */
+  --color-text-secondary: #4b4f55; /* رمادي متوسط */
+
+  /* ألوان البراند */
+  --color-accent: #ff7a1a; /* برتقالي */
+  --color-accent-hover: #e96a13; /* أغمق قليلاً */
+  --color-accent-transparent: #ff7a1acc;
+  --color-on-accent: #ffffff; /* نص أبيض */
+
+  /* الأزرق الكهربائي */
+  --color-electric: #00a9e0;
+
+  /* حدود */
+  --color-border: #ffaa7a;
+
+  /* تدرج خفيف بخطوط البراند */
   --bg-gradient: radial-gradient(
-    ellipse at top, 
-    rgba(255, 215, 128, 0.3) 0%, 
-    rgba(212, 175, 55, 0.2) 45%, 
-    rgba(0,0,0,0.8) 100%
+    ellipse at top,
+    rgba(0, 169, 224, 0.25) 0%,
+    rgba(255, 122, 26, 0.20) 40%,
+    rgba(255,255,255,1) 100%
   );
 }
+
+/* =========================================================
+   🌙 DARK MODE — VOLTY
+   ========================================================= */
+
 .dark {
-  --color-bg: #fff8e7; /* خلفية فاتحة مائلة للذهبي */
-  --color-bg-gray: #f4e7c6; /* رمادي فاتح دافئ */
-  --color-bg-opacity: #fff8e7f2;
-  --color-text: #faa72a; /* ذهبي غامق للنصوص */
-  --color-text-secondary: #262525; 
+  --color-bg: #0f0f0f;
+  --color-bg-gray: #1a1a1a;
+  --color-bg-opacity: #0f0f0fee;
+
+  --color-text: #f0f0f0;
+  --color-text-secondary: #cccccc;
+
+  --color-accent: #ff7a1a;
+  --color-accent-hover: #e96a13;
+  --color-on-accent: #000000;
+
   --bg-gradient: radial-gradient(
-    ellipse at top, 
-    rgba(255, 239, 200, 0.96) 0%, 
-    rgba(250, 225, 170, 0.87) 45%, 
-    rgba(255, 250, 230, 0.7) 100%
+    ellipse at top,
+    rgba(0, 169, 224, 0.20) 0%,
+    rgba(255, 122, 26, 0.18) 40%,
+    rgba(0, 0, 0, 0.85) 100%
   );
 }
 
+/* =========================================================
+   📌 تطبيق الألوان على العناصر
+   ========================================================= */
 
-/*
-
-:root {
-  --color-bg: #0F2027;
-  --color-bg-gray: #1A343D;
-  --color-bg-opacity: #0F2027f2;
-  --color-text: #bbb122;
-  --color-text-secondary: #fefefe;
-  --color-border: #86792e;
-  --color-accent: #93831a;
-  --color-accent-hover: #787a14;
-  --color-on-accent: #FFFFFF;
-  --bg-gradient: radial-gradient(ellipse at top, rgba(147, 127, 26, 0.3) 0%, rgba(122, 115, 20, 0.2) 45%, rgba(0, 0, 0, 0.1) 100%);
-}.dark {
-  --color-bg: #fffadc;
-  --color-bg-gray: #e6ddb4;
-  --color-bg-opacity:#fdffdbf2;
-  --color-text: #998b1f;
-  --color-text-secondary: #262525; 
-  --bg-gradient: radial-gradient(ellipse at top, rgba(255, 252, 200, 0.9) 0%, rgba(240, 231, 180, 0.7) 45%, rgba(255, 253, 240, 0.5) 100%);
-}
-*/
-
-/* استخدام المتغيرات في عناصر صفحة */
 body {
   background-color: var(--color-bg);
   color: var(--color-text);
+  background-image: var(--bg-gradient);
+  background-attachment: fixed;
 }
 
 ::selection {
-  background-color: #ffaa29;
-  color: #fff;
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
 }
 
-/* إخفاء scrollbar عند الحاجة */
+/* =========================================================
+   📜 Scrollbar Styling
+   ========================================================= */
+
 .scrollbar-x-hide::-webkit-scrollbar {
   display: none;
 }
@@ -82,37 +93,35 @@ html {
   scroll-behavior: smooth;
 }
 
-/* تصميم مخصص لـ scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1f2937; /* bg-gray-800 */
+  background: #1a1a1a;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ffaa29; /* bg-emerald-600 */
+  background: var(--color-accent);
   border-radius: 10px;
-  border: 2px solid #1f2937; /* يتناسب مع لون المسار */
+  border: 2px solid #1a1a1a;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #ffaa29; /* bg-emerald-700 */
+  background: var(--color-accent-hover);
 }
 
-/* لـ Firefox */
+/* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #ffaa29 #1f2937; /* thumb track */
+  scrollbar-color: var(--color-accent) #1a1a1a;
 }
 
-/* scrollbar للعناصر الداخلية */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #ffaa29 #1f2937;
+  scrollbar-color: var(--color-accent) #1a1a1a;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -121,14 +130,15 @@ html {
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #1f2937;
+  background: #1a1a1a;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #ffaa29;
+  background-color: var(--color-accent);
   border-radius: 10px;
 }
 
+/* عناصر ثابتة */
 .fixed-order {
   position: fixed;
   top: 50%;
