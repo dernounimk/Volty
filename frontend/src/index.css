@@ -1,63 +1,81 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+* {
+  font-family: 'Inter', sans-serif;
+}
 
 /* =========================================================
-   🎨 VOLTY NEW BRAND COLORS
+   🎨 MODERN COLOR SYSTEM
    ========================================================= */
 
 :root {
-  /* خلفيات */
-  --color-bg: #ffffff; /* أبيض */
-  --color-bg-gray: #f5f5f5; /* رمادي فاتح */
-  --color-bg-opacity: #ffffffee;
+  /* Primary Colors */
+  --color-primary: #3b82f6;
+  --color-primary-dark: #1d4ed8;
+  --color-primary-light: #60a5fa;
+  
+  /* Background Colors */
+  --color-bg: #ffffff;
+  --color-bg-gray: #f8fafc;
+  --color-bg-dark: #0f172a;
+  --color-bg-opacity: rgba(255, 255, 255, 0.95);
 
-  /* نصوص */
-  --color-text: #2c2f33; /* رمادي غامق */
-  --color-text-secondary: #4b4f55; /* رمادي متوسط */
+  /* Text Colors */
+  --color-text: #1e293b;
+  --color-text-secondary: #64748b;
+  --color-text-muted: #94a3b8;
 
-  /* ألوان البراند */
-  --color-accent: #ff7a1a; /* برتقالي */
-  --color-accent-hover: #e96a13; /* أغمق قليلاً */
-  --color-accent-transparent: #ff7a1acc;
-  --color-on-accent: #ffffff; /* نص أبيض */
+  /* Accent Colors */
+  --color-accent: #8b5cf6;
+  --color-accent-hover: #7c3aed;
+  --color-accent-transparent: rgba(139, 92, 246, 0.1);
+  --color-on-accent: #ffffff;
 
-  /* الأزرق الكهربائي */
-  --color-electric: #00a9e0;
+  /* Status Colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
 
-  /* حدود */
-  --color-border: #ffaa7a;
+  /* Border Colors */
+  --color-border: #e2e8f0;
+  --color-border-dark: #334155;
 
-  /* تدرج خفيف بخطوط البراند */
+  /* Gradient Background */
   --bg-gradient: radial-gradient(
     ellipse at top,
-    rgba(0, 169, 224, 0.25) 0%,
-    rgba(255, 122, 26, 0.20) 40%,
-    rgba(255,255,255,1) 100%
+    rgba(59, 130, 246, 0.15) 0%,
+    rgba(139, 92, 246, 0.12) 40%,
+    rgba(255, 255, 255, 1) 100%
   );
 }
 
 /* =========================================================
-   🌙 DARK MODE — VOLTY
+   🌙 DARK MODE
    ========================================================= */
 
 .dark {
-  --color-bg: #0f0f0f;
-  --color-bg-gray: #1a1a1a;
-  --color-bg-opacity: #0f0f0fee;
+  --color-bg: #0f172a;
+  --color-bg-gray: #1e293b;
+  --color-bg-dark: #020617;
+  --color-bg-opacity: rgba(15, 23, 42, 0.95);
 
-  --color-text: #f0f0f0;
-  --color-text-secondary: #cccccc;
+  --color-text: #f1f5f9;
+  --color-text-secondary: #cbd5e1;
+  --color-text-muted: #94a3b8;
 
-  --color-accent: #ff7a1a;
-  --color-accent-hover: #e96a13;
-  --color-on-accent: #000000;
+  --color-accent: #8b5cf6;
+  --color-accent-hover: #7c3aed;
+  --color-on-accent: #ffffff;
+
+  --color-border: #334155;
+  --color-border-dark: #475569;
 
   --bg-gradient: radial-gradient(
     ellipse at top,
-    rgba(0, 169, 224, 0.20) 0%,
-    rgba(255, 122, 26, 0.18) 40%,
-    rgba(0, 0, 0, 0.85) 100%
+    rgba(59, 130, 246, 0.15) 0%,
+    rgba(139, 92, 246, 0.12) 40%,
+    rgba(15, 23, 42, 1) 100%
   );
 }
 
@@ -70,6 +88,7 @@ body {
   color: var(--color-text);
   background-image: var(--bg-gradient);
   background-attachment: fixed;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 ::selection {
@@ -84,6 +103,7 @@ body {
 .scrollbar-x-hide::-webkit-scrollbar {
   display: none;
 }
+
 .scrollbar-x-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -94,19 +114,19 @@ html {
 }
 
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: var(--color-bg-gray);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--color-accent);
   border-radius: 10px;
-  border: 2px solid #1a1a1a;
+  border: 2px solid var(--color-bg-gray);
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -116,31 +136,171 @@ html {
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-accent) #1a1a1a;
+  scrollbar-color: var(--color-accent) var(--color-bg-gray);
 }
 
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-accent) #1a1a1a;
+  scrollbar-color: var(--color-accent) var(--color-bg-gray);
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: var(--color-bg-gray);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: var(--color-accent);
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
-/* عناصر ثابتة */
-.fixed-order {
-  position: fixed;
-  top: 50%;
-  width: 50%;
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-accent-hover);
+}
+
+/* =========================================================
+   🎯 Utility Classes
+   ========================================================= */
+
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* =========================================================
+   🔥 Animation Classes
+   ========================================================= */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.5s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* =========================================================
+   📱 Responsive Design Helpers
+   ========================================================= */
+
+@media (max-width: 640px) {
+  .container-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-stack {
+    flex-direction: column;
+  }
+}
+
+/* =========================================================
+   🎨 Gradient Text Utility
+   ========================================================= */
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* =========================================================
+   🔄 Smooth Transitions
+   ========================================================= */
+
+* {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* =========================================================
+   🛠️ Focus States
+   ========================================================= */
+
+.focus-ring:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: var(--color-accent);
+  ring-offset: 2px;
+}
+
+/* =========================================================
+   📦 Card Styles
+   ========================================================= */
+
+.card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.dark .card {
+  border-color: var(--color-border-dark);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
 }
