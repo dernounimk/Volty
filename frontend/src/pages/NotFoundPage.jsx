@@ -1,97 +1,158 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ShoppingBag, Home, Search } from "lucide-react";
+import { ShoppingBag, Home, Search, ArrowRight, Ghost } from "lucide-react";
 import { motion } from "framer-motion";
-import { useRef } from "react";
 import { useNavbar } from "../context/NavbarContext";
 
 const NotFoundPage = () => {
   const { t } = useTranslation();
   const { openNavbarAndFocusSearch } = useNavbar(); 
 
-    return (
-    <div className="min-h-screen text-white flex flex-col items-center justify-center p-6 text-center">
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.6
+      }
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center px-6 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
       <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="mb-8 relative"
+        className="max-w-2xl w-full text-center"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
       >
-        <div className="text-9xl font-bold text-[var(--color-text)] drop-shadow-lg">
-          404
-        </div>
-        <div className="absolute -inset-4 border-4 border-[var(--color-text)] rounded-full animate-pulse"></div>
-      </motion.div>
-
-      {/* العنوان الرئيسي */}
-      <motion.h1 
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
-        className="text-4xl md:text-5xl font-bold mb-4 text-[var(--color-text-secondary)]"
-      >
-        {t("notFound.title")}
-      </motion.h1>
-
-      {/* الرسالة التوضيحية */}
-      <motion.p
-        initial={{ y: -10, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.4, duration: 0.5 }}
-        className="text-xl text-[var(--color-text)] mb-8 max-w-2xl"
-      >
-        {t("notFound.message")}
-      </motion.p>
-
-      {/* الأزرار الإجرائية */}
-<motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.6, duration: 0.5 }}
-        className="flex flex-wrap justify-center gap-4 mb-12"
-      >
-        <Link
-          to="/"
-          className="flex items-center gap-2 px-6 py-3 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] rounded-lg font-medium transition-colors"
+        {/* الرمز الرئيسي */}
+        <motion.div
+          variants={itemVariants}
+          className="mb-8 relative"
         >
-          <Home size={20} />
-          {t("notFound.homeButton")}
-        </Link>
-        
-        <button
-          onClick={openNavbarAndFocusSearch} // تغيير من Link إلى button واستدعاء الدالة
-          className="flex items-center gap-2 px-6 py-3 bg-[var(--color-bg)] text-[var(--color-text-secondary)] rounded-lg font-medium transition-colors"
-        >
-          <Search size={20} />
-          {t("notFound.searchButton")}
-        </button>
-      </motion.div>
+          <div className="relative inline-block">
+            {/* تأثير الخلفية */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur-3xl opacity-20 animate-pulse"></div>
+            
+            {/* الرمز الرئيسي */}
+            <div className="relative bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700">
+              <motion.div
+                animate={{
+                  y: [0, -10, 0],
+                  rotate: [0, 5, -5, 0],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                }}
+                className="text-8xl mb-4"
+              >
+                👻
+              </motion.div>
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.5, type: "spring" }}
+                className="text-9xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+              >
+                404
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
 
-      {/* رسوم متحركة إضافية */}
-      <motion.div
-        animate={{
-          scale: [1, 1.05, 1],
-          rotate: [0, 5, -5, 0],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          repeatType: "mirror",
-        }}
-        className="mt-8 opacity-60"
-      >
-        <svg
-          width="120"
-          height="120"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+        {/* العنوان والرسالة */}
+        <motion.div variants={itemVariants} className="mb-8">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            {t("notFound.title")}
+          </h1>
+          <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-md mx-auto">
+            {t("notFound.message")}
+          </p>
+        </motion.div>
+
+        {/* أزرار الإجراءات */}
+        <motion.div
+          variants={itemVariants}
+          className="flex flex-col sm:flex-row justify-center gap-4 mb-12"
         >
-          <path
-            d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM11 16H13V18H11V16ZM12 6C9.79 6 8 7.79 8 10H10C10 8.9 10.9 8 12 8C13.1 8 14 8.9 14 10C14 12 11 11.75 11 15H13C13 12.75 16 12.5 16 10C16 7.79 14.21 6 12 6Z"
-            fill="var(--color-text)"
-          />
-        </svg>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Link
+              to="/"
+              className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              <Home className="w-5 h-5" />
+              {t("notFound.homeButton")}
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </motion.div>
+          
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <button
+              onClick={openNavbarAndFocusSearch}
+              className="flex items-center justify-center gap-3 px-8 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-2 border-gray-200 dark:border-gray-700 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:border-blue-500"
+            >
+              <Search className="w-5 h-5" />
+              {t("notFound.searchButton")}
+            </button>
+          </motion.div>
+        </motion.div>
+
+        {/* معلومات إضافية */}
+        <motion.div
+          variants={itemVariants}
+          className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 max-w-md mx-auto"
+        >
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <Ghost className="w-6 h-6 text-purple-500" />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              {t("notFound.tipsTitle")}
+            </h3>
+          </div>
+          <ul className="text-gray-600 dark:text-gray-300 text-left space-y-2">
+            <li className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              {t("notFound.tip1")}
+            </li>
+            <li className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              {t("notFound.tip2")}
+            </li>
+            <li className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+              {t("notFound.tip3")}
+            </li>
+          </ul>
+        </motion.div>
+
+        {/* رسوم متحركة إضافية */}
+        <motion.div
+          className="mt-12 opacity-60"
+          animate={{
+            scale: [1, 1.1, 1],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            repeatType: "loop",
+          }}
+        >
+          <div className="w-20 h-20 mx-auto border-4 border-dashed border-blue-500 rounded-full"></div>
+        </motion.div>
       </motion.div>
     </div>
   );
