@@ -26,54 +26,58 @@ import FavoritesPage from "./pages/FavoritesPage";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 
 function App() {
-	const { i18n } = useTranslation();
-	const calculateTotals = useCartStore((state) => state.calculateTotals);
-	const checkAuth = useAdminAuthStore((state) => state.checkAuth);
+  const { i18n } = useTranslation();
+  const calculateTotals = useCartStore((state) => state.calculateTotals);
+  const checkAuth = useAdminAuthStore((state) => state.checkAuth);
 
-	useEffect(() => {
-		checkAuth();
-	}, []);
+  useEffect(() => {
+    checkAuth();
+  }, []);
 
-	useEffect(() => {
-		calculateTotals();
-	}, []);
+  useEffect(() => {
+    calculateTotals();
+  }, []);
 
-	return (
-		<div className='min-h-screen bg-gray-900 text-white relative overflow-hidden' dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
-			<ScrollToTop/>
-			<div className='absolute inset-0 overflow-hidden'>
-				<div className='absolute inset-0'>
-					<div
-					className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full"
-					style={{ backgroundImage: "var(--bg-gradient)" }}
-					/>
-				</div>
-			</div>
+  return (
+    <div className='min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900 text-gray-900 dark:text-white relative' dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
+      {/* Background Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-r from-blue-200 to-purple-200 dark:from-blue-800 dark:to-purple-800 rounded-full blur-3xl opacity-30"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-r from-green-200 to-cyan-200 dark:from-green-800 dark:to-cyan-800 rounded-full blur-3xl opacity-30"></div>
+      </div>
 
-			<div className='relative z-50 pt-20'>
-				<Navbar />
-				<Routes>
-					<Route path='/' element={<HomePage />} />
-					<Route path='/contact' element={<Contact />} />
-					<Route path='/dash' element={<AdminPage />} />
-					<Route path='/category/:category' element={<CategoryPage />} />
-					<Route path='/cart' element={<CartPage />} />
-					<Route path='/purchase-success' element={<PurchaseSuccessPage />} />
-					<Route path='/shipping-info' element={<ShippingInfoPage />} />
-					<Route path='/admin/login' element={<AdminLogin/>} />
-					<Route path="/product/:id" element={<ProductPage />} />
-					<Route path="/faq" element={<Faq/>} />
-					<Route path="/privacy-policy" element={<Confidentiality/>} />
-					<Route path="/terms-of-use" element={<Terms/>} />
-					<Route path="*" element={<NotFoundPage/>} />
-					<Route path="/favorites" element={<FavoritesPage/>} />
-				</Routes>
-				<Footer/>
-				<ScrollToTopButton />
-			</div>
-			<Toaster containerStyle={{ zIndex: 11000 }} />
-		</div>
-	);
+      <ScrollToTop/>
+      <div className='relative z-50'>
+        <Navbar />
+        <main className="pt-20 min-h-screen">
+          <Routes>
+            <Route path='/' element={<HomePage />} />
+            <Route path='/contact' element={<Contact />} />
+            <Route path='/dash' element={<AdminPage />} />
+            <Route path='/category/:category' element={<CategoryPage />} />
+            <Route path='/cart' element={<CartPage />} />
+            <Route path='/purchase-success' element={<PurchaseSuccessPage />} />
+            <Route path='/shipping-info' element={<ShippingInfoPage />} />
+            <Route path='/admin/login' element={<AdminLogin/>} />
+            <Route path="/product/:id" element={<ProductPage />} />
+            <Route path="/faq" element={<Faq/>} />
+            <Route path="/privacy-policy" element={<Confidentiality/>} />
+            <Route path="/terms-of-use" element={<Terms/>} />
+            <Route path="*" element={<NotFoundPage/>} />
+            <Route path="/favorites" element={<FavoritesPage/>} />
+          </Routes>
+        </main>
+        <Footer/>
+        <ScrollToTopButton />
+      </div>
+      <Toaster 
+        containerStyle={{ zIndex: 11000 }} 
+        toastOptions={{
+          className: 'dark:bg-gray-800 dark:text-white',
+        }}
+      />
+    </div>
+  );
 }
 
 export default App;

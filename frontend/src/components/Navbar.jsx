@@ -1,4 +1,4 @@
-import { ShoppingCart, LogOut, Lock, Menu, Search, XCircle, KeyRound, Globe, Moon, Sun, Home, Phone, Heart } from "lucide-react";
+import { ShoppingCart, LogOut, Lock, Menu, Search, XCircle, KeyRound, Globe, Moon, Sun, Home, Phone, Heart, User, ChevronDown } from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAdminAuthStore } from "../stores/useAdminAuthStore";
 import { useTranslation } from "react-i18next";
@@ -76,17 +76,17 @@ const Navbar = () => {
 
   const renderSearchResults = () =>
     searchResults.length > 0 && (
-      <div className="absolute top-full mt-1 w-full bg-[var(--color-bg)] rounded-md shadow-lg overflow-hidden z-50 border border-[var(--color-bg-gray)]">
+      <div className="absolute top-full mt-2 w-full bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden z-50 border border-gray-200 dark:border-gray-700">
         {searchResults.map((item) => (
           <div
             key={item.id}
-            className="flex items-center gap-3 px-4 py-2 text-[var(--color-text)] hover:bg-[var(--color-accent)] hover:text-white border-b border-[var(--color-bg-gray)] transition cursor-pointer"
+            className="flex items-center gap-3 px-4 py-3 text-gray-900 dark:text-white hover:bg-blue-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-600 transition-all cursor-pointer group"
             onClick={() => handleResultClick(item.id)}
           >
-            <img src={item.image} alt={item.name} className="w-10 h-10 rounded object-cover" />
-            <div className="flex justify-between flex-1">
-              <span>{item.name}</span>
-              <span className="text-sm">{item.price} DA</span>
+            <img src={item.image} alt={item.name} className="w-12 h-12 rounded-xl object-cover group-hover:scale-110 transition-transform" />
+            <div className="flex justify-between flex-1 items-center">
+              <span className="font-medium">{item.name}</span>
+              <span className="text-sm font-bold text-blue-600 dark:text-blue-400">{item.price} DA</span>
             </div>
           </div>
         ))}
@@ -94,185 +94,117 @@ const Navbar = () => {
     );
 
   return (
-      <header className="fixed top-0 left-0 w-full backdrop-blur-md shadow-lg
-       z-50 border- bg-[var(--color-bg-opacity)] border-[var(--color-accent)] text-[var(--color-text)]"
-      >
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between relative">
+    <header className="fixed top-0 left-0 w-full backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800 shadow-sm z-50">
+      <div className="container mx-auto px-4 py-3">
+        <div className="flex items-center justify-between">
+          {/* Left Section - Menu & Logo */}
+          <div className="flex items-center gap-8">
+            {/* Menu Button */}
+            <button
+              className="p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
+              onClick={() => setIsMenuOpen((prev) => !prev)}
+              aria-label="Toggle menu"
+            >
+              <Menu size={24} />
+            </button>
 
-        {/* زر القائمة الجانبية */}
-        <div className="flex items-center">
-          <button        
-          className="p-2 rounded-md text-[var(--color-text)] hover:text-[var(--color-accent)] z-50"
-            onClick={() => setIsMenuOpen((prev) => !prev)}
-            aria-label="Toggle menu"
-          >
-            <Menu size={28} />
-          </button>
-        </div>
-
-        {/* الشعار */}
-        <div>
-          <Link
-            to="/"
-            className="text-2xl font-extrabold select-none text-[var(--color-accent)] hover:text-[var(--color-accent)]"
-          >
-             <img
-                src={logo}
-                alt="Zoubir"
-                className="h-14 w-36 rounded-lg object-cover"
-              />
-          </Link>
-        </div>
-
-        {/* أيقونة السلة + الأدمن */}
-        <div className="flex items-center gap-4">  
-          <Link
-            to="/cart"
-            className="relative text-[var(--color-text)] hover:text-[var(--color-accent)]"
-          >
-            <ShoppingCart size={28} />
-            {cart.length > 0 && (
-              <span className="absolute -top-2 -right-2 bg-[var(--color-accent)] text-[var(--color-on-accent)] rounded-full px-2 py-0.5 text-xs font-semibold animate-pulse">
-                {cart.length}
-              </span>
-            )}
-          </Link>
-
-          {!checkingAuth && isAdmin && (
-            <div className="relative">
-              <button
-                onClick={() => setIsAdminMenuOpen((prev) => !prev)}
-                className="flex items-center gap-1 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-on-accent)] px-3 py-2 rounded-md transition-colors duration-200"
-
-                aria-expanded={isAdminMenuOpen}
-              >
-                <Lock size={18} />
-                <span className="hidden sm:inline">{t("navbar.dashboard")}</span>
-                <svg
-                  className={`ml-1 w-4 h-4 transition-transform ${isAdminMenuOpen ? "rotate-180" : ""}`}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
-              {isAdminMenuOpen && (
-                <div className={`absolute ${isRTL ? "left-0" : "right-0"} top-full w-48 bg-[var(--color-bg)] rounded-md shadow-lg z-50 mt-1 overflow-hidden`}>
-                  <Link
-                    to="/dash"
-                    className="block px-4 py-2 hover:bg-[var(--color-accent)] hover:text-[var(--color-on-accent)] transition rounded-md text-[var(--color-text)] font-semibold"
-                    onClick={() => setIsAdminMenuOpen(false)}
-                  >
-                    <KeyRound size={16} className={`inline ${isRTL ? "ml-2" : "mr-2"}`} />
-                    {t("navbar.admin")}
-                  </Link>
-                  <button
-                    onClick={() => {
-                      try {
-                        logout();
-                        toast.success(t("logout.success"));
-                        setIsAdminMenuOpen(false);
-                      } catch (error) {
-                        t("logout.error")
-                      }
-                    }}
-                    className={`w-full ${isRTL ? "text-right" : "text-left"} px-4 py-2 hover:bg-red-600 hover:text-[var(--color-on-accent)] transition rounded-md text-[var(--color-text)] font-semibold`}
-                  >
-                    <LogOut size={16} className={`inline ${isRTL ? "ml-2" : "mr-2"}`} />
-                    {t("navbar.logout")}
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* القائمة الجانبية */}
-      {isMenuOpen && (
-        <nav className="absolute top-full left-0 w-full bg-[var(--color-bg)] border-t border-b border-[var(--color-accent)] border-[var(--color-accent-hover)] px-4 py-4 space-y-4 z-40 shadow-lg">
-{/* روابط التنقل */}
-<div className="flex flex-row justify-center gap-4 w-full">
-  {[
-    { path: "/", label: t("navbar.home"), icon: <Home size={22} /> },
-    { path: "/contact", label: t("navbar.contact"), icon: <Phone size={22} /> },
-    { path: "/favorites", label: t("navbar.favorites"), icon: <Heart size={22} /> }
-  ].map((item) => (
-<NavLink
-  key={item.path}
-  to={item.path}
-  onClick={() => setIsMenuOpen(false)}
-  className={({ isActive }) =>
-    `flex flex-col items-center justify-center gap-1 
-     text-[var(--color-text-secondary)] text-sm text-center
-     rounded-lg px-3 py-2 transition
-     ${isActive ? "bg-[var(--color-accent)] text-white" : "hover:bg-[var(--color-bg-gray)]"}`
-  }
->
-  <span  className={({ isActive }) =>
-    `${isActive ? "text-white" : ""}`
-}>{item.icon}</span>
-  <span className="">{item.label}</span>
-</NavLink>
-
-  ))}
-</div>
-
-          {/* البحث */}
-          <div className="relative max-w-md mx-auto">
-            <form onSubmit={(e) => e.preventDefault()} className="flex relative">
-            <input
-              ref={searchInputRef}
-              type="text"
-              className={`flex-grow px-3 py-2 ${isRTL ? "rounded-r-md" : "rounded-l-md"} bg-[var(--color-bg-gray)] text-[var(--color-text)] focus:outline-none`}
-              placeholder={t("navbar.searchPlaceholder")}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-              {searchTerm && (
-                <button
-                  type="button"
-                  onClick={clearSearch}
-                  className={`absolute ${isRTL ? "left-12" : "right-12" } top-1/2 -translate-y-1/2 text-white hover:text-red-500`}
-                  aria-label="Clear search"
-                >
-                  <XCircle size={20} />
-                </button>
-              )}
-              <button
-                className={`px-3 bg-[var(--color-accent)] cursor-auto ${isRTL ? "rounded-l-md" : "rounded-r-md"} text-white`}
-                aria-label="Submit search"
-              >
-                <Search size={20} />
-              </button>
-            </form>
-            {renderSearchResults()}
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-3">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-sm opacity-75"></div>
+                <img
+                  src={logo}
+                  alt="Zoubir"
+                  className="relative h-12 w-32 rounded-2xl object-cover border-2 border-white dark:border-gray-800 shadow-lg"
+                />
+              </div>
+            </Link>
           </div>
 
-          {/* اختيار اللغة داخل القائمة */}
-          <div className="relative w-full gap-3 flex justify-center">
-            <button
-              onClick={() => setIsLangMenuOpen(prev => !prev)}
-              className="flex items-center justify-center gap-1 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white px-3 py-3 rounded-full transition-colors duration-200 font-semibold w-32"
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center gap-8">
+            {[
+              { path: "/", label: t("navbar.home") },
+              { path: "/contact", label: t("navbar.contact") },
+              { path: "/favorites", label: t("navbar.favorites") }
+            ].map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) =>
+                  `font-medium transition-all duration-200 px-3 py-2 rounded-xl ${
+                    isActive
+                      ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20"
+                      : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                  }`
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
+
+          {/* Right Section - Actions */}
+          <div className="flex items-center gap-4">
+            {/* Search Bar - Desktop */}
+            <div className="hidden md:block relative">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  className="pl-10 pr-10 py-2.5 w-64 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder={t("navbar.searchPlaceholder")}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                {searchTerm && (
+                  <button
+                    onClick={clearSearch}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
+                  >
+                    <XCircle size={20} />
+                  </button>
+                )}
+              </div>
+              {renderSearchResults()}
+            </div>
+
+            {/* Cart */}
+            <Link
+              to="/cart"
+              className="relative p-2.5 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 group"
             >
-              <Globe size={18} />
-              {languages.find(l => l.code === i18n.language)?.label || t("navbar.language")}
+              <ShoppingCart size={24} />
+              {cart.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full px-2 py-0.5 text-xs font-bold min-w-[20px] text-center animate-bounce">
+                  {cart.length}
+                </span>
+              )}
+            </Link>
+
+            {/* Language Selector */}
+            <div className="relative">
+              <button
+                onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                className="flex items-center gap-2 p-2.5 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
+              >
+                <Globe size={20} />
+                <span className="text-sm font-medium hidden sm:block">
+                  {languages.find(l => l.code === i18n.language)?.label}
+                </span>
+                <ChevronDown size={16} className={`transition-transform ${isLangMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+
               {isLangMenuOpen && (
-                <div className="absolute top-full mt-1 bg-[var(--color-bg)] rounded-md shadow-lg z-50 overflow-hidden w-32">
+                <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
                   {languages.map(lang => (
                     <button
                       key={lang.code}
-                      onClick={() => {
-                        setIsLangMenuOpen(false);
-                        setTimeout(() => {
-                          changeLanguage(lang.code);
-                        }, 100);
-                      }}
-                      className={`block w-full px-4 py-2 hover:bg-[var(--color-accent)] hover:text-[var(--color-on-accent)] text-center ${
-                        i18n.language === lang.code ? "bg-[var(--color-accent)] text-[var(--color-on-accent)]" : "text-[var(--color-text)]"
+                      onClick={() => changeLanguage(lang.code)}
+                      className={`w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-all ${
+                        i18n.language === lang.code 
+                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' 
+                          : 'text-gray-700 dark:text-gray-300'
                       }`}
                     >
                       {lang.label}
@@ -280,27 +212,110 @@ const Navbar = () => {
                   ))}
                 </div>
               )}
+            </div>
+
+            {/* Dark Mode Toggle */}
+            <button
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className="p-2.5 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
+            >
+              {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
             </button>
-<div className="relative flex bg-[var(--color-bg-gray)] rounded-full w-36 select-none overflow-hidden cursor-pointer" onClick={() => setIsDarkMode(prev =>!prev)}>
-  <div
-    className="absolute top-1 bottom-1 w-[47%] bg-[var(--color-accent)] rounded-full transition-transform duration-300 ease-in-out"
-    style={{
-      right: isRTL? "0.25rem": "auto",
-      left: isRTL? "auto": "0.25rem",
-      transform: !isDarkMode? (isRTL? "translateX(-100%)": "translateX(100%)"): "translateX(0%)",
-    }}
-  ></div>
 
-  <div className={`relative flex-1 z-10 flex justify-center items-center text-white`}>
-    <Sun size={25} />
-  </div>
+            {/* Admin Menu */}
+            {!checkingAuth && isAdmin && (
+              <div className="relative">
+                <button
+                  onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
+                  className="flex items-center gap-2 p-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg transition-all duration-200 group"
+                >
+                  <Lock size={18} />
+                  <span className="font-medium hidden sm:block">{t("navbar.dashboard")}</span>
+                  <ChevronDown size={16} className={`transition-transform ${isAdminMenuOpen ? 'rotate-180' : ''}`} />
+                </button>
 
-  <div className={`relative flex-1 z-10 flex justify-center items-center ${!isDarkMode? "text-[var(--color-text-secondary)]" : "text-[var(--color-[var(--color-accent)]"}`}>
-    <Moon size={23} />
-  </div>
-</div>
+                {isAdminMenuOpen && (
+                  <div className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
+                    <Link
+                      to="/dash"
+                      className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all text-gray-700 dark:text-gray-300"
+                      onClick={() => setIsAdminMenuOpen(false)}
+                    >
+                      <KeyRound size={18} />
+                      <span className="font-medium">{t("navbar.admin")}</span>
+                    </Link>
+                    <button
+                      onClick={() => {
+                        logout();
+                        toast.success(t("logout.success"));
+                        setIsAdminMenuOpen(false);
+                      }}
+                      className="flex items-center gap-3 w-full px-4 py-3 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition-all font-medium"
+                    >
+                      <LogOut size={18} />
+                      <span>{t("navbar.logout")}</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-        </nav>
+        </div>
+
+        {/* Mobile Search */}
+        <div className="md:hidden mt-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              className="w-full pl-10 pr-10 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              placeholder={t("navbar.searchPlaceholder")}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            {searchTerm && (
+              <button
+                onClick={clearSearch}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
+              >
+                <XCircle size={20} />
+              </button>
+            )}
+          </div>
+          {renderSearchResults()}
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="lg:hidden absolute top-full left-0 w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-2xl">
+          <div className="container mx-auto px-4 py-6">
+            {/* Mobile Navigation */}
+            <nav className="grid grid-cols-3 gap-4 mb-6">
+              {[
+                { path: "/", label: t("navbar.home"), icon: <Home size={20} /> },
+                { path: "/contact", label: t("navbar.contact"), icon: <Phone size={20} /> },
+                { path: "/favorites", label: t("navbar.favorites"), icon: <Heart size={20} /> }
+              ].map((item) => (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `flex flex-col items-center gap-2 p-3 rounded-2xl transition-all ${
+                      isActive
+                        ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
+                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                    }`
+                  }
+                >
+                  {item.icon}
+                  <span className="text-sm font-medium">{item.label}</span>
+                </NavLink>
+              ))}
+            </nav>
+          </div>
+        </div>
       )}
     </header>
   );

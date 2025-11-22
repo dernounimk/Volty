@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import useSettingStore from "../stores/useSettingStore";
+import { ArrowRight, ShoppingBag } from "lucide-react";
 
 const CategoryItem = ({ category, href }) => {
   const { t, i18n } = useTranslation();
@@ -25,20 +26,24 @@ const CategoryItem = ({ category, href }) => {
 
   return (
     <motion.div
-      className="relative overflow-hidden h-80 w-full rounded-xl shadow-lg group"
-      whileHover={{ scale: 1.03 }}
-      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+      className="group relative overflow-hidden rounded-3xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-200 dark:border-gray-700"
+      whileHover={{ scale: 1.02, y: -5 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
     >
-      <Link to={categoryHref}>
-        <div className="w-full h-full cursor-pointer relative">
+      <Link to={categoryHref} className="block h-full">
+        <div className="relative h-64 w-full cursor-pointer overflow-hidden">
           {/* طبقة تدرج لوني */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent z-10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10 opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+          
+          {/* تأثير إشعاعي */}
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
           
           {/* صورة التصنيف */}
           <img
             src={imageUrl}
             alt={translatedName}
-            className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 group-focus:scale-105"
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
             loading="lazy"
             onError={(e) => {
               e.target.src = '/default-category.jpg';
@@ -46,18 +51,42 @@ const CategoryItem = ({ category, href }) => {
           />
           
           {/* محتوى التصنيف */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 z-20 space-y-1">
-            <h3 className="text-white text-2xl font-bold">
-              {translatedName}
-            </h3>
+          <div className="absolute bottom-0 left-0 right-0 p-6 z-20 space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-white text-2xl font-bold drop-shadow-lg">
+                {translatedName}
+              </h3>
+              
+              {/* أيقونة متحركة */}
+              <motion.div
+                className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center"
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 400 }}
+              >
+                <ArrowRight className="w-5 h-5 text-white" />
+              </motion.div>
+            </div>
             
             {/* عدد المنتجات (اختياري) */}
             {fullCategory?.productCount && (
-              <span className="inline-block mt-2 px-3 py-1 bg-black/30 text-white text-xs rounded-full backdrop-blur-sm">
-                {t("category.productsCount", { count: fullCategory.productCount })}
-              </span>
+              <div className="flex items-center gap-2">
+                <ShoppingBag className="w-4 h-4 text-white/80" />
+                <span className="text-white/80 text-sm font-medium">
+                  {t("category.productsCount", { count: fullCategory.productCount })}
+                </span>
+              </div>
+            )}
+            
+            {/* وصف التصنيف (إذا وجد) */}
+            {fullCategory?.description && (
+              <p className="text-white/80 text-sm leading-relaxed line-clamp-2">
+                {fullCategory.description}
+              </p>
             )}
           </div>
+
+          {/* تأثير hover إضافي */}
+          <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/30 rounded-3xl transition-all duration-300 z-10" />
         </div>
       </Link>
     </motion.div>
