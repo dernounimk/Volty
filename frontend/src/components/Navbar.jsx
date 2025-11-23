@@ -1,4 +1,25 @@
-import { ShoppingCart, LogOut, Lock, Menu, Search, XCircle, KeyRound, Globe, Moon, Sun, Home, Phone, Heart, User, ChevronDown } from "lucide-react";
+import { 
+  ShoppingCart, 
+  LogOut, 
+  Lock, 
+  Menu, 
+  Search, 
+  XCircle, 
+  KeyRound, 
+  Globe, 
+  Moon, 
+  Sun, 
+  Home, 
+  Phone, 
+  Heart, 
+  User, 
+  ChevronDown,
+  ShoppingBag,
+  HelpCircle,
+  Shield,
+  FileText,
+  Star
+} from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAdminAuthStore } from "../stores/useAdminAuthStore";
 import { useTranslation } from "react-i18next";
@@ -96,6 +117,28 @@ const Navbar = () => {
       </div>
     );
 
+  // تعريف روابط التنقل مع الأيقونات
+  const navLinks = [
+    { path: "/", label: t("navbar.home"), icon: <Home size={20} /> },
+    { path: "/contact", label: t("navbar.contact"), icon: <Phone size={20} /> },
+  ];
+
+  // تعريف روابط الموبايل مع الأيقونات
+  const mobileNavLinks = [
+    { path: "/", label: t("navbar.home"), icon: <Home size={24} /> },
+    { path: "/contact", label: t("navbar.contact"), icon: <Phone size={24} /> },
+    { path: "/favorites", label: t("navbar.favorites"), icon: <Heart size={24} /> },
+    { path: "/cart", label: t("navbar.cart"), icon: <ShoppingCart size={24} /> },
+    { path: "/faq", label: t("navbar.faq"), icon: <HelpCircle size={24} /> },
+  ];
+
+  // تعريف روابط الفوتر مع الأيقونات
+  const footerLinks = [
+    { path: "/privacy-policy", label: t("navbar.privacy"), icon: <Shield size={16} /> },
+    { path: "/terms-of-use", label: t("navbar.terms"), icon: <FileText size={16} /> },
+    { path: "/faq", label: t("navbar.faq"), icon: <HelpCircle size={16} /> },
+  ];
+
   return (
     <header className="fixed top-0 left-0 w-full backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800 shadow-sm z-50">
       <div className="container mx-auto px-4 py-3">
@@ -125,23 +168,21 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8 flex-shrink-0">
-            {[
-              { path: "/", label: t("navbar.home") },
-              { path: "/contact", label: t("navbar.contact") },
-            ].map((item) => (
+          <nav className="hidden lg:flex items-center gap-2 flex-shrink-0">
+            {navLinks.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
                 className={({ isActive }) =>
-                  `font-medium transition-all duration-200 px-3 py-2 rounded-xl whitespace-nowrap ${
+                  `flex items-center gap-2 font-medium transition-all duration-200 px-4 py-2 rounded-xl whitespace-nowrap ${
                     isActive
                       ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20"
                       : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800"
                   }`
                 }
               >
-                {item.label}
+                {item.icon}
+                <span>{item.label}</span>
               </NavLink>
             ))}
           </nav>
@@ -171,7 +212,7 @@ const Navbar = () => {
               {renderSearchResults()}
             </div>
 
-            {/* Favorites with counter - إزالة النص في الشاشات الصغيرة */}
+            {/* Favorites with counter */}
             <Link
               to="/favorites"
               className="relative p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 group flex-shrink-0"
@@ -218,13 +259,14 @@ const Navbar = () => {
                     <button
                       key={lang.code}
                       onClick={() => changeLanguage(lang.code)}
-                      className={`w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-all ${
+                      className={`flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-all ${
                         i18n.language === lang.code 
                           ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' 
                           : 'text-gray-700 dark:text-gray-300'
                       }`}
                     >
-                      {lang.label}
+                      <Globe size={16} />
+                      <span>{lang.label}</span>
                     </button>
                   ))}
                 </div>
@@ -235,6 +277,7 @@ const Navbar = () => {
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
               className="p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 flex-shrink-0"
+              title={isDarkMode ? t("navbar.lightMode") : t("navbar.darkMode")}
             >
               {isDarkMode ? <Sun size={20} className="md:w-6 md:h-6" /> : <Moon size={20} className="md:w-6 md:h-6" />}
             </button>
@@ -307,12 +350,9 @@ const Navbar = () => {
       {isMenuOpen && (
         <div className="lg:hidden absolute top-full left-0 w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-2xl">
           <div className="container mx-auto px-4 py-6">
-            {/* Mobile Navigation - إزالة المفضلة من القائمة */}
-            <nav className="grid grid-cols-2 gap-4 mb-6">
-              {[
-                { path: "/", label: t("navbar.home"), icon: <Home size={20} /> },
-                { path: "/contact", label: t("navbar.contact"), icon: <Phone size={20} /> },
-              ].map((item) => (
+            {/* Mobile Navigation - جميع الروابط مع الأيقونات */}
+            <nav className="grid grid-cols-3 gap-3 mb-6">
+              {mobileNavLinks.map((item) => (
                 <NavLink
                   key={item.path}
                   to={item.path}
@@ -326,27 +366,52 @@ const Navbar = () => {
                   }
                 >
                   {item.icon}
-                  <span className="text-sm font-medium">{item.label}</span>
+                  <span className="text-xs font-medium text-center">{item.label}</span>
                 </NavLink>
               ))}
             </nav>
 
             {/* Language Selector in Mobile Menu */}
             <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">{t("navbar.language")}</h3>
+              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3 flex items-center gap-2">
+                <Globe size={16} />
+                {t("navbar.language")}
+              </h3>
               <div className="grid grid-cols-3 gap-2">
                 {languages.map(lang => (
                   <button
                     key={lang.code}
                     onClick={() => changeLanguage(lang.code)}
-                    className={`p-2 rounded-xl text-center transition-all ${
+                    className={`flex items-center justify-center gap-1 p-2 rounded-xl text-center transition-all ${
                       i18n.language === lang.code 
                         ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800' 
                         : 'bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700'
                     }`}
                   >
+                    <Globe size={14} />
                     <span className="text-xs font-medium">{lang.label}</span>
                   </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Additional Links in Mobile Menu */}
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3 flex items-center gap-2">
+                <HelpCircle size={16} />
+                {t("navbar.more")}
+              </h3>
+              <div className="grid grid-cols-2 gap-2">
+                {footerLinks.map((link) => (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
+                  >
+                    {link.icon}
+                    <span className="text-xs font-medium">{link.label}</span>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -354,7 +419,10 @@ const Navbar = () => {
             {/* Admin Menu in Mobile Menu */}
             {!checkingAuth && isAdmin && (
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">{t("navbar.admin")}</h3>
+                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3 flex items-center gap-2">
+                  <Lock size={16} />
+                  {t("navbar.admin")}
+                </h3>
                 <div className="space-y-2">
                   <Link
                     to="/dash"
