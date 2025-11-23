@@ -49,7 +49,8 @@ function App() {
       <ScrollToTop/>
       <div className='relative z-50'>
         <Navbar />
-        <main className="pt-20 min-h-screen">
+        {/* إضافة pb-8 للهواتف لتعويض مساحة البحث */}
+        <main className="pt-20 pb-8 md:pb-0 min-h-screen">
           <Routes>
             <Route path='/' element={<HomePage />} />
             <Route path='/contact' element={<Contact />} />

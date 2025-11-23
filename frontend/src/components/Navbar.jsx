@@ -171,10 +171,11 @@ const Navbar = () => {
               {renderSearchResults()}
             </div>
 
-            {/* Favorites with counter */}
+            {/* Favorites with counter - إزالة النص في الشاشات الصغيرة */}
             <Link
               to="/favorites"
               className="relative p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 group flex-shrink-0"
+              title={t("navbar.favorites")}
             >
               <Heart size={20} className="md:w-6 md:h-6" />
               {favorites.length > 0 && (
@@ -188,6 +189,7 @@ const Navbar = () => {
             <Link
               to="/cart"
               className="relative p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 group flex-shrink-0"
+              title={t("navbar.cart")}
             >
               <ShoppingCart size={20} className="md:w-6 md:h-6" />
               {cart.length > 0 && (
@@ -277,8 +279,8 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Search */}
-        <div className="md:hidden mt-4">
+        {/* Mobile Search - إضافة margin-bottom لتجنب تغطية المحتوى */}
+        <div className="md:hidden mt-4 mb-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
@@ -305,12 +307,11 @@ const Navbar = () => {
       {isMenuOpen && (
         <div className="lg:hidden absolute top-full left-0 w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-2xl">
           <div className="container mx-auto px-4 py-6">
-            {/* Mobile Navigation */}
-            <nav className="grid grid-cols-3 gap-4 mb-6">
+            {/* Mobile Navigation - إزالة المفضلة من القائمة */}
+            <nav className="grid grid-cols-2 gap-4 mb-6">
               {[
                 { path: "/", label: t("navbar.home"), icon: <Home size={20} /> },
                 { path: "/contact", label: t("navbar.contact"), icon: <Phone size={20} /> },
-                { path: "/favorites", label: t("navbar.favorites"), icon: <Heart size={20} /> }
               ].map((item) => (
                 <NavLink
                   key={item.path}
