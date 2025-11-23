@@ -197,26 +197,23 @@ const Navbar = () => {
               )}
             </Link>
 
-            {/* Language Selector - Hidden on small screens */}
-            <div className="hidden sm:relative sm:block">
+            {/* Language Selector - Visible on all screens */}
+            <div className="relative">
               <button
                 onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-                className="flex items-center gap-2 p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
+                className="flex items-center gap-1 p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
               >
                 <Globe size={18} className="md:w-5 md:h-5" />
-                <span className="text-sm font-medium hidden md:block">
-                  {languages.find(l => l.code === i18n.language)?.label}
-                </span>
-                <ChevronDown size={14} className={`transition-transform hidden md:block ${isLangMenuOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown size={14} className={`transition-transform ${isLangMenuOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {isLangMenuOpen && (
-                <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
+                <div className="absolute top-full right-0 mt-2 w-36 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
                   {languages.map(lang => (
                     <button
                       key={lang.code}
                       onClick={() => changeLanguage(lang.code)}
-                      className={`w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-all ${
+                      className={`w-full px-3 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-all text-sm ${
                         i18n.language === lang.code 
                           ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' 
                           : 'text-gray-700 dark:text-gray-300'
@@ -237,16 +234,16 @@ const Navbar = () => {
               {isDarkMode ? <Sun size={20} className="md:w-6 md:h-6" /> : <Moon size={20} className="md:w-6 md:h-6" />}
             </button>
 
-            {/* Admin Menu */}
+            {/* Admin Menu - Hidden on small screens, moved to mobile menu */}
             {!checkingAuth && isAdmin && (
-              <div className="relative hidden sm:block">
+              <div className="hidden md:relative md:block">
                 <button
                   onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
                   className="flex items-center gap-2 p-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg transition-all duration-200 group"
                 >
                   <Lock size={16} className="md:w-5 md:h-5" />
-                  <span className="font-medium hidden md:block">{t("navbar.dashboard")}</span>
-                  <ChevronDown size={14} className={`transition-transform hidden md:block ${isAdminMenuOpen ? 'rotate-180' : ''}`} />
+                  <span className="font-medium hidden lg:block">{t("navbar.dashboard")}</span>
+                  <ChevronDown size={14} className={`transition-transform hidden lg:block ${isAdminMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {isAdminMenuOpen && (
@@ -329,26 +326,6 @@ const Navbar = () => {
                 </NavLink>
               ))}
             </nav>
-
-            {/* Language Selector in Mobile Menu */}
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">{t("navbar.language")}</h3>
-              <div className="grid grid-cols-3 gap-2">
-                {languages.map(lang => (
-                  <button
-                    key={lang.code}
-                    onClick={() => changeLanguage(lang.code)}
-                    className={`p-2 rounded-xl text-center transition-all ${
-                      i18n.language === lang.code 
-                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800' 
-                        : 'bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700'
-                    }`}
-                  >
-                    <span className="text-xs font-medium">{lang.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
 
             {/* Admin Menu in Mobile Menu */}
             {!checkingAuth && isAdmin && (
