@@ -33,6 +33,9 @@ const Navbar = () => {
     return localStorage.getItem('darkMode') === 'true' || false;
   });
 
+  // افترض أن لديك store للمفضلة
+  const [favorites] = useState([]); // استبدل هذا بـ useFavoritesStore إذا كان لديك
+
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
@@ -99,9 +102,9 @@ const Navbar = () => {
         <div className="flex items-center justify-between">
           {/* Left Section - Menu & Logo */}
           <div className="flex items-center gap-8">
-            {/* Menu Button */}
+            {/* Menu Button - Hidden on large screens */}
             <button
-              className="p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
+              className="p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 lg:hidden"
               onClick={() => setIsMenuOpen((prev) => !prev)}
               aria-label="Toggle menu"
             >
@@ -168,6 +171,19 @@ const Navbar = () => {
               </div>
               {renderSearchResults()}
             </div>
+
+            {/* Favorites with counter */}
+            <Link
+              to="/favorites"
+              className="relative p-2.5 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 group"
+            >
+              <Heart size={24} />
+              {favorites.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-pink-500 to-red-500 text-white rounded-full px-2 py-0.5 text-xs font-bold min-w-[20px] text-center animate-bounce">
+                  {favorites.length}
+                </span>
+              )}
+            </Link>
 
             {/* Cart */}
             <Link
