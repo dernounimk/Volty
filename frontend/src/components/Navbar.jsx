@@ -53,6 +53,7 @@ const Navbar = () => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem('darkMode') === 'true' || false;
   });
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   // افترض أن لديك store للمفضلة
   const [favorites] = useState([]); // استبدل هذا بـ useFavoritesStore إذا كان لديك
@@ -89,13 +90,24 @@ const Navbar = () => {
     return () => clearTimeout(delay);
   }, [searchTerm]);
 
-  const clearSearch = () => setSearchTerm("");
+  const clearSearch = () => {
+    setSearchTerm("");
+    setSearchResults([]);
+  };
 
   const handleResultClick = (id) => {
     setSearchTerm("");
     setSearchResults([]);
     setIsMenuOpen(false);
+    setIsSearchOpen(false);
     navigate(`/product/${id}`);
+  };
+
+  const handleSearchToggle = () => {
+    setIsSearchOpen(!isSearchOpen);
+    if (isSearchOpen) {
+      clearSearch();
+    }
   };
 
   const renderSearchResults = () =>
@@ -180,27 +192,55 @@ const Navbar = () => {
 
           {/* Right Section - Actions */}
           <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
-            {/* Search Bar - Desktop */}
+            {/* Search Button & Input - Desktop */}
             <div className="hidden md:block relative">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  className="pl-10 pr-10 py-2.5 w-48 lg:w-64 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder={t("navbar.searchPlaceholder")}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                {searchTerm && (
-                  <button
-                    onClick={clearSearch}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
-                  >
-                    <XCircle size={20} />
-                  </button>
-                )}
+              {/* Search Button */}
+              {!isSearchOpen && (
+                <button
+                  onClick={handleSearchToggle}
+                  className="p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 group"
+                  title={t("navbar.search")}
+                >
+                  <Search size={20} className="md:w-6 md:h-6 group-hover:scale-110 transition-transform" />
+                </button>
+              )}
+
+              {/* Search Input with Animation */}
+              <div className={`transition-all duration-500 ease-in-out overflow-hidden ${
+                isSearchOpen ? 'w-48 lg:w-64 opacity-100' : 'w-0 opacity-0'
+              }`}>
+                <div className="relative min-w-[192px] lg:min-w-[256px]">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    className="w-full pl-10 pr-10 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    placeholder={t("navbar.searchPlaceholder")}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    autoFocus
+                  />
+                  {searchTerm && (
+                    <button
+                      onClick={clearSearch}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
+                    >
+                      <XCircle size={20} />
+                    </button>
+                  )}
+                </div>
+                {renderSearchResults()}
               </div>
-              {renderSearchResults()}
+
+              {/* Close Button when search is open */}
+              {isSearchOpen && (
+                <button
+                  onClick={handleSearchToggle}
+                  className="ml-2 p-2 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
+                  title={t("navbar.closeSearch")}
+                >
+                  <XCircle size={20} />
+                </button>
+              )}
             </div>
 
             {/* Favorites with counter */}
@@ -223,7 +263,7 @@ const Navbar = () => {
               className="relative p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 group flex-shrink-0"
               title={t("navbar.cart")}
             >
-              <ShoppingCart size={20} className="md:w-6 md:h-6" />
+              <ShoppingCart size={20} className="md:w-6 md-h-6" />
               {cart.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full px-1.5 py-0.5 text-xs font-bold min-w-[18px] text-center animate-bounce">
                   {cart.length}
@@ -313,27 +353,37 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Search - إضافة margin-bottom لتجنب تغطية المحتوى */}
+        {/* Mobile Search */}
         <div className="md:hidden mt-4 mb-2">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              className="w-full pl-10 pr-10 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              placeholder={t("navbar.searchPlaceholder")}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            {searchTerm && (
+          {/* Search Button for Mobile */}
+          {!isSearchOpen ? (
+            <button
+              onClick={handleSearchToggle}
+              className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200"
+            >
+              <Search size={20} />
+              <span className="font-medium">{t("navbar.search")}</span>
+            </button>
+          ) : (
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                className="w-full pl-10 pr-10 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                placeholder={t("navbar.searchPlaceholder")}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                autoFocus
+              />
               <button
-                onClick={clearSearch}
+                onClick={handleSearchToggle}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
               >
                 <XCircle size={20} />
               </button>
-            )}
-          </div>
-          {renderSearchResults()}
+              {renderSearchResults()}
+            </div>
+          )}
         </div>
       </div>
 
