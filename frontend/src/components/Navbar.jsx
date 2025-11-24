@@ -180,17 +180,17 @@ const Navbar = () => {
               <Menu size={24} />
             </button>
 
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-3 flex-shrink-0 min-w-0">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-sm opacity-75"></div>
-                <img
-                  src={logo}
-                  alt="Zoubir"
-                  className="relative h-10 w-28 md:h-12 md:w-32 rounded-2xl object-cover border-2 border-white dark:border-gray-800 shadow-lg"
-                />
-              </div>
-            </Link>
+{/* Logo */}
+<Link to="/" className="flex items-center gap-3 flex-shrink-0 min-w-0">
+  <div className="relative">
+    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-sm opacity-75"></div>
+    <img
+      src={logo}
+      alt="Zoubir"
+      className="relative h-10 w-28 md:h-12 md:w-32 rounded-2xl object-cover border-2 border-white dark:border-gray-800 shadow-lg max-w-[100px] md:max-w-none"
+    />
+  </div>
+</Link>
           </div>
 
           {/* Desktop Navigation */}
@@ -238,7 +238,7 @@ const Navbar = () => {
                   <input
                     ref={searchInputRefLocal}
                     type="text"
-                    className="w-full pl-10 pr-10 py-2.5 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-300 shadow-sm"
+                    className="w-full pl-10 pr-10 py-2.5 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-blue-500/30 transition-all duration-300 shadow-sm"
                     placeholder={t("navbar.searchPlaceholder")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
