@@ -24,7 +24,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAdminAuthStore } from "../stores/useAdminAuthStore";
 import { useTranslation } from "react-i18next";
 import { useCartStore } from "../stores/useCartStore";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavbar } from "../context/NavbarContext";
 import logo from "../../public/logo.png";
 import toast from "react-hot-toast";
@@ -54,6 +54,9 @@ const Navbar = () => {
     return localStorage.getItem('darkMode') === 'true' || false;
   });
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const searchContainerRef = useRef(null);
+  const searchInputRefLocal = useRef(null);
 
   // افترض أن لديك store للمفضلة
   const [favorites] = useState([]); // استبدل هذا بـ useFavoritesStore إذا كان لديك
@@ -105,10 +108,30 @@ const Navbar = () => {
 
   const handleSearchToggle = () => {
     setIsSearchOpen(!isSearchOpen);
-    if (isSearchOpen) {
+    if (!isSearchOpen) {
+      setTimeout(() => {
+        searchInputRefLocal.current?.focus();
+      }, 300);
+    } else {
       clearSearch();
     }
   };
+
+  // إغلاق البحث عند النقر خارج المنطقة
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+        if (isSearchOpen && searchTerm === "") {
+          setIsSearchOpen(false);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isSearchOpen, searchTerm]);
 
   const renderSearchResults = () =>
     searchResults.length > 0 && (
@@ -192,32 +215,34 @@ const Navbar = () => {
 
           {/* Right Section - Actions */}
           <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
-            {/* Search Button & Input - Desktop */}
-            <div className="hidden md:block relative">
-              {/* Search Button */}
-              {!isSearchOpen && (
-                <button
-                  onClick={handleSearchToggle}
-                  className="p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 group"
-                  title={t("navbar.search")}
-                >
-                  <Search size={20} className="md:w-6 md:h-6 group-hover:scale-110 transition-transform" />
-                </button>
-              )}
+            {/* Search Container - Integrated with other buttons */}
+            <div ref={searchContainerRef} className="flex items-center gap-2">
+              {/* Search Button - Always visible */}
+              <button
+                onClick={handleSearchToggle}
+                className={`p-2 rounded-xl transition-all duration-300 group flex-shrink-0 ${
+                  isSearchOpen 
+                    ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20" 
+                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                }`}
+                title={isSearchOpen ? t("navbar.closeSearch") : t("navbar.search")}
+              >
+                {isSearchOpen ? <XCircle size={20} className="md:w-6 md:h-6" /> : <Search size={20} className="md:w-6 md:h-6 group-hover:scale-110 transition-transform" />}
+              </button>
 
-              {/* Search Input with Animation */}
-              <div className={`transition-all duration-500 ease-in-out overflow-hidden ${
-                isSearchOpen ? 'w-48 lg:w-64 opacity-100' : 'w-0 opacity-0'
+              {/* Search Input with Smooth Animation */}
+              <div className={`relative transition-all duration-500 ease-in-out overflow-hidden ${
+                isSearchOpen ? 'w-48 lg:w-64 opacity-100 mr-2' : 'w-0 opacity-0'
               }`}>
                 <div className="relative min-w-[192px] lg:min-w-[256px]">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
+                    ref={searchInputRefLocal}
                     type="text"
                     className="w-full pl-10 pr-10 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     placeholder={t("navbar.searchPlaceholder")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    autoFocus
                   />
                   {searchTerm && (
                     <button
@@ -230,17 +255,6 @@ const Navbar = () => {
                 </div>
                 {renderSearchResults()}
               </div>
-
-              {/* Close Button when search is open */}
-              {isSearchOpen && (
-                <button
-                  onClick={handleSearchToggle}
-                  className="ml-2 p-2 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
-                  title={t("navbar.closeSearch")}
-                >
-                  <XCircle size={20} />
-                </button>
-              )}
             </div>
 
             {/* Favorites with counter */}
@@ -263,7 +277,7 @@ const Navbar = () => {
               className="relative p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 group flex-shrink-0"
               title={t("navbar.cart")}
             >
-              <ShoppingCart size={20} className="md:w-6 md-h-6" />
+              <ShoppingCart size={20} className="md:w-6 md:h-6" />
               {cart.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full px-1.5 py-0.5 text-xs font-bold min-w-[18px] text-center animate-bounce">
                   {cart.length}
