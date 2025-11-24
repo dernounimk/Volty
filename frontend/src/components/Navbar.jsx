@@ -117,13 +117,13 @@ const Navbar = () => {
     }
   };
 
-  // إغلاق القوائم المنسدلة عند النقر خارجها
+  // إغلاق القوائم المنسدلة عند النقر خارجها - تم إزالة الإغلاق التلقائي للبحث
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
-        if (isSearchOpen && searchTerm === "") {
-          setIsSearchOpen(false);
-        }
+      // فقط إغلاق قوائم اللغة والإدارة عند النقر خارجها
+      if (isLangMenuOpen || isAdminMenuOpen) {
+        setIsLangMenuOpen(false);
+        setIsAdminMenuOpen(false);
       }
     };
 
@@ -131,7 +131,7 @@ const Navbar = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isSearchOpen, searchTerm]);
+  }, [isLangMenuOpen, isAdminMenuOpen]);
 
   const renderSearchResults = () =>
     searchResults.length > 0 && (
@@ -239,7 +239,7 @@ const Navbar = () => {
                   <input
                     ref={searchInputRefLocal}
                     type="text"
-                    className="w-full pl-10 pr-10 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all hover:bg-gray-200 dark:hover:bg-gray-700"
+                    className="w-full pl-10 pr-10 py-2.5 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-300 shadow-sm hover:border-gray-300 dark:hover:border-gray-600"
                     placeholder={t("navbar.searchPlaceholder")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -247,7 +247,7 @@ const Navbar = () => {
                   {searchTerm && (
                     <button
                       onClick={clearSearch}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors duration-200"
                     >
                       <XCircle size={20} />
                     </button>
@@ -372,20 +372,20 @@ const Navbar = () => {
           {!isSearchOpen ? (
             <button
               onClick={handleSearchToggle}
-              className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 group"
+              className="w-full flex items-center justify-center gap-3 p-4 rounded-2xl bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-blue-500 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 group shadow-sm"
             >
-              <Search size={20} className="group-hover:scale-110 transition-transform" />
-              <span className="font-medium">{t("navbar.search")}</span>
+              <Search size={22} className="group-hover:scale-110 transition-transform" />
+              <span className="font-medium text-base">{t("navbar.search")}</span>
             </button>
           ) : (
-            <div className="relative bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-lg border border-gray-200 dark:border-gray-700">
+            <div className="relative bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg border-2 border-blue-500 dark:border-blue-400 animate-fadeIn">
               <div className="flex items-center gap-3">
                 <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
                     ref={searchInputRefLocal}
                     type="text"
-                    className="w-full pl-10 pr-10 py-3 bg-gray-100 dark:bg-gray-700 border-0 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all hover:bg-gray-200 dark:hover:bg-gray-600"
+                    className="w-full pl-12 pr-12 py-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-blue-500/30 focus:border-blue-500 transition-all duration-300 text-base shadow-sm hover:border-gray-300 dark:hover:border-gray-600"
                     placeholder={t("navbar.searchPlaceholder")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -394,17 +394,17 @@ const Navbar = () => {
                   {searchTerm && (
                     <button
                       onClick={clearSearch}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
+                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors duration-200"
                     >
-                      <XCircle size={20} />
+                      <XCircle size={22} />
                     </button>
                   )}
                 </div>
                 <button
                   onClick={handleSearchToggle}
-                  className="p-2 text-gray-400 hover:text-red-500 transition-colors flex-shrink-0 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl"
+                  className="p-3 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200 flex-shrink-0 rounded-xl"
                 >
-                  <XCircle size={24} />
+                  <XCircle size={26} />
                 </button>
               </div>
               {renderSearchResults()}
