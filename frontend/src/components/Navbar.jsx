@@ -123,20 +123,11 @@ const Navbar = () => {
     { path: "/contact", label: t("navbar.contact"), icon: <Phone size={20} /> },
   ];
 
-  // تعريف روابط الموبايل مع الأيقونات
+  // تعريف روابط الموبايل مع الأيقونات (تم إزالة السلة والمفضلة)
   const mobileNavLinks = [
     { path: "/", label: t("navbar.home"), icon: <Home size={24} /> },
     { path: "/contact", label: t("navbar.contact"), icon: <Phone size={24} /> },
-    { path: "/favorites", label: t("navbar.favorites"), icon: <Heart size={24} /> },
-    { path: "/cart", label: t("navbar.cart"), icon: <ShoppingCart size={24} /> },
     { path: "/faq", label: t("navbar.faq"), icon: <HelpCircle size={24} /> },
-  ];
-
-  // تعريف روابط الفوتر مع الأيقونات
-  const footerLinks = [
-    { path: "/privacy-policy", label: t("navbar.privacy"), icon: <Shield size={16} /> },
-    { path: "/terms-of-use", label: t("navbar.terms"), icon: <FileText size={16} /> },
-    { path: "/faq", label: t("navbar.faq"), icon: <HelpCircle size={16} /> },
   ];
 
   return (
@@ -350,7 +341,7 @@ const Navbar = () => {
       {isMenuOpen && (
         <div className="lg:hidden absolute top-full left-0 w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-2xl">
           <div className="container mx-auto px-4 py-6">
-            {/* Mobile Navigation - جميع الروابط مع الأيقونات */}
+            {/* Mobile Navigation - روابط أساسية فقط */}
             <nav className="grid grid-cols-3 gap-3 mb-6">
               {mobileNavLinks.map((item) => (
                 <NavLink
@@ -391,27 +382,6 @@ const Navbar = () => {
                     <Globe size={14} />
                     <span className="text-xs font-medium">{lang.label}</span>
                   </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Additional Links in Mobile Menu */}
-            <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3 flex items-center gap-2">
-                <HelpCircle size={16} />
-                {t("navbar.more")}
-              </h3>
-              <div className="grid grid-cols-2 gap-2">
-                {footerLinks.map((link) => (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
-                  >
-                    {link.icon}
-                    <span className="text-xs font-medium">{link.label}</span>
-                  </Link>
                 ))}
               </div>
             </div>
