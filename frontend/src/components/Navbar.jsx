@@ -117,8 +117,21 @@ const Navbar = () => {
     }
   };
 
-  // إزالة الـ click outside listener لتجنب الإغلاق التلقائي
-  // البحث سيغلق فقط عند الضغط على زر الإغلاق
+  // إغلاق القوائم المنسدلة عند النقر خارجها
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+        if (isSearchOpen && searchTerm === "") {
+          setIsSearchOpen(false);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isSearchOpen, searchTerm]);
 
   const renderSearchResults = () =>
     searchResults.length > 0 && (
@@ -203,7 +216,7 @@ const Navbar = () => {
           {/* Right Section - Actions */}
           <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
             {/* Search Container - Integrated with other buttons */}
-            <div ref={searchContainerRef} className="flex items-center gap-2">
+            <div ref={searchContainerRef} className="hidden md:flex items-center gap-2">
               {/* Search Button - Always visible */}
               <button
                 onClick={handleSearchToggle}
@@ -226,7 +239,7 @@ const Navbar = () => {
                   <input
                     ref={searchInputRefLocal}
                     type="text"
-                    className="w-full pl-10 pr-10 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full pl-10 pr-10 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all hover:bg-gray-200 dark:hover:bg-gray-700"
                     placeholder={t("navbar.searchPlaceholder")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -250,7 +263,7 @@ const Navbar = () => {
               className="relative p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 group flex-shrink-0"
               title={t("navbar.favorites")}
             >
-              <Heart size={20} className="md:w-6 md:h-6" />
+              <Heart size={20} className="md:w-6 md:h-6 group-hover:scale-110 transition-transform" />
               {favorites.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-gradient-to-r from-pink-500 to-red-500 text-white rounded-full px-1.5 py-0.5 text-xs font-bold min-w-[18px] text-center animate-bounce">
                   {favorites.length}
@@ -264,7 +277,7 @@ const Navbar = () => {
               className="relative p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 group flex-shrink-0"
               title={t("navbar.cart")}
             >
-              <ShoppingCart size={20} className="md:w-6 md:h-6" />
+              <ShoppingCart size={20} className="md:w-6 md:h-6 group-hover:scale-110 transition-transform" />
               {cart.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full px-1.5 py-0.5 text-xs font-bold min-w-[18px] text-center animate-bounce">
                   {cart.length}
@@ -276,9 +289,9 @@ const Navbar = () => {
             <div className="hidden sm:relative sm:block">
               <button
                 onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-                className="flex items-center gap-2 p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
+                className="flex items-center gap-2 p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 group"
               >
-                <Globe size={18} className="md:w-5 md:h-5" />
+                <Globe size={18} className="md:w-5 md:h-5 group-hover:scale-110 transition-transform" />
                 <span className="text-sm font-medium hidden md:block">
                   {languages.find(l => l.code === i18n.language)?.label}
                 </span>
@@ -308,10 +321,10 @@ const Navbar = () => {
             {/* Dark Mode Toggle */}
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className="p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 flex-shrink-0"
+              className="p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 flex-shrink-0 group"
               title={isDarkMode ? t("navbar.lightMode") : t("navbar.darkMode")}
             >
-              {isDarkMode ? <Sun size={20} className="md:w-6 md:h-6" /> : <Moon size={20} className="md:w-6 md:h-6" />}
+              {isDarkMode ? <Sun size={20} className="md:w-6 md:h-6 group-hover:scale-110 transition-transform" /> : <Moon size={20} className="md:w-6 md:h-6 group-hover:scale-110 transition-transform" />}
             </button>
 
             {/* Admin Menu */}
@@ -321,7 +334,7 @@ const Navbar = () => {
                   onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
                   className="flex items-center gap-2 p-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg transition-all duration-200 group"
                 >
-                  <Lock size={16} className="md:w-5 md:h-5" />
+                  <Lock size={16} className="md:w-5 md:h-5 group-hover:scale-110 transition-transform" />
                   <span className="font-medium hidden md:block">{t("navbar.dashboard")}</span>
                   <ChevronDown size={14} className={`transition-transform hidden md:block ${isAdminMenuOpen ? 'rotate-180' : ''}`} />
                 </button>
@@ -359,19 +372,20 @@ const Navbar = () => {
           {!isSearchOpen ? (
             <button
               onClick={handleSearchToggle}
-              className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200"
+              className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 group"
             >
-              <Search size={20} />
+              <Search size={20} className="group-hover:scale-110 transition-transform" />
               <span className="font-medium">{t("navbar.search")}</span>
             </button>
           ) : (
-            <div className="relative bg-white dark:bg-gray-800 rounded-2xl p-2 shadow-lg border border-gray-200 dark:border-gray-700">
-              <div className="flex items-center gap-2">
+            <div className="relative bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-lg border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-3">
                 <div className="flex-1 relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
+                    ref={searchInputRefLocal}
                     type="text"
-                    className="w-full pl-10 pr-10 py-3 bg-gray-100 dark:bg-gray-700 border-0 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    className="w-full pl-10 pr-10 py-3 bg-gray-100 dark:bg-gray-700 border-0 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all hover:bg-gray-200 dark:hover:bg-gray-600"
                     placeholder={t("navbar.searchPlaceholder")}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -388,7 +402,7 @@ const Navbar = () => {
                 </div>
                 <button
                   onClick={handleSearchToggle}
-                  className="p-2 text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
+                  className="p-2 text-gray-400 hover:text-red-500 transition-colors flex-shrink-0 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl"
                 >
                   <XCircle size={24} />
                 </button>
@@ -411,10 +425,10 @@ const Navbar = () => {
                   to={item.path}
                   onClick={() => setIsMenuOpen(false)}
                   className={({ isActive }) =>
-                    `flex flex-col items-center gap-2 p-3 rounded-2xl transition-all ${
+                    `flex flex-col items-center gap-2 p-3 rounded-2xl transition-all hover:bg-gray-50 dark:hover:bg-gray-800 ${
                       isActive
                         ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
-                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                        : "text-gray-600 dark:text-gray-300"
                     }`
                   }
                 >
@@ -435,7 +449,7 @@ const Navbar = () => {
                   <button
                     key={lang.code}
                     onClick={() => changeLanguage(lang.code)}
-                    className={`flex items-center justify-center gap-1 p-2 rounded-xl text-center transition-all ${
+                    className={`flex items-center justify-center gap-1 p-2 rounded-xl text-center transition-all hover:bg-gray-50 dark:hover:bg-gray-800 ${
                       i18n.language === lang.code 
                         ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800' 
                         : 'bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700'
@@ -458,7 +472,7 @@ const Navbar = () => {
                 <div className="space-y-2">
                   <Link
                     to="/dash"
-                    className="flex items-center gap-3 px-3 py-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 transition-all"
+                    className="flex items-center gap-3 px-3 py-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 transition-all hover:bg-blue-100 dark:hover:bg-blue-900/30"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <KeyRound size={18} />
@@ -470,7 +484,7 @@ const Navbar = () => {
                       toast.success(t("logout.success"));
                       setIsMenuOpen(false);
                     }}
-                    className="flex items-center gap-3 w-full px-3 py-2 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 transition-all font-medium"
+                    className="flex items-center gap-3 w-full px-3 py-2 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 transition-all font-medium hover:bg-red-100 dark:hover:bg-red-900/30"
                   >
                     <LogOut size={18} />
                     <span>{t("navbar.logout")}</span>
