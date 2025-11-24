@@ -117,21 +117,8 @@ const Navbar = () => {
     }
   };
 
-  // إغلاق البحث عند النقر خارج المنطقة
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
-        if (isSearchOpen && searchTerm === "") {
-          setIsSearchOpen(false);
-        }
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isSearchOpen, searchTerm]);
+  // إزالة الـ click outside listener لتجنب الإغلاق التلقائي
+  // البحث سيغلق فقط عند الضغط على زر الإغلاق
 
   const renderSearchResults = () =>
     searchResults.length > 0 && (
@@ -367,9 +354,8 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Search */}
+        {/* Mobile Search - محسّن للهواتف */}
         <div className="md:hidden mt-4 mb-2">
-          {/* Search Button for Mobile */}
           {!isSearchOpen ? (
             <button
               onClick={handleSearchToggle}
@@ -379,22 +365,34 @@ const Navbar = () => {
               <span className="font-medium">{t("navbar.search")}</span>
             </button>
           ) : (
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                className="w-full pl-10 pr-10 py-2.5 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                placeholder={t("navbar.searchPlaceholder")}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                autoFocus
-              />
-              <button
-                onClick={handleSearchToggle}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
-              >
-                <XCircle size={20} />
-              </button>
+            <div className="relative bg-white dark:bg-gray-800 rounded-2xl p-2 shadow-lg border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-2">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    className="w-full pl-10 pr-10 py-3 bg-gray-100 dark:bg-gray-700 border-0 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    placeholder={t("navbar.searchPlaceholder")}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    autoFocus
+                  />
+                  {searchTerm && (
+                    <button
+                      onClick={clearSearch}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
+                    >
+                      <XCircle size={20} />
+                    </button>
+                  )}
+                </div>
+                <button
+                  onClick={handleSearchToggle}
+                  className="p-2 text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
+                >
+                  <XCircle size={24} />
+                </button>
+              </div>
               {renderSearchResults()}
             </div>
           )}
