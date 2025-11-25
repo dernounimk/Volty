@@ -11,12 +11,12 @@ import LoadingSpinner from "../components/LoadingSpinner";
 const CategoryPage = () => {
   const { 
     fetchProductsByCategory, 
-    products, 
+    products = [], 
     isLoading: productsLoading 
   } = useProductStore();
   
   const { 
-    categories,
+    categories = [],
     loadingMeta: categoriesLoading,
     fetchMetaData
   } = useSettingStore();
@@ -26,41 +26,53 @@ const CategoryPage = () => {
   const [categoryNotFound, setCategoryNotFound] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
   const [sortBy, setSortBy] = useState('popular');
+  const [hasFetched, setHasFetched] = useState(false);
 
+  // إصلاح: استخدام useCallback لتجنب إعادة التحميل
   useEffect(() => {
-    if (categories.length === 0) {
+    if (categories.length === 0 && !categoriesLoading) {
       fetchMetaData();
     }
-  }, [categories.length, fetchMetaData]);
+  }, [categories.length, categoriesLoading, fetchMetaData]);
 
+  // إصلاح: تحسين منطق البحث عن التصنيف
   useEffect(() => {
-    if (category) {
-      const foundCategory = categories.find(c => 
-        c._id === category || 
-        c.slug === category || 
-        c.name?.toLowerCase() === category.toLowerCase()
-      );
+    if (category && categories.length > 0 && !hasFetched) {
+      const foundCategory = categories.find(c => {
+        if (!c) return false;
+        return (
+          c._id === category || 
+          c.slug === category || 
+          c.name?.toLowerCase() === category?.toLowerCase()
+        );
+      });
 
       if (foundCategory) {
         fetchProductsByCategory(foundCategory._id);
         setCategoryNotFound(false);
+        setHasFetched(true);
       } else {
         setCategoryNotFound(true);
+        setHasFetched(true);
       }
     }
-  }, [category, categories, fetchProductsByCategory]);
+  }, [category, categories, fetchProductsByCategory, hasFetched]);
 
-  const currentCategory = categories.find(c => 
-    c._id === category || 
-    c.slug === category || 
-    c.name?.toLowerCase() === category.toLowerCase()
-  );
+  const currentCategory = categories.find(c => {
+    if (!c) return false;
+    return (
+      c._id === category || 
+      c.slug === category || 
+      c.name?.toLowerCase() === category?.toLowerCase()
+    );
+  });
 
   const translatedCategoryName = currentCategory 
     ? t(`categories.${currentCategory.name}`, currentCategory.name)
     : t(`categories.${category}`, category?.charAt(0)?.toUpperCase() + category?.slice(1));
 
-  if (categoriesLoading) {
+  // إصلاح: تحسين شروط التحميل
+  if (categoriesLoading || (!hasFetched && !categoryNotFound)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
         <LoadingSpinner size="xl" />
@@ -124,6 +136,9 @@ const CategoryPage = () => {
               src={currentCategory.imageUrl}
               alt={currentCategory.name}
               className="w-full h-full object-cover"
+              onError={(e) => {
+                e.target.src = '/default-category.jpg';
+              }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-8">
               <div className="text-white">
@@ -174,7 +189,7 @@ const CategoryPage = () => {
         ) : (
           <>
             <AnimatePresence>
-              {(!products || products.length === 0) && (
+              {(products.length === 0) && (
                 <motion.div 
                   className="text-center py-16"
                   initial={{ opacity: 0, scale: 0.8 }}
@@ -296,29 +311,11 @@ const CategoryPage = () => {
                       </motion.div>
                     </Link>
                   </motion.div>
-
-                  {/* Additional Options */}
-                  <motion.div
-                    className="flex flex-wrap justify-center gap-4 mt-8"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1 }}
-                  >
-                    <Link
-                      to="/categories"
-                      className="inline-flex items-center gap-2 px-6 py-3 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300 border border-gray-300 dark:border-gray-600 rounded-xl hover:border-blue-300 dark:hover:border-blue-500"
-                    >
-                      <ShoppingBag className="w-4 h-4" />
-                      <span className="text-sm font-medium">
-                        {t("categoryPage.browseAllCategories")}
-                      </span>
-                    </Link>
-                  </motion.div>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {products?.length > 0 && (
+            {products.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -339,7 +336,7 @@ const CategoryPage = () => {
                         onClick={() => setViewMode('grid')}
                         className={`p-2 rounded-xl transition-all ${
                           viewMode === 'grid' 
-                            ? 'bg-white dark:bg-gray-600 shadow-sm' 
+                            ? 'bg-white dark:bg-gray-600 shadow-sm text-blue-600' 
                             : 'text-gray-500 dark:text-gray-400'
                         }`}
                       >
@@ -349,7 +346,7 @@ const CategoryPage = () => {
                         onClick={() => setViewMode('list')}
                         className={`p-2 rounded-xl transition-all ${
                           viewMode === 'list' 
-                            ? 'bg-white dark:bg-gray-600 shadow-sm' 
+                            ? 'bg-white dark:bg-gray-600 shadow-sm text-blue-600' 
                             : 'text-gray-500 dark:text-gray-400'
                         }`}
                       >
@@ -375,15 +372,13 @@ const CategoryPage = () => {
                 </div>
 
                 {/* Products Grid/List */}
-                <div className={`
-                  ${viewMode === 'grid' 
-                    ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' 
-                    : 'space-y-4'
-                  }
-                `}>
+                <div className={viewMode === 'grid' 
+                  ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' 
+                  : 'space-y-4'
+                }>
                   {products.map((product, index) => (
                     <motion.div
-                      key={product._id}
+                      key={product._id || index}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: index * 0.1 }}
