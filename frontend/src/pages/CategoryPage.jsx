@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useProductStore } from "../stores/useProductStore";
 import useSettingStore from "../stores/useSettingStore";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, ShoppingBag, Filter, Grid, List } from "lucide-react";
-import { motion } from "framer-motion";
+import { ArrowLeft, ShoppingBag, Filter, Grid, List, Home, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "../components/ProductCard";
 import { useTranslation } from "react-i18next";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -38,7 +38,7 @@ const CategoryPage = () => {
       const foundCategory = categories.find(c => 
         c._id === category || 
         c.slug === category || 
-        c.name.toLowerCase() === category.toLowerCase()
+        c.name?.toLowerCase() === category.toLowerCase()
       );
 
       if (foundCategory) {
@@ -53,7 +53,7 @@ const CategoryPage = () => {
   const currentCategory = categories.find(c => 
     c._id === category || 
     c.slug === category || 
-    c.name.toLowerCase() === category.toLowerCase()
+    c.name?.toLowerCase() === category.toLowerCase()
   );
 
   const translatedCategoryName = currentCategory 
@@ -173,31 +173,150 @@ const CategoryPage = () => {
           </div>
         ) : (
           <>
-            {products?.length === 0 && (
-              <motion.div 
-                className="text-center py-16"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-              >
-                <div className="w-24 h-24 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <ShoppingBag className="w-10 h-10 text-gray-400" />
-                </div>
-                <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
-                  {t('categoryPage.noProducts')}
-                </h2>
-                <p className="text-gray-600 dark:text-gray-300 mb-6 text-lg">
-                  {t('categoryPage.noProductsDescription')}
-                </p>
-                <Link
-                  to='/'
-                  className='inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-lg transition-all duration-300'
+            <AnimatePresence>
+              {(!products || products.length === 0) && (
+                <motion.div 
+                  className="text-center py-16"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
                 >
-                  {t("categoryPage.exploreOtherCategories")}
-                  <ArrowLeft className="w-5 h-5" />
-                </Link>
-              </motion.div>
-            )}
+                  {/* Floating Animation Container */}
+                  <motion.div
+                    className="relative mb-8"
+                    animate={{ 
+                      y: [0, -10, 0],
+                    }}
+                    transition={{ 
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <div className="relative w-32 h-32 mx-auto">
+                      {/* Main Icon */}
+                      <motion.div
+                        className="w-32 h-32 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-full flex items-center justify-center shadow-2xl border border-purple-200/50 dark:border-purple-700/30"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <ShoppingBag className="w-16 h-16 text-purple-500 dark:text-purple-400" />
+                      </motion.div>
+                      
+                      {/* Floating Particles */}
+                      <motion.div
+                        className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg"
+                        animate={{ 
+                          scale: [1, 1.2, 1],
+                          rotate: [0, 180, 360]
+                        }}
+                        transition={{ 
+                          duration: 4,
+                          repeat: Infinity,
+                          ease: "linear"
+                        }}
+                      >
+                        <Sparkles className="w-4 h-4 text-white" />
+                      </motion.div>
+                      
+                      <motion.div
+                        className="absolute -bottom-2 -left-2 w-6 h-6 bg-blue-400 rounded-full shadow-lg"
+                        animate={{ 
+                          scale: [1, 1.3, 1],
+                          y: [0, -5, 0]
+                        }}
+                        transition={{ 
+                          duration: 3,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                          delay: 0.5
+                        }}
+                      />
+                    </div>
+                  </motion.div>
+
+                  {/* Text Content */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                  >
+                    <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-purple-600 dark:from-white dark:to-purple-400 bg-clip-text text-transparent mb-4">
+                      {t('categoryPage.noProducts')}
+                    </h2>
+                    <p className="text-lg text-gray-600 dark:text-gray-300 mb-2 max-w-md mx-auto leading-relaxed">
+                      {t('categoryPage.noProductsDescription')}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
+                      {t('categoryPage.noProductsHint')}
+                    </p>
+                  </motion.div>
+
+                  {/* Animated Back to Home Button */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8, type: "spring", stiffness: 200 }}
+                  >
+                    <Link
+                      to='/'
+                      className="group inline-flex items-center gap-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-2xl transition-all duration-500 relative overflow-hidden"
+                    >
+                      {/* Background Shine Effect */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                      
+                      {/* Icon with Animation */}
+                      <motion.div
+                        className="flex items-center justify-center"
+                        whileHover={{ 
+                          scale: 1.1,
+                          rotate: -5
+                        }}
+                        transition={{ type: "spring", stiffness: 400 }}
+                      >
+                        <Home className="w-6 h-6" />
+                      </motion.div>
+                      
+                      {/* Text */}
+                      <span className="relative z-10 text-lg">
+                        {t("categoryPage.exploreOtherCategories")}
+                      </span>
+                      
+                      {/* Arrow with Animation */}
+                      <motion.div
+                        animate={{ x: [0, 5, 0] }}
+                        transition={{ 
+                          duration: 1.5, 
+                          repeat: Infinity,
+                          repeatType: "reverse"
+                        }}
+                      >
+                        <ArrowLeft className="w-5 h-5 transform rotate-180" />
+                      </motion.div>
+                    </Link>
+                  </motion.div>
+
+                  {/* Additional Options */}
+                  <motion.div
+                    className="flex flex-wrap justify-center gap-4 mt-8"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1 }}
+                  >
+                    <Link
+                      to="/categories"
+                      className="inline-flex items-center gap-2 px-6 py-3 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300 border border-gray-300 dark:border-gray-600 rounded-xl hover:border-blue-300 dark:hover:border-blue-500"
+                    >
+                      <ShoppingBag className="w-4 h-4" />
+                      <span className="text-sm font-medium">
+                        {t("categoryPage.browseAllCategories")}
+                      </span>
+                    </Link>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {products?.length > 0 && (
               <motion.div
