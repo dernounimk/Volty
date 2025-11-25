@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Trash, Star, Eye, Pencil, Trash2, InstagramIcon, X, MessageSquare, Search, Filter, Download, Upload } from "lucide-react";
+import { Trash, Star, Eye, Pencil, Trash2, InstagramIcon, X, MessageSquare, Search, Filter } from "lucide-react";
 import { useProductStore } from "../stores/useProductStore";
 import useSettingStore from "../stores/useSettingStore";
 import toast from "react-hot-toast";
@@ -1071,14 +1071,297 @@ const DeleteConfirmationModal = ({ showPopup, setShowPopup, handleDelete, t }) =
   );
 };
 
-// Reviews Popup Component (يحتاج إلى تحسين إضافي)
+// Reviews Popup Component
 const ReviewsPopup = ({ product, onClose, isRTL, t }) => {
-  // ... (الكود الحالي للـ ReviewsPopup مع تحسينات التصميم)
-  // يمكن تحسينه بنفس النمط السابق
-  
-  return (
-    // ... (التنفيذ الحالي مع تحسينات التصميم)
-    null // مؤقت - يجب استبداله بالكود الكامل
+  const deleteReviewByIdStore = useProductStore((s) => s.deleteReviewById);
+  const deleteAllReviewsStore = useProductStore((s) => s.deleteAllReviews);
+  const toggleReviewsStore = useProductStore((s) => s.toggleReviews);
+
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [iDToDelete, setIDtoDelete] = useState(null);
+  const [reviewsEnabled, setReviewsEnabled] = useState(product.reviewsEnabled);
+
+  const [deleteOnePopup, setDeleteOnePopup] = useState(false);
+  const [deleteAllPopup, setDeleteAllPopup] = useState(false);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        setLoading(true);
+        const res = await axiosInstance.get(`/reviews/${product._id}`);
+        setReviews(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        console.error("Error fetching reviews", err);
+        setReviews([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReviews();
+  }, [product._id]);
+
+  const handleDeleteReview = async(reviewId) => {
+    setDeleteOnePopup(true);
+    setIDtoDelete(reviewId);
+  }
+
+  const deleteReview = async () => {
+    try {
+      if (typeof deleteReviewByIdStore === "function") {
+        await deleteReviewByIdStore(product._id, iDToDelete);
+      } else {
+        await axiosInstance.delete(`/api/reviews/${product._id}/review/${iDToDelete}`);
+      }
+      setReviews((prev) => prev.filter((r) => r._id !== iDToDelete));
+      toast.success("تم حذف التقييم");
+    } catch (err) {
+      console.error("deleteReview error:", err);
+      toast.error(err.response?.data?.message || "فشل حذف التقييم");
+    } finally {
+      setIDtoDelete(null);
+      setDeleteOnePopup(false)
+    }
+  };
+
+  const deleteAll = async () => {
+    try {
+      if (typeof deleteAllReviewsStore === "function") {
+        await deleteAllReviewsStore(product._id);
+      } else {
+        await axiosInstance.delete(`/api/reviews/${product._id}/delete-reviews`);
+      }
+      setReviews([]);
+      toast.success("تم حذف جميع التقييمات");
+    } catch (err) {
+      console.error("deleteAllReviews error:", err);
+      toast.error(err.response?.data?.message || "فشل حذف التقييمات");
+    } finally {
+      setIDtoDelete(null);
+      setDeleteAllPopup(false)
+    }
+  };
+
+  const handleToggleReviews = async () => {
+    try {
+      if (typeof toggleReviewsStore === "function") {
+        await toggleReviewsStore(product._id);
+      } else {
+        await axiosInstance.put(`/api/reviews/${product._id}/toggle-reviews`);
+      }
+
+      setReviewsEnabled((prev) => {
+        const newState = !prev;
+        toast.success(newState ? "تم تفعيل التقييمات" : "تم إيقاف التقييمات");
+        return newState;
+      });
+    } catch (err) {
+      console.error("toggleReviews error:", err);
+      toast.error(err.response?.data?.message || "فشل تحديث حالة التقييمات");
+    }
+  };
+
+  return createPortal(
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-gray-200 dark:border-gray-700"
+      >
+        {/* Header */}
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-700 rounded-t-2xl">
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white">
+            إدارة التقييمات
+          </h3>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-xl text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
+          >
+            <X size={24} />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 overflow-y-auto flex-1 space-y-6">
+          {/* Product Summary */}
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-semibold text-gray-800 dark:text-white">{product.name}</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-300">متوسط التقييم: {product.averageRating?.toFixed(1) || 0}/5</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-800 dark:text-white">عدد التقييمات: {product.numReviews || 0}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+            {/* Toggle Switch */}
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">حالة التقييمات:</span>
+              <button
+                onClick={handleToggleReviews}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  reviewsEnabled ? 'bg-green-500' : 'bg-gray-300'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    reviewsEnabled ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+              <span className="text-sm font-medium">{reviewsEnabled ? 'مفعل' : 'معطل'}</span>
+            </div>
+
+            {/* Delete All Button */}
+            {reviews.length > 0 && (
+              <button
+                onClick={() => setDeleteAllPopup(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all duration-200"
+              >
+                <Trash2 className="w-4 h-4" />
+                حذف الكل
+              </button>
+            )}
+          </div>
+
+          {/* Reviews List */}
+          {loading ? (
+            <div className="flex justify-center py-8">
+              <LoadingSpinner />
+            </div>
+          ) : reviews.length > 0 ? (
+            <div className="space-y-4">
+              {reviews.map((review) => (
+                <motion.div
+                  key={review._id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="font-semibold text-gray-800 dark:text-white">{review.name}</span>
+                        <div className="flex items-center text-yellow-500">
+                          <Star className="w-4 h-4 fill-yellow-400" />
+                          <span className="text-sm mr-1">{review.rating}/5</span>
+                        </div>
+                      </div>
+                      
+                      {review.comment && (
+                        <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">{review.comment}</p>
+                      )}
+                      
+                      <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                        <span>{dayjs(review.createdAt).format("HH:mm YYYY/MM/DD")}</span>
+                        {review.instagram && (
+                          <a
+                            href={`https://instagram.com/${review.instagram.replace("@", "")}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-pink-500 hover:text-pink-600"
+                          >
+                            <InstagramIcon size={14} />
+                            {review.instagram}
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <button
+                      onClick={() => handleDeleteReview(review._id)}
+                      className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              لا توجد تقييمات
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-center">
+          <button
+            onClick={onClose}
+            className="px-8 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-xl font-medium transition-all duration-200"
+          >
+            إغلاق
+          </button>
+        </div>
+      </motion.div>
+
+      {/* Delete Confirmation Modals */}
+      <DeleteReviewModal
+        show={deleteOnePopup}
+        onClose={() => setDeleteOnePopup(false)}
+        onConfirm={deleteReview}
+        message="هل أنت متأكد من حذف هذا التقييم؟"
+      />
+      
+      <DeleteReviewModal
+        show={deleteAllPopup}
+        onClose={() => setDeleteAllPopup(false)}
+        onConfirm={deleteAll}
+        message="هل أنت متأكد من حذف جميع التقييمات؟"
+      />
+    </div>,
+    document.body
+  );
+};
+
+// Delete Review Modal Component
+const DeleteReviewModal = ({ show, onClose, onConfirm, message }) => {
+  if (!show) return null;
+
+  return createPortal(
+    <AnimatePresence>
+      <motion.div
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[60]"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
+        <motion.div
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 w-96 border border-gray-200 dark:border-gray-700"
+          initial={{ scale: 0.8 }}
+          animate={{ scale: 1 }}
+          exit={{ scale: 0.8 }}
+        >
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4 text-center">
+            تأكيد الحذف
+          </h3>
+          <p className="text-gray-600 dark:text-gray-300 mb-6 text-center">
+            {message}
+          </p>
+          <div className="flex justify-center gap-4">
+            <button
+              onClick={onConfirm}
+              className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-medium transition-all duration-200 shadow-md"
+            >
+              نعم، احذف
+            </button>
+            <button
+              onClick={onClose}
+              className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-xl font-medium transition-all duration-200"
+            >
+              إلغاء
+            </button>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>,
+    document.body
   );
 };
 
