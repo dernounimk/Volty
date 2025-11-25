@@ -168,7 +168,7 @@ const Footer = () => {
                 </div>
                 <div>
                   <span className="font-medium block">{t("footer.address")}</span>
-                  <span className="text-sm text-blue-200">زقاق بن رمضان بسكرة</span>
+                  <span className="text-sm text-blue-200"> بن رمضان بسكرة</span>
                 </div>
               </div>
             </div>
