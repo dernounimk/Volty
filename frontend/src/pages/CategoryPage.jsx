@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useProductStore } from "../stores/useProductStore";
 import useSettingStore from "../stores/useSettingStore";
 import { Link, useParams } from "react-router-dom";
@@ -24,38 +24,52 @@ const CategoryPage = () => {
   const { category } = useParams();
   const { t } = useTranslation();
   const [categoryNotFound, setCategoryNotFound] = useState(false);
-  const [viewMode, setViewMode] = useState('grid');
+  const [viewMode, setViewMode] = useState('grid'); // إصلاح: التأكد من أن القيمة string وليست تعبير منطقي
   const [sortBy, setSortBy] = useState('popular');
   const [hasFetched, setHasFetched] = useState(false);
 
-  // إصلاح: استخدام useCallback لتجنب إعادة التحميل
-  useEffect(() => {
+  // إصلاح: استخدام useCallback لمنع إعادة التحميل اللانهائي
+  const loadMetaData = useCallback(async () => {
     if (categories.length === 0 && !categoriesLoading) {
-      fetchMetaData();
+      await fetchMetaData();
     }
   }, [categories.length, categoriesLoading, fetchMetaData]);
 
-  // إصلاح: تحسين منطق البحث عن التصنيف
   useEffect(() => {
-    if (category && categories.length > 0 && !hasFetched) {
-      const foundCategory = categories.find(c => {
-        if (!c) return false;
-        return (
-          c._id === category || 
-          c.slug === category || 
-          c.name?.toLowerCase() === category?.toLowerCase()
-        );
-      });
+    loadMetaData();
+  }, [loadMetaData]);
 
-      if (foundCategory) {
-        fetchProductsByCategory(foundCategory._id);
-        setCategoryNotFound(false);
-        setHasFetched(true);
-      } else {
-        setCategoryNotFound(true);
-        setHasFetched(true);
+  // إصلاح: تحسين منطق جلب المنتجات
+  useEffect(() => {
+    const loadCategoryProducts = async () => {
+      if (category && categories.length > 0 && !hasFetched) {
+        const foundCategory = categories.find(c => {
+          if (!c) return false;
+          return (
+            c._id === category || 
+            c.slug === category || 
+            c.name?.toLowerCase() === category?.toLowerCase()
+          );
+        });
+
+        if (foundCategory) {
+          try {
+            await fetchProductsByCategory(foundCategory._id);
+            setCategoryNotFound(false);
+            setHasFetched(true);
+          } catch (error) {
+            console.error('Error fetching products:', error);
+            setCategoryNotFound(true);
+            setHasFetched(true);
+          }
+        } else {
+          setCategoryNotFound(true);
+          setHasFetched(true);
+        }
       }
-    }
+    };
+
+    loadCategoryProducts();
   }, [category, categories, fetchProductsByCategory, hasFetched]);
 
   const currentCategory = categories.find(c => {
@@ -69,10 +83,12 @@ const CategoryPage = () => {
 
   const translatedCategoryName = currentCategory 
     ? t(`categories.${currentCategory.name}`, currentCategory.name)
-    : t(`categories.${category}`, category?.charAt(0)?.toUpperCase() + category?.slice(1));
+    : category 
+      ? t(`categories.${category}`, category.charAt(0)?.toUpperCase() + category.slice(1))
+      : t('categoryPage.unknownCategory');
 
   // إصلاح: تحسين شروط التحميل
-  if (categoriesLoading || (!hasFetched && !categoryNotFound)) {
+  if (categoriesLoading || (productsLoading && !hasFetched)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
         <LoadingSpinner size="xl" />
