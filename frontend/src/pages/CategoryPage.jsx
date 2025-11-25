@@ -24,7 +24,7 @@ const CategoryPage = () => {
   const { category } = useParams();
   const { t } = useTranslation();
   const [categoryNotFound, setCategoryNotFound] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState('grid');
   const [sortBy, setSortBy] = useState('popular');
 
   useEffect(() => {
