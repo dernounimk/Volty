@@ -22,7 +22,7 @@ const __dirname = path.resolve();
 // ===== إعداد CORS محسن =====
 app.use(cors({
   origin: [
-    "https://zoubir-trends.vercel.app",
+    "https://volty-store.vercel.app",
     "http://localhost:5173",
     "http://localhost:3000",
   ],
