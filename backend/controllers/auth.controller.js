@@ -1,6 +1,6 @@
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 
 const generateAccessToken = (userId) => {
   return jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, {
@@ -12,6 +12,42 @@ const generateRefreshToken = (userId) => {
   return jwt.sign({ userId }, process.env.REFRESH_TOKEN_SECRET, {
     expiresIn: "7d",
   });
+};
+
+// في auth.controller.js
+export const createAdminUser = async (req, res) => {
+  try {
+    // احذف المستخدم القديم إذا كان موجوداً
+    await User.deleteOne({ email: "admin@volty.com" });
+    
+    const user = new User({
+      name: "Volty Admin",
+      email: "admin@volty.com",
+      password: "Volty07Store", // سيتم تشفيرها تلقائياً بـ bcrypt
+      role: "admin"
+    });
+
+    await user.save();
+
+    console.log("✅ New admin user created successfully");
+    
+    return res.json({
+      success: true,
+      message: "Admin user created successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    console.error("💥 Create admin error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error creating admin user"
+    });
+  }
 };
 
 export const login = async (req, res) => {
