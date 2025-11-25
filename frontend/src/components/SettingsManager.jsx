@@ -1,75 +1,13 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { PlusCircle, Trash2, ImagePlus, X, ArrowLeft, ArrowRight, Search, Save, Building2, Home, Hourglass } from "lucide-react";
+import { PlusCircle, Trash2, ImagePlus, X, ArrowLeft, ArrowRight, Search, Save, Building2, Home, Hourglass, Settings, Palette, Ruler, FolderOpen, Truck, Calculator } from "lucide-react";
 import toast from "react-hot-toast";
 import useSettingStore from "../stores/useSettingStore";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import LoadingSpinner from "./LoadingSpinner";
 
-const wilayas = [
-  "01 - أدرار",
-  "02 - الشلف",
-  "03 - الأغواط",
-  "04 - أم البواقي",
-  "05 - باتنة",
-  "06 - بجاية",
-  "07 - بسكرة",
-  "08 - بشار",
-  "09 - البليدة",
-  "10 - البويرة",
-  "11 - تمنراست",
-  "12 - تبسة",
-  "13 - تلمسان",
-  "14 - تيارت",
-  "15 - تيزي وزو",
-  "16 - الجزائر",
-  "17 - الجلفة",
-  "18 - جيجل",
-  "19 - سطيف",
-  "20 - سعيدة",
-  "21 - سكيكدة",
-  "22 - سيدي بلعباس",
-  "23 - عنابة",
-  "24 - قالمة",
-  "25 - قسنطينة",
-  "26 - المدية",
-  "27 - مستغانم",
-  "28 - المسيلة",
-  "29 - معسكر",
-  "30 - ورقلة",
-  "31 - وهران",
-  "32 - البيض",
-  "33 - إليزي",
-  "34 - برج بوعريريج",
-  "35 - بومرداس",
-  "36 - الطارف",
-  "37 - تندوف",
-  "38 - تيسمسيلت",
-  "39 - الوادي",
-  "40 - خنشلة",
-  "41 - سوق أهراس",
-  "42 - تيبازة",
-  "43 - ميلة",
-  "44 - عين الدفلى",
-  "45 - النعامة",
-  "46 - عين تموشنت",
-  "47 - غرداية",
-  "48 - غليزان",
-  "49 - تيميمون",
-  "50 - برج باجي مختار",
-  "51 - أولاد جلال",
-  "52 - بني عباس",
-  "53 - عين صالح",
-  "54 - عين قزام",
-  "55 - تقرت",
-  "56 - جانت",
-  "57 - المغير",
-  "58 - المنيعة"
-];
-
 const SettingsManager = () => {
-
   const {
     categories,
     sizesLetters,
@@ -84,7 +22,6 @@ const SettingsManager = () => {
     createColor,
     deleteColor,
   } = useSettingStore();
-
 
   const [newCategory, setNewCategory] = useState({ name: "", image: null });
   const [newSize, setNewSize] = useState({ type: "letters", value: "" });
@@ -121,7 +58,7 @@ const SettingsManager = () => {
     e.preventDefault();
     try {
       await createCategory(newCategory);
-      toast.success('success_to_add_category');
+      toast.success(t('success_to_add_category'));
       setNewCategory({ name: "", image: null });
     } catch (error) {
       toast.error(t("failed_to_add_category"));
@@ -154,292 +91,433 @@ const SettingsManager = () => {
   };
 
   if (isLoading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   return (
-    <motion.div
-      className="bg-[var(--color-bg)] shadow-xl text-[var(--color-text-secondary)] rounded-lg p-8 max-w-5xl mx-auto space-y-16"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-    >
-      {/* Categories */}
-      <section>
-        <h2 className="text-3xl font-extrabold text-[var(--color-text)] mb-8 border-b border-[var(--color-accent)] pb-2">
-          {t("categories")}
-        </h2>
-        <form onSubmit={handleAddCategory} className="flex flex-col sm:flex-row sm:items-center gap-4">
-          <input
-            type="text"
-            placeholder={t("category_name")}
-            value={newCategory.name}
-            onChange={(e) =>
-              setNewCategory((prev) => ({ ...prev, name: e.target.value }))
-            }
-            className="flex-1 bg-[var(--color-bg-gray)] border border-[var(--color-accent)] rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[var(--color-accent-hover)] transition"
-            disabled={loadingMeta}
-            required
-          />
-
-          <label
-            htmlFor="category-image"
-            className={`flex items-center gap-2 px-5 py-3 rounded-md cursor-pointer text-white select-none transition ${
-              newCategory.image ? 'bg-[var(--color-accent-hover)]' : 'bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)]'
-            }`}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
+      <motion.div
+        className="max-w-6xl mx-auto"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <motion.h1 
+            className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
           >
-            <ImagePlus className="w-6 h-6" />
-            {newCategory.image ? t("image_selected") : t("upload_image")}
-            <input
-              id="category-image"
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="hidden"
-              disabled={loadingMeta}
-              required
-            />
-          </label>
-
-          {categoryImageUrl && (
-            <img
-              src={categoryImageUrl}
-              alt={t("image_preview")}
-              className="w-14 h-14 rounded-md object-cover border-2 border-[var(--color-accent)]"
-            />
-          )}
-
-          <button
-            type="submit"
-            className="flex items-center justify-center gap-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] rounded-md px-5 py-3 text-white font-semibold transition disabled:opacity-50"
-            disabled={loadingMeta || !newCategory.name || !newCategory.image}
+            {t("settings.title")}
+          </motion.h1>
+          <motion.p 
+            className="text-gray-600 dark:text-gray-300"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
           >
-            <PlusCircle className="w-6 h-6" />
-            {t("add")}
-          </button>
-        </form>
+            {t("settings.subtitle")}
+          </motion.p>
+        </div>
 
-        <ul className="mt-8 space-y-4 max-h-72 overflow-auto">
-          {categories.length === 0 && (
-            <li className="text-sm text-center">{t("no_categories_found")}</li>
-          )}
-          {categories.map((cat) => (
-            cat && (
-              <li
-                key={cat._id}
-                className="flex items-center justify-between bg-[var(--color-bg-gray)] border border-[var(--color-accent)] p-4 rounded-lg shadow-inner"
-              >
-                <div className="flex items-center gap-5">
-                  {cat.imageUrl && (
-                    <img
-                      src={cat.imageUrl}
-                      alt={cat.name}
-                      className="w-14 h-14 rounded-md object-cover border border-gray-500"
-                    />
-                  )}
-                  <span className="text-lg font-medium">{cat.name}</span>
-                </div>
-                <button
-                  onClick={async () => {
-                    await deleteCategory(cat._id);
-                    toast.success(t("delete_category_done"));
-                  }}
-                  className="text-red-500 hover:text-red-600 transition disabled:opacity-50"
-                  aria-label={t("delete_category")}
+        {/* Categories Section */}
+        <motion.div
+          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-3">
+            <FolderOpen className="w-7 h-7 text-blue-500" />
+            {t("categories")}
+          </h2>
+
+          {/* Add Category Form */}
+          <form onSubmit={handleAddCategory} className="flex flex-col lg:flex-row gap-4 items-end mb-8">
+            <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4">
+              {/* Category Name */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  {t("category_name")}
+                </label>
+                <input
+                  type="text"
+                  placeholder={t("category_name")}
+                  value={newCategory.name}
+                  onChange={(e) =>
+                    setNewCategory((prev) => ({ ...prev, name: e.target.value }))
+                  }
+                  className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl py-3 px-4 text-gray-800 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   disabled={loadingMeta}
+                  required
+                />
+              </div>
+
+              {/* Image Upload */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  {t("upload_image")}
+                </label>
+                <label
+                  htmlFor="category-image"
+                  className={`flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl cursor-pointer text-white font-medium transition-all duration-200 ${
+                    newCategory.image 
+                      ? "bg-green-500 hover:bg-green-600" 
+                      : "bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                  }`}
                 >
-                  <Trash2 className="w-7 h-7" />
-                </button>
-              </li>
-            )
-          ))}
-        </ul>
-      </section>
+                  <ImagePlus className="w-5 h-5" />
+                  {newCategory.image ? t("image_selected") : t("upload_image")}
+                </label>
+                <input
+                  id="category-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                  disabled={loadingMeta}
+                  required
+                />
+              </div>
 
-      {/* Sizes and Colors section */}
-      <section>
-        <h2 className="text-3xl font-extrabold text-[var(--color-text)] mb-8 border-b border-[var(--color-accent-hover)] pb-2">
-          {t("sizes_and_colors")}
-        </h2>
+              {/* Image Preview */}
+              {categoryImageUrl && (
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                    {t("image_preview")}
+                  </label>
+                  <img
+                    src={categoryImageUrl}
+                    alt={t("image_preview")}
+                    className="w-16 h-16 rounded-xl object-cover border-2 border-blue-500 shadow-md"
+                  />
+                </div>
+              )}
+            </div>
 
-        <div className="flex flex-col sm:flex-row gap-6 mb-8">
-          {/* Add size form */}
-          <form onSubmit={handleAddSize} className="flex items-center gap-4 flex-wrap w-full sm:w-auto">
-            <select
-              value={newSize.type}
-              onChange={(e) =>
-                setNewSize((prev) => ({ ...prev, type: e.target.value }))
-              }
-              className="bg-[var(--color-bg-gray)] border border-[var(--color-accent)] rounded-md py-3 px-4 focus:outline-none focus:ring-1 focus:ring-[var(--color-accent-hover)] transition"
-              disabled={loadingMeta}
-            >
-              <option value="letters">{t("letters")}</option>
-              <option value="numbers">{t("numbers")}</option>
-            </select>
-            <input
-              type="text"
-              placeholder={t("size_value")}
-              value={newSize.value}
-              onChange={(e) =>
-                setNewSize((prev) => ({ ...prev, value: e.target.value }))
-              }
-              className="bg-[var(--color-bg-gray)] border border-[var(--color-accent)] rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-hover)] transition"
-              disabled={loadingMeta}
-              required
-            />
-            <button
+            <motion.button
               type="submit"
-              className="flex items-center justify-center gap-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] rounded-md px-5 py-3 text-white font-semibold transition disabled:opacity-50"
-              disabled={loadingMeta || !newSize.value}
+              className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-3 px-6 rounded-xl font-semibold transition-all duration-200 disabled:opacity-50 flex items-center gap-2 shadow-md"
+              disabled={loadingMeta || !newCategory.name || !newCategory.image}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              <PlusCircle className="w-6 h-6" />
-              {t("add_size")}
-            </button>
+              <PlusCircle className="w-5 h-5" />
+              {t("add")}
+            </motion.button>
           </form>
 
-          {/* Add color form */}
-          <form onSubmit={handleAddColor} className="flex items-center gap-4 flex-wrap w-full sm:w-auto">
-            <input
-              type="text"
-              placeholder={t("color_name")}
-              value={newColor.name}
-              onChange={(e) =>
-                setNewColor((prev) => ({ ...prev, name: e.target.value }))
-              }
-              className="bg-[var(--color-bg-gray)] border border-[var(--color-accent)] rounded-md py-3 px-4 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[var(--color-accent-hover)] transition"
-              disabled={loadingMeta}
-              required
-            />
-            <input
-              type="color"
-              value={newColor.hex}
-              onChange={(e) =>
-                setNewColor((prev) => ({ ...prev, hex: e.target.value }))
-              }
-              className="w-12 h-12 rounded-full cursor-pointer border border-[var(--color-accent)] outline-none ring-1 ring-[var(--color-accent-hover)] transition"
-              disabled={loadingMeta}
-            />
-            <button
-              type="submit"
-              className="flex items-center justify-center gap-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] rounded-md px-5 py-3 text-white font-semibold transition disabled:opacity-50"
-              disabled={loadingMeta || !newColor.name}
-            >
-              <PlusCircle className="w-6 h-6" />
-              {t("add_color")}
-            </button>
-          </form>
-        </div>
-
-        {/* Lists display */}
-        <div className="flex flex-col sm:flex-row gap-10">
-          {/* Letter sizes */}
-          <div className="flex-1 min-w-[160px] bg-[var(--color-bg-gray)] rounded-lg p-5 max-h-72 overflow-auto shadow-inner">
-            <h3 className="text-xl font-semibold text-[var(--color-text)] mb-4 border-b border-[var(--color-accent-hover)] pb-1">
-              {t("letters")}
+          {/* Categories List */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+              {t("existing_categories")} ({categories.length})
             </h3>
-            {sizesLetters.length === 0 ? (
-              <p className="text-center">{t("no_letter_sizes")}</p>
+            {categories.length === 0 ? (
+              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                <FolderOpen className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                {t("no_categories_found")}
+              </div>
             ) : (
-              <div className="flex flex-wrap gap-2">
-                {sizesLetters.map((size) => (
-                  size && (
-                    <div key={size._id} 
-                      className="flex items-center gap-2 bg-[var(--color-bg)] rounded-full px-4 py-2 select-none shadow-xl"
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {categories.map((cat, index) => (
+                  cat && (
+                    <motion.div
+                      key={cat._id}
+                      className="bg-white dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600 shadow-sm hover:shadow-md transition-all duration-200"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 * index }}
                     >
-                      <span>{size.name}</span>
-                      <button
-                      onClick={async () => {
-                        await deleteSize(size._id);
-                        toast.success(t("delete_size_done"));
-                      }}
-                        className="text-red-500 hover:text-red-400 transition disabled:opacity-50"
-                        aria-label={t("delete_size")}
-                        disabled={loadingMeta}
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                    </div>
+                      <div className="flex items-center gap-4">
+                        {cat.imageUrl && (
+                          <img
+                            src={cat.imageUrl}
+                            alt={cat.name}
+                            className="w-16 h-16 rounded-xl object-cover border border-gray-300 dark:border-gray-500"
+                          />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-gray-800 dark:text-white text-lg truncate">
+                            {cat.name}
+                          </h4>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            ID: {cat._id.slice(-6)}
+                          </p>
+                        </div>
+                        <motion.button
+                          onClick={async () => {
+                            await deleteCategory(cat._id);
+                            toast.success(t("delete_category_done"));
+                          }}
+                          className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          disabled={loadingMeta}
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </motion.button>
+                      </div>
+                    </motion.div>
                   )
                 ))}
               </div>
             )}
           </div>
+        </motion.div>
 
-          {/* Number sizes */}
-          <div className="flex-1 min-w-[160px] bg-[var(--color-bg-gray)] rounded-lg p-5 max-h-72 overflow-auto shadow-inner">
-            <h3 className="text-xl font-semibold text-[var(--color-text)] mb-4 border-b border-[var(--color-accent-hover)] pb-1">
-              {t("numbers")}
-            </h3>
-            {sizesNumbers.length === 0 ? (
-              <p className="text-center">{t("no_number_sizes")}</p>
-            ) : (
-              <div className="flex flex-wrap gap-2">
-                {sizesNumbers.map((size) => (
-                  size && (
-                    <div
-                      key={size._id}
-                      className="flex items-center gap-2 bg-[var(--color-bg)] rounded-full px-4 py-2 select-none shadow-xl"
-                    >
-                      <span>{size.name}</span>
-                      <button
-                        onClick={async () => {
-                          await deleteSize(size._id);
-                          toast.success(t("delete_size_done"));
-                        }}
-                        className="text-red-500 hover:text-red-400 transition disabled:opacity-50"
-                        aria-label={t("delete_size")}
-                        disabled={loadingMeta}
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                    </div>
-                  )
-                ))}
-              </div>
-            )}
+        {/* Sizes and Colors Section */}
+        <motion.div
+          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-3">
+            <Ruler className="w-7 h-7 text-purple-500" />
+            {t("sizes_and_colors")}
+          </h2>
+
+          {/* Add Size and Color Forms */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {/* Add Size Form */}
+            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <Ruler className="w-5 h-5 text-blue-500" />
+                {t("add_size")}
+              </h3>
+              <form onSubmit={handleAddSize} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <select
+                    value={newSize.type}
+                    onChange={(e) =>
+                      setNewSize((prev) => ({ ...prev, type: e.target.value }))
+                    }
+                    className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl py-3 px-4 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    disabled={loadingMeta}
+                  >
+                    <option value="letters">{t("letters")}</option>
+                    <option value="numbers">{t("numbers")}</option>
+                  </select>
+                  <input
+                    type="text"
+                    placeholder={t("size_value")}
+                    value={newSize.value}
+                    onChange={(e) =>
+                      setNewSize((prev) => ({ ...prev, value: e.target.value }))
+                    }
+                    className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl py-3 px-4 text-gray-800 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    disabled={loadingMeta}
+                    required
+                  />
+                </div>
+                <motion.button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 shadow-md"
+                  disabled={loadingMeta || !newSize.value}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <PlusCircle className="w-5 h-5" />
+                  {t("add_size")}
+                </motion.button>
+              </form>
+            </div>
+
+            {/* Add Color Form */}
+            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <Palette className="w-5 h-5 text-green-500" />
+                {t("add_color")}
+              </h3>
+              <form onSubmit={handleAddColor} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <input
+                    type="text"
+                    placeholder={t("color_name")}
+                    value={newColor.name}
+                    onChange={(e) =>
+                      setNewColor((prev) => ({ ...prev, name: e.target.value }))
+                    }
+                    className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl py-3 px-4 text-gray-800 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    disabled={loadingMeta}
+                    required
+                  />
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="color"
+                      value={newColor.hex}
+                      onChange={(e) =>
+                        setNewColor((prev) => ({ ...prev, hex: e.target.value }))
+                      }
+                      className="w-12 h-12 rounded-xl cursor-pointer border border-gray-300 dark:border-gray-600 shadow-md"
+                      disabled={loadingMeta}
+                    />
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      {newColor.hex}
+                    </span>
+                  </div>
+                </div>
+                <motion.button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 shadow-md"
+                  disabled={loadingMeta || !newColor.name}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <PlusCircle className="w-5 h-5" />
+                  {t("add_color")}
+                </motion.button>
+              </form>
+            </div>
           </div>
 
-          {/* Colors */}
-          <div className="flex-1 min-w-[180px] bg-[var(--color-bg-gray)] rounded-lg p-5 max-h-72 overflow-auto shadow-inner">
-            <h3 className="text-xl font-semibold text-[var(--color-text)] mb-4 border-b border-[var(--color-accent-hover)] pb-1">
-              {t("colors")}
-            </h3>
-            {colorsList.length === 0 ? (
-              <p className="text-center">{t("no_colors")}</p>
-            ) : (
-              <div className="flex flex-wrap gap-3">
-                {colorsList.map((color) => (
-                  color && (
-                    <div
-                      key={color._id}
-                      className="flex items-center gap-3 bg-[var(--color-bg)] rounded-full px-4 py-2 select-none shadow-xl"
-                    >
-                      <span
-                        className="w-7 h-7 rounded-full border border-gray-500"
-                        style={{ backgroundColor: color.hex }}
-                      />
-                      <span>{color.name}</span>
-                      <button
-                        onClick={async () => {
-                          await deleteColor(color._id);
-                          toast.success(t("delete_color_done"));
-                        }}
-                        className="text-red-500 hover:text-red-400 transition disabled:opacity-50"
-                        aria-label={t("delete_color")}
-                        disabled={loadingMeta}
+          {/* Sizes and Colors Lists */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Letter Sizes */}
+            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <Ruler className="w-5 h-5 text-blue-500" />
+                {t("letters")} ({sizesLetters.length})
+              </h3>
+              {sizesLetters.length === 0 ? (
+                <p className="text-center text-gray-500 dark:text-gray-400 py-4">
+                  {t("no_letter_sizes")}
+                </p>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {sizesLetters.map((size, index) => (
+                    size && (
+                      <motion.div
+                        key={size._id}
+                        className="flex items-center gap-2 bg-white dark:bg-gray-700 rounded-full px-3 py-2 shadow-sm border border-gray-200 dark:border-gray-600"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.05 * index }}
                       >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                    </div>
-                  )
-                ))}
-              </div>
-            )}
+                        <span className="text-sm font-medium text-gray-800 dark:text-white">
+                          {size.name}
+                        </span>
+                        <motion.button
+                          onClick={async () => {
+                            await deleteSize(size._id);
+                            toast.success(t("delete_size_done"));
+                          }}
+                          className="text-red-500 hover:text-red-600 transition-colors duration-200"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          disabled={loadingMeta}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </motion.button>
+                      </motion.div>
+                    )
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Number Sizes */}
+            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <Ruler className="w-5 h-5 text-green-500" />
+                {t("numbers")} ({sizesNumbers.length})
+              </h3>
+              {sizesNumbers.length === 0 ? (
+                <p className="text-center text-gray-500 dark:text-gray-400 py-4">
+                  {t("no_number_sizes")}
+                </p>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {sizesNumbers.map((size, index) => (
+                    size && (
+                      <motion.div
+                        key={size._id}
+                        className="flex items-center gap-2 bg-white dark:bg-gray-700 rounded-full px-3 py-2 shadow-sm border border-gray-200 dark:border-gray-600"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.05 * index }}
+                      >
+                        <span className="text-sm font-medium text-gray-800 dark:text-white">
+                          {size.name}
+                        </span>
+                        <motion.button
+                          onClick={async () => {
+                            await deleteSize(size._id);
+                            toast.success(t("delete_size_done"));
+                          }}
+                          className="text-red-500 hover:text-red-600 transition-colors duration-200"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          disabled={loadingMeta}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </motion.button>
+                      </motion.div>
+                    )
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Colors */}
+            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <Palette className="w-5 h-5 text-purple-500" />
+                {t("colors")} ({colorsList.length})
+              </h3>
+              {colorsList.length === 0 ? (
+                <p className="text-center text-gray-500 dark:text-gray-400 py-4">
+                  {t("no_colors")}
+                </p>
+              ) : (
+                <div className="flex flex-wrap gap-3">
+                  {colorsList.map((color, index) => (
+                    color && (
+                      <motion.div
+                        key={color._id}
+                        className="flex items-center gap-2 bg-white dark:bg-gray-700 rounded-full px-3 py-2 shadow-sm border border-gray-200 dark:border-gray-600"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.05 * index }}
+                      >
+                        <span
+                          className="w-4 h-4 rounded-full border border-gray-300 shadow-sm"
+                          style={{ backgroundColor: color.hex }}
+                        />
+                        <span className="text-sm font-medium text-gray-800 dark:text-white">
+                          {color.name}
+                        </span>
+                        <motion.button
+                          onClick={async () => {
+                            await deleteColor(color._id);
+                            toast.success(t("delete_color_done"));
+                          }}
+                          className="text-red-500 hover:text-red-600 transition-colors duration-200"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          disabled={loadingMeta}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </motion.button>
+                      </motion.div>
+                    )
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
-      <SomeComponent/>
-    </motion.div>
+        </motion.div>
+
+        {/* Other Settings */}
+        <SomeComponent/>
+      </motion.div>
+    </div>
   );
 };
 
@@ -454,7 +532,7 @@ const DeliverySettingsPopup = ({ onClose, settings, handleChange, handleSubmit, 
 
   return createPortal(
     <div
-      className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       onClick={onClose}
     >
       <AnimatePresence>
@@ -462,99 +540,119 @@ const DeliverySettingsPopup = ({ onClose, settings, handleChange, handleSubmit, 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
-          transition={{ duration: 0.25 }}
+          transition={{ duration: 0.3 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-[var(--color-bg)] p-6 rounded-2xl max-w-5xl w-full max-h-[85vh] overflow-y-auto relative shadow-xl border border-[var(--color-accent)]"
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-6xl max-h-[85vh] overflow-y-auto border border-gray-200 dark:border-gray-700"
         >
-          {/* زر الإغلاق */}
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition"
-            aria-label="Close popup"
-          >
-            <X className="w-6 h-6" />
-          </button>
-
-          {/* العنوان */}
-          <h2 className="text-2xl font-bold mb-6 text-[var(--color-text)] flex items-center gap-2">
-            {t("deliverySettings.title")}
-          </h2>
-
-          {/* البحث */}
-          <div className="flex items-center gap-2 mb-6 bg-[var(--color-bg-gray)] rounded-lg px-3 py-2 border border-[var(--color-accent)] focus-within:ring-2 focus-within:ring-[var(--color-accent-hover)] transition">
-            <Search className="w-5 h-5 text-[var(--color-text-secondary)]" />
-            <input
-              type="text"
-              placeholder={t("searchState")}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="bg-transparent flex-1 focus:outline-none text-[var(--color-text)] text-sm"
-            />
+          {/* Header */}
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-700 rounded-t-2xl">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-3">
+              <Truck className="w-7 h-7 text-blue-500" />
+              {t("deliverySettings.title")}
+            </h2>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-xl text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
+            >
+              <X className="w-6 h-6" />
+            </button>
           </div>
 
-          {/* فورم */}
-          <form onSubmit={handleSubmit}>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredSettings.map(({ state, officePrice, homePrice, deliveryDays }, i) => (
-                <div
-                  key={state}
-                  className="p-5 rounded-xl border border-[var(--color-accent)] bg-[var(--color-bg-gray)] shadow-md hover:shadow-lg transition flex flex-col gap-4"
-                >
-                  <h3 className="font-semibold text-lg text-[var(--color-text)] border-b border-[var(--color-accent)] pb-2">
-                    {state}
-                  </h3>
-
-                  <div className="flex flex-col gap-3">
-                    {/* سعر المكتب */}
-                    <label className="text-sm m-auto text-[var(--color-text-secondary)] flex items-center gap-2">
-                      <Building2 className="w-4 h-4 text-[var(--color-accent)]" />
-                      {t("deliverySettings.officePrice")}
-                    </label>
-                    <input
-                      type="text"
-                      value={officePrice}
-                      onChange={(e) => handleChange(i, "officePrice", e.target.value)}
-                      placeholder={t("deliverySettings.officePrice")}
-                      className="w-full bg-[var(--color-bg)] border border-[var(--color-accent)] rounded-lg px-3 py-2 text-sm text-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-hover)]"
-                    />
-
-                    {/* سعر المنزل */}
-                    <label className="text-sm m-auto text-[var(--color-text-secondary)] flex items-center gap-2">
-                      <Home className="w-4 h-4 text-[var(--color-accent)]" />
-                      {t("deliverySettings.homePrice")}
-                    </label>
-                    <input
-                      type="text"
-                      value={homePrice}
-                      onChange={(e) => handleChange(i, "homePrice", e.target.value)}
-                      placeholder={t("deliverySettings.homePrice")}
-                      className="w-full bg-[var(--color-bg)] border border-[var(--color-accent)] rounded-lg px-3 py-2 text-sm text-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent-hover)]"
-                    />
-
-                    {/* عدد الأيام */}
-                    <label className="text-sm m-auto text-[var(--color-text-secondary)] flex items-center gap-2">
-                      <Hourglass className="w-4 h-4 text-[var(--color-accent)]" />
-                      {t("deliverySettings.deliveryDays")}
-                    </label>
-                    <DeliveryDaysSelector
-                      index={i}
-                      selected={deliveryDays}
-                      handleChange={handleChange}
-                    />
-                  </div>
-                </div>
-              ))}
+          {/* Content */}
+          <div className="p-6">
+            {/* Search */}
+            <div className="relative mb-6">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder={t("searchState")}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-800 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              />
             </div>
 
-            {/* زر الحفظ */}
-            <button
-              type="submit"
-              className="mt-8 flex items-center justify-center gap-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white rounded-lg px-6 py-3 shadow-md transition w-full sm:w-auto"
-            >
-              <Save className="w-5 h-5" />
-              {t("deliverySettings.save")}
-            </button>
-          </form>
+            {/* Settings Form */}
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredSettings.map(({ state, officePrice, homePrice, deliveryDays }, i) => (
+                  <motion.div
+                    key={state}
+                    className="bg-white dark:bg-gray-700 rounded-xl p-6 border border-gray-200 dark:border-gray-600 shadow-sm hover:shadow-md transition-all duration-200"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.05 * i }}
+                  >
+                    <h3 className="font-semibold text-lg text-gray-800 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-600 pb-2">
+                      {state}
+                    </h3>
+
+                    <div className="space-y-4">
+                      {/* Office Price */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                          <Building2 className="w-4 h-4 text-blue-500" />
+                          {t("deliverySettings.officePrice")}
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="number"
+                            value={officePrice}
+                            onChange={(e) => handleChange(i, "officePrice", e.target.value)}
+                            className="w-full bg-gray-50 dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-xl py-2 px-4 pr-12 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                          />
+                          <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">DA</span>
+                        </div>
+                      </div>
+
+                      {/* Home Price */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                          <Home className="w-4 h-4 text-green-500" />
+                          {t("deliverySettings.homePrice")}
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="number"
+                            value={homePrice}
+                            onChange={(e) => handleChange(i, "homePrice", e.target.value)}
+                            className="w-full bg-gray-50 dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-xl py-2 px-4 pr-12 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                          />
+                          <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">DA</span>
+                        </div>
+                      </div>
+
+                      {/* Delivery Days */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                          <Hourglass className="w-4 h-4 text-purple-500" />
+                          {t("deliverySettings.deliveryDays")}
+                        </label>
+                        <DeliveryDaysSelector
+                          index={i}
+                          selected={deliveryDays}
+                          handleChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Save Button */}
+              <div className="flex justify-center mt-8">
+                <motion.button
+                  type="submit"
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-3 px-8 rounded-xl font-semibold transition-all duration-200 flex items-center gap-3 shadow-md"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Save className="w-5 h-5" />
+                  {t("deliverySettings.save")}
+                </motion.button>
+              </div>
+            </form>
+          </div>
         </motion.div>
       </AnimatePresence>
     </div>,
@@ -563,7 +661,7 @@ const DeliverySettingsPopup = ({ onClose, settings, handleChange, handleSubmit, 
 };
 
 // ==========================
-// Component Example
+// Other Settings Component
 // ==========================
 const SomeComponent = () => {
   const { t, i18n } = useTranslation();
@@ -618,99 +716,105 @@ const SomeComponent = () => {
     }
 
     return (
-      <div className="flex items-center justify-center gap-1">
-        <button
+      <div className="flex items-center justify-center gap-3 bg-gray-50 dark:bg-gray-600 rounded-xl p-2">
+        <motion.button
           type="button"
           onClick={prev}
-          className="px-1 py-1 rounded bg-[var(--color-bg)] text-[var(--color-text-secondary)] hover:bg-[var(--color-bg)]"
+          className="p-2 text-gray-600 dark:text-gray-300 hover:text-blue-500 transition-colors duration-200"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
         >
-          <ArrowLeft className="h-4 w-4" />
-        </button>
-        <span className="px-2 py-1 text-xs font-semibold bg-[var(--color-bg)] border border-[var(--color-accent)] rounded text-[var(--color-text-secondary)] w-8 text-center">
+          <ArrowLeft className="w-4 h-4" />
+        </motion.button>
+        <span className="px-3 py-1 font-semibold bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-500 rounded-lg text-gray-800 dark:text-white min-w-[40px] text-center">
           {current}
         </span>
-        <button
+        <motion.button
           type="button"
           onClick={next}
-          className="px-1 py-1 rounded bg-[var(--color-bg)] text-[var(--color-text-secondary)] hover:bg-[var(--color-bg)]"
+          className="p-2 text-gray-600 dark:text-gray-300 hover:text-blue-500 transition-colors duration-200"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
         >
           <ArrowRight className="w-4 h-4" />
-        </button>
+        </motion.button>
       </div>
     );
   }
 
   return (
-    <section>
-      <h2 className="text-3xl font-extrabold text-[var(--color-text)] mb-8 border-b border-[var(--color-accent-hover)] pb-2">
+    <motion.div
+      className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.6 }}
+    >
+      <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-3">
+        <Settings className="w-7 h-7 text-purple-500" />
         {t("other")}
       </h2>
 
-      <div className="rounded-xl flex flex-wrap gap-5 justify-center">
-        {[
-          {
-            titleKey: "orderSetting",
-            content: (
-              <button
-                type="button"
-                onClick={() => setShowPopup(true)}
-                className="flex items-center justify-center gap-2 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] rounded-full px-6 py-3 text-white shadow-md transition disabled:opacity-50 w-full max-w-xs"
-              >
-                {t("showSetting")}
-              </button>
-            ),
-          },
-          {
-            title: t("calcRevenue"),
-            content: (
-              <div className="relative flex bg-[var(--color-bg-gray)] rounded-full p-2 w-full max-w-xs select-none overflow-hidden">
-                <div
-                  className={`absolute top-1 bottom-1 w-[48%] bg-[var(--color-accent)] rounded-full transition-transform duration-300 ease-in-out`}
-                  style={{
-                    right: isRTL ? "0.25rem" : "auto",
-                    left: isRTL ? "auto" : "0.25rem",
-                    transform:
-                      orderCalculation === "confirmed"
-                        ? "translateX(0%)"
-                        : isRTL
-                        ? "translateX(-100%)"
-                        : "translateX(100%)",
-                  }}
-                ></div>
-
-                <button
-                  disabled={loadingMeta}
-                  onClick={() => updateOrderCalculation("confirmed")}
-                  className={`relative flex-1 z-10 px-4 py-2 rounded-full text-center ${
-                    orderCalculation === "confirmed" ? "text-white" : ""
-                  }`}
-                >
-                  {t("confirmedOrders")}
-                </button>
-
-                <button
-                  disabled={loadingMeta}
-                  onClick={() => updateOrderCalculation("all")}
-                  className={`relative flex-1 z-10 px-4 py-2 rounded-full text-center ${
-                    orderCalculation === "all" ? "text-white" : ""
-                  }`}
-                >
-                  {t("allOrders")}
-                </button>
-              </div>
-            ),
-          },
-        ].map((section, i) => (
-          <div
-            key={i}
-            className="flex flex-col items-center p-6 border border-[var(--color-accent)] rounded-2xl space-y-4 w-full sm:w-[48%]"
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Delivery Settings */}
+        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+            <Truck className="w-5 h-5 text-blue-500" />
+            {t("orderSetting")}
+          </h3>
+          <motion.button
+            onClick={() => setShowPopup(true)}
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-3 shadow-md"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <p className="text-xl font-semibold">
-              {section.titleKey ? t(section.titleKey) : section.title}
-            </p>
-            {section.content}
+            <Settings className="w-5 h-5" />
+            {t("showSetting")}
+          </motion.button>
+        </div>
+
+        {/* Revenue Calculation */}
+        <div className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+            <Calculator className="w-5 h-5 text-green-500" />
+            {t("calcRevenue")}
+          </h3>
+          <div className="relative flex bg-gray-200 dark:bg-gray-600 rounded-full p-1 select-none overflow-hidden">
+            <div
+              className={`absolute top-1 bottom-1 w-1/2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-transform duration-300 ease-in-out`}
+              style={{
+                transform: orderCalculation === "confirmed" 
+                  ? "translateX(0%)" 
+                  : "translateX(100%)",
+              }}
+            />
+            <motion.button
+              disabled={loadingMeta}
+              onClick={() => updateOrderCalculation("confirmed")}
+              className={`relative flex-1 z-10 px-4 py-2 rounded-full text-center text-sm font-medium transition-colors duration-200 ${
+                orderCalculation === "confirmed" 
+                  ? "text-white" 
+                  : "text-gray-600 dark:text-gray-400"
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {t("confirmedOrders")}
+            </motion.button>
+            <motion.button
+              disabled={loadingMeta}
+              onClick={() => updateOrderCalculation("all")}
+              className={`relative flex-1 z-10 px-4 py-2 rounded-full text-center text-sm font-medium transition-colors duration-200 ${
+                orderCalculation === "all" 
+                  ? "text-white" 
+                  : "text-gray-600 dark:text-gray-400"
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {t("allOrders")}
+            </motion.button>
           </div>
-        ))}
+        </div>
       </div>
 
       {showPopup && (
@@ -723,6 +827,6 @@ const SomeComponent = () => {
           t={t}
         />
       )}
-    </section>
+    </motion.div>
   );
 };
