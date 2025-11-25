@@ -4,7 +4,8 @@ import axios from "../lib/axios";
 import { createPortal } from "react-dom";
 import { 
   Package, ShoppingCart, Star, CheckCircle, Clock, Ticket,
-  Zap, ZapOff, TrendingUp, TicketPercent, List, X
+  Zap, ZapOff, TrendingUp, TicketPercent, List, X,
+  Home, BarChart3, DollarSign
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import LoadingSpinner from "./LoadingSpinner";
@@ -12,6 +13,8 @@ import { useTranslation } from "react-i18next";
 
 export const AnalyticsTab = () => {
   const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === 'ar';
+  
   const [analyticsData, setAnalyticsData] = useState({
     products: { total: 0, featured: 0, regular: 0 },
     orders: { total: 0, confirmed: 0, pending: 0 },
@@ -36,10 +39,8 @@ export const AnalyticsTab = () => {
   useEffect(() => {
     const fetchAnalyticsData = async () => {
       try {
-        // 🔥 استخدم '/analytics' بدون /api
         const response = await axios.get("/analytics");
         
-        // بيانات افتراضية في حالة الخطأ
         const defaultData = {
           analyticsData: {
             products: { total: 0, featured: 0, regular: 0 },
@@ -62,7 +63,6 @@ export const AnalyticsTab = () => {
         setDailyOrdersData(Array.isArray(data.dailySalesData) ? data.dailySalesData : []);
       } catch (error) {
         console.error("Error fetching analytics data:", error);
-        // استخدم البيانات الافتراضية
         setAnalyticsData({
           products: { total: 0, featured: 0, regular: 0 },
           orders: { total: 0, confirmed: 0, pending: 0 },
@@ -83,10 +83,13 @@ export const AnalyticsTab = () => {
     fetchAnalyticsData();
   }, []);
 
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoading) return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
+      <LoadingSpinner />
+    </div>
+  );
 
-
-  // ✅ إنشاء بيانات آخر N أيام دائمًا
+  // توليد بيانات الأيام
   const generateLastDaysData = (daysCount = 30) => {
     const today = new Date();
     const daysArray = [];
@@ -111,355 +114,480 @@ export const AnalyticsTab = () => {
 
     return daysArray;
   };
-// ✅ عرض آخر 7 أيام فقط في المنحنى بغض النظر عن الفلاتر
-const filteredData = (() => {
-  // إذا كانت البيانات أقل من 7 أيام، نستخدمها كما هي
-  if (dailyOrdersData.length <= 7) return generateLastDaysData(7);
 
-  // ترتيب حسب التاريخ تصاعديًا
-  const sorted = [...dailyOrdersData].sort(
-    (a, b) => new Date(a.date) - new Date(b.date)
-  );
+  // عرض آخر 7 أيام فقط في المنحنى
+  const filteredData = (() => {
+    if (dailyOrdersData.length <= 7) return generateLastDaysData(7);
 
-  // أخذ آخر 7 أيام فقط
-  const lastSeven = sorted.slice(-7);
-
-  // توليد بيانات الأيام الناقصة إذا لم تكن متوفرة
-  return generateLastDaysData(7).map((day) => {
-    const existing = lastSeven.find(
-      (d) => new Date(d.date).toISOString().split("T")[0] === day.date
+    const sorted = [...dailyOrdersData].sort(
+      (a, b) => new Date(a.date) - new Date(b.date)
     );
-    return (
-      existing || {
-        date: day.date,
-        orders: 0,
-        netRevenueWithoutDelivery: 0,
-        netRevenueWithDelivery: 0,
-      }
-    );
-  });
-})();
 
+    const lastSeven = sorted.slice(-7);
+
+    return generateLastDaysData(7).map((day) => {
+      const existing = lastSeven.find(
+        (d) => new Date(d.date).toISOString().split("T")[0] === day.date
+      );
+      return (
+        existing || {
+          date: day.date,
+          orders: 0,
+          netRevenueWithoutDelivery: 0,
+          netRevenueWithDelivery: 0,
+        }
+      );
+    });
+  })();
 
   return (
-    <motion.div
-      className="max-w-7xl mx-auto px-6 py-8 bg-[var(--color-bg)] rounded-2xl shadow-md border border-[var(--color-border)]"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-    >
-
-      {/* Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <AnalyticsCard title={t("analytics.totalProducts")} value={analyticsData.products.total} icon={Package} formatNumber={formatNumber}/>
-        <AnalyticsCard title={t("analytics.featuredProducts")} value={analyticsData.products.featured} icon={Star} formatNumber={formatNumber}/>
-        <AnalyticsCard title={t("analytics.regularProducts")} value={analyticsData.products.regular} icon={Package} formatNumber={formatNumber}/>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <AnalyticsCard title={t("analytics.totalOrders")} value={analyticsData.orders.total} icon={ShoppingCart} formatNumber={formatNumber}/>
-        <AnalyticsCard title={t("analytics.confirmedOrders")} value={analyticsData.orders.confirmed} icon={CheckCircle} formatNumber={formatNumber}/>
-        <AnalyticsCard title={t("analytics.pendingOrders")} value={analyticsData.orders.pending} icon={Clock} formatNumber={formatNumber}/>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <AnalyticsCard title={t("analytics.totalCoupons")} value={analyticsData.coupons.total} icon={Ticket} formatNumber={formatNumber}/>
-        <AnalyticsCard title={t("analytics.activeCoupons")} value={analyticsData.coupons.active} icon={Zap} formatNumber={formatNumber}/>
-        <AnalyticsCard title={t("analytics.inactiveCoupons")} value={analyticsData.coupons.inactive} icon={ZapOff} formatNumber={formatNumber}/>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <AnalyticsCard
-          title={t("analytics.totalDiscounts")}
-          value={analyticsData.revenue.totalDiscounts}
-          icon={TicketPercent}
-          unit={t("analytics.revenueUnit")}
-          formatNumber={formatNumber}
-        />
-        <RevenueCard 
-          revenueMode={revenueMode}
-          setRevenueMode={setRevenueMode}
-          analyticsData={analyticsData}
-          t={t}
-          formatNumber={formatNumber}
-          onShowPopup={() => setShowRevenuePopup(true)}
-        />
-      </div>
-
-      {/* Chart */}
-{/* Chart */}
-{/* Chart */}
-<div
-  className="bg-[var(--color-bg-gray)] rounded-xl p-4 sm:p-6 border border-[var(--color-border)] shadow-inner overflow-x-auto"
->
-  <div dir="ltr" className="min-w-[600px] sm:min-w-full">
-    <ResponsiveContainer width="100%" height={320}>
-      <LineChart
-        data={filteredData}
-        margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-8 px-4">
+      <motion.div
+        className="max-w-7xl mx-auto"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
       >
-        <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-        <XAxis
-          dataKey="date"
-          stroke="var(--color-text-secondary)"
-          tick={{
-            fontSize: window.innerWidth < 640 ? 10 : 15, // ✅ تصغير في الشاشات الصغيرة
-          }}
-          tickFormatter={(value, index) => {
-            const date = new Date(value);
-            const isArabic = i18n.language === "ar";
-            const monthName = date.toLocaleDateString(
-              isArabic ? "ar-EG" : "en-US",
-              { month: "short" }
-            );
-            const day = date.toLocaleDateString("en-US", { day: "numeric" });
-            return `${day} ${monthName}`;
-          }}
-        />
-        <YAxis
-          stroke="var(--color-text-secondary)"
-          tick={{
-            fontSize: window.innerWidth < 640 ? 10 : 12, // ✅ نفس الشيء
-          }}
-          width={50}
-          tickFormatter={(value, index) => (index === 0 ? "" : formatNumber(value))}
-        />
-        <Tooltip
-          contentStyle={{
-            backgroundColor: "rgba(0,0,0,0.8)",
-            border: "1px solid var(--color-border)",
-            borderRadius: "8px",
-            fontSize: window.innerWidth < 640 ? "0.75rem" : "0.9rem", // ✅ حجم أصغر على الموبايل
-          }}
-          formatter={(value) => formatNumber(value)}
-        />
-        <Legend
-          wrapperStyle={{
-            fontSize: window.innerWidth < 640 ? "0.7rem" : "0.9rem", // ✅ تصغير الليجند
-            paddingTop: "10px",
-          }}
-        />
-        <Line
-          type="monotone"
-          dataKey="orders"
-          stroke="#faa72a"
-          name={t("analytics.ordersLabel")}
-          strokeWidth={2}
-          dot={window.innerWidth > 640} // ✅ بدون نقاط في الهاتف
-        />
-        <Line
-          type="monotone"
-          dataKey={
-            revenueMode === "withDelivery"
-              ? "netRevenueWithDelivery"
-              : "netRevenueWithoutDelivery"
-          }
-          stroke="#ffb341"
-          name={t("analytics.revenueLabel")}
-          strokeWidth={2}
-          dot={window.innerWidth > 640}
-        />
-      </LineChart>
-    </ResponsiveContainer>
-  </div>
-</div>
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <motion.h1 
+            className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            {t("analytics.dashboard")}
+          </motion.h1>
+          <motion.p 
+            className="text-gray-600 dark:text-gray-300 mt-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            {t("analytics.overview")}
+          </motion.p>
+        </div>
 
+        {/* Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <AnalyticsCard 
+            title={t("analytics.totalProducts")} 
+            value={analyticsData.products.total} 
+            icon={Package} 
+            color="blue"
+            formatNumber={formatNumber}
+          />
+          <AnalyticsCard 
+            title={t("analytics.featuredProducts")} 
+            value={analyticsData.products.featured} 
+            icon={Star} 
+            color="purple"
+            formatNumber={formatNumber}
+          />
+          <AnalyticsCard 
+            title={t("analytics.regularProducts")} 
+            value={analyticsData.products.regular} 
+            icon={Package} 
+            color="green"
+            formatNumber={formatNumber}
+          />
+          <AnalyticsCard 
+            title={t("analytics.totalOrders")} 
+            value={analyticsData.orders.total} 
+            icon={ShoppingCart} 
+            color="orange"
+            formatNumber={formatNumber}
+          />
+          <AnalyticsCard 
+            title={t("analytics.confirmedOrders")} 
+            value={analyticsData.orders.confirmed} 
+            icon={CheckCircle} 
+            color="green"
+            formatNumber={formatNumber}
+          />
+          <AnalyticsCard 
+            title={t("analytics.pendingOrders")} 
+            value={analyticsData.orders.pending} 
+            icon={Clock} 
+            color="yellow"
+            formatNumber={formatNumber}
+          />
+        </div>
 
+        {/* Second Row Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <AnalyticsCard 
+            title={t("analytics.totalCoupons")} 
+            value={analyticsData.coupons.total} 
+            icon={Ticket} 
+            color="pink"
+            formatNumber={formatNumber}
+          />
+          <AnalyticsCard 
+            title={t("analytics.activeCoupons")} 
+            value={analyticsData.coupons.active} 
+            icon={Zap} 
+            color="green"
+            formatNumber={formatNumber}
+          />
+          <AnalyticsCard 
+            title={t("analytics.inactiveCoupons")} 
+            value={analyticsData.coupons.inactive} 
+            icon={ZapOff} 
+            color="red"
+            formatNumber={formatNumber}
+          />
+        </div>
 
-      {/* Popup: سجل الأرباح */}
-      {showRevenuePopup &&
-        createPortal(
-          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[9999]">
-            <div
-              className="bg-[var(--color-bg)] text-[var(--color-text-secondary)] rounded-lg shadow-lg w-[90%] max-w-3xl max-h-[90vh] flex flex-col"
-            >
-              {/* Header */}
-              <div className="p-6 border-b border-[var(--color-bg-gray)] flex justify-between items-center">
-                <h3 className="text-xl font-bold text-[var(--color-text)]">
-                  {t("analytics.revenueHistory")}
-                </h3>
-                <button
-                  onClick={() => setShowRevenuePopup(false)}
-                  className="hover:text-gray-500"
-                  aria-label="close"
-                >
-                  <X size={25} />
-                </button>
-              </div>
+        {/* Revenue Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <AnalyticsCard
+            title={t("analytics.totalDiscounts")}
+            value={analyticsData.revenue.totalDiscounts}
+            icon={TicketPercent}
+            unit={t("analytics.revenueUnit")}
+            color="red"
+            formatNumber={formatNumber}
+          />
+          <RevenueCard 
+            revenueMode={revenueMode}
+            setRevenueMode={setRevenueMode}
+            analyticsData={analyticsData}
+            t={t}
+            formatNumber={formatNumber}
+            onShowPopup={() => setShowRevenuePopup(true)}
+          />
+        </div>
 
-              {/* Content */}
-              <div className="p-6 overflow-y-auto flex-1 space-y-4">
-                {/* Selectors */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                  <select
-                    value={selectedRange}
-                    onChange={(e) => {
-                      setSelectedRange(Number(e.target.value));
-                      setSelectedDate("");
-                    }}
-                    className="bg-[var(--color-bg-gray)] border border-[var(--color-border)] text-[var(--color-text-secondary)] rounded-md px-3 py-1 text-sm focus:outline-none"
-                  >
-                    <option value={7}>{t("analytics.last7Days")}</option>
-                    <option value={14}>{t("analytics.last14Days")}</option>
-                    <option value={30}>{t("analytics.last30Days")}</option>
-                  </select>
-
-                  <select
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="bg-[var(--color-bg-gray)] border border-[var(--color-border)] text-[var(--color-text-secondary)] rounded-md px-3 py-1 text-sm focus:outline-none"
-                  >
-                    <option value="">{t("analytics.allDates")}</option>
-                    {dailyOrdersData.map((entry, idx) => {
-                      const date = new Date(entry.date);
-                      const formattedDate = date.toLocaleDateString(
-                        "en-US",
-                        { day: "numeric", month: "short", year: "numeric" }
-                      );
-                      const value = date.toISOString().split("T")[0];
-                      return (
-                        <option key={idx} value={value}>
-                          {formattedDate}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </div>
-
-                {/* Table */}
-                <div className="overflow-y-auto max-h-[400px] border border-[var(--color-border)] rounded-xl">
-                  <table className="min-w-full text-sm">
-                    <thead className="bg-[var(--color-bg-gray)] sticky top-0">
-                      <tr>
-                        <th className="py-2 px-3 text-left text-[var(--color-text)] font-semibold">{t("analytics.date")}</th>
-                        <th className="py-2 px-3 text-left text-[var(--color-text)] font-semibold">{t("analytics.numberOfOrders")}</th>
-                        <th className="py-2 px-3 text-left text-[var(--color-text)] font-semibold">{t("analytics.revenueLabel")}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {generateLastDaysData(selectedRange)
-                        .filter((entry) => {
-                          if (!selectedDate) return true;
-                          const day = new Date(entry.date).toISOString().split("T")[0];
-                          return day === selectedDate;
-                        })
-                        .map((entry, idx) => {
-                          const date = new Date(entry.date);
-                          const formattedDate = date.toLocaleDateString("en-US", {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          });
-                          const revenueValue =
-                            revenueMode === "withDelivery"
-                              ? entry.netRevenueWithDelivery
-                              : entry.netRevenueWithoutDelivery;
-                          return (
-                            <tr key={idx} className="border-t border-[var(--color-border)] hover:bg-[var(--color-bg-gray)] transition">
-                              <td className="py-2 px-3 text-[var(--color-text-secondary)]">{formattedDate}</td>
-                              <td className="py-2 px-3 text-[var(--color-text-secondary)]">{formatNumber(entry.orders)}</td>
-                              <td className="py-2 px-3 text-[var(--color-text-secondary)]">
-                                {formatNumber(revenueValue)} {t("analytics.revenueUnit")}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+        {/* Chart Section */}
+        <motion.div
+          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg mb-8"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+            <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <BarChart3 className="w-6 h-6 text-blue-600" />
+              {t("analytics.salesOverview")}
+            </h2>
+            <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-xl p-1">
+              <button
+                onClick={() => setRevenueMode("withoutDelivery")}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  revenueMode === "withoutDelivery"
+                    ? "bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm"
+                    : "text-gray-600 dark:text-gray-300 hover:text-blue-600"
+                }`}
+              >
+                {t("analytics.withoutDelivery")}
+              </button>
+              <button
+                onClick={() => setRevenueMode("withDelivery")}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                  revenueMode === "withDelivery"
+                    ? "bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm"
+                    : "text-gray-600 dark:text-gray-300 hover:text-blue-600"
+                }`}
+              >
+                {t("analytics.withDelivery")}
+              </button>
             </div>
-          </div>,
-          document.body
-        )}
-    </motion.div>
+          </div>
+
+          <div dir="ltr" className="min-w-0">
+            <ResponsiveContainer width="100%" height={320}>
+              <LineChart data={filteredData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis
+                  dataKey="date"
+                  stroke="#6b7280"
+                  tick={{ fontSize: 12 }}
+                  tickFormatter={(value) => {
+                    const date = new Date(value);
+                    const isArabic = i18n.language === "ar";
+                    const monthName = date.toLocaleDateString(
+                      isArabic ? "ar-EG" : "en-US",
+                      { month: "short" }
+                    );
+                    const day = date.getDate();
+                    return `${day} ${monthName}`;
+                  }}
+                />
+                <YAxis
+                  stroke="#6b7280"
+                  tick={{ fontSize: 12 }}
+                  width={50}
+                  tickFormatter={(value) => formatNumber(value)}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "rgba(255, 255, 255, 0.95)",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "12px",
+                    backdropFilter: "blur(16px)",
+                    fontSize: "14px",
+                  }}
+                  formatter={(value) => [formatNumber(value), ""]}
+                />
+                <Legend 
+                  wrapperStyle={{ 
+                    fontSize: "14px",
+                    paddingTop: "10px"
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="orders"
+                  stroke="#f59e0b"
+                  name={t("analytics.ordersLabel")}
+                  strokeWidth={3}
+                  dot={{ fill: "#f59e0b", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, fill: "#f59e0b" }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey={
+                    revenueMode === "withDelivery"
+                      ? "netRevenueWithDelivery"
+                      : "netRevenueWithoutDelivery"
+                  }
+                  stroke="#8b5cf6"
+                  name={t("analytics.revenueLabel")}
+                  strokeWidth={3}
+                  dot={{ fill: "#8b5cf6", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, fill: "#8b5cf6" }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </motion.div>
+
+        {/* Revenue History Popup */}
+        {showRevenuePopup &&
+          createPortal(
+            <motion.div 
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <motion.div
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col border border-gray-200 dark:border-gray-700"
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+              >
+                {/* Header */}
+                <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-700 rounded-t-2xl">
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                    <DollarSign className="w-6 h-6 text-green-500" />
+                    {t("analytics.revenueHistory")}
+                  </h3>
+                  <button
+                    onClick={() => setShowRevenuePopup(false)}
+                    className="p-2 rounded-xl text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
+                    aria-label="close"
+                  >
+                    <X size={24} />
+                  </button>
+                </div>
+
+                {/* Content */}
+                <div className="p-6 overflow-y-auto flex-1 space-y-4">
+                  {/* Filters */}
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <select
+                      value={selectedRange}
+                      onChange={(e) => {
+                        setSelectedRange(Number(e.target.value));
+                        setSelectedDate("");
+                      }}
+                      className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    >
+                      <option value={7}>{t("analytics.last7Days")}</option>
+                      <option value={14}>{t("analytics.last14Days")}</option>
+                      <option value={30}>{t("analytics.last30Days")}</option>
+                    </select>
+
+                    <select
+                      value={selectedDate}
+                      onChange={(e) => setSelectedDate(e.target.value)}
+                      className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    >
+                      <option value="">{t("analytics.allDates")}</option>
+                      {dailyOrdersData.map((entry, idx) => {
+                        const date = new Date(entry.date);
+                        const formattedDate = date.toLocaleDateString(
+                          "en-US",
+                          { day: "numeric", month: "short", year: "numeric" }
+                        );
+                        const value = date.toISOString().split("T")[0];
+                        return (
+                          <option key={idx} value={value}>
+                            {formattedDate}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+
+                  {/* Table */}
+                  <div className="overflow-y-auto max-h-[400px] border border-gray-200 dark:border-gray-700 rounded-xl">
+                    <table className="min-w-full text-sm">
+                      <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0">
+                        <tr>
+                          <th className="py-3 px-4 text-left text-gray-700 dark:text-gray-300 font-semibold border-b border-gray-200 dark:border-gray-600">
+                            {t("analytics.date")}
+                          </th>
+                          <th className="py-3 px-4 text-left text-gray-700 dark:text-gray-300 font-semibold border-b border-gray-200 dark:border-gray-600">
+                            {t("analytics.numberOfOrders")}
+                          </th>
+                          <th className="py-3 px-4 text-left text-gray-700 dark:text-gray-300 font-semibold border-b border-gray-200 dark:border-gray-600">
+                            {t("analytics.revenueLabel")}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {generateLastDaysData(selectedRange)
+                          .filter((entry) => {
+                            if (!selectedDate) return true;
+                            const day = new Date(entry.date).toISOString().split("T")[0];
+                            return day === selectedDate;
+                          })
+                          .map((entry, idx) => {
+                            const date = new Date(entry.date);
+                            const formattedDate = date.toLocaleDateString("en-US", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            });
+                            const revenueValue =
+                              revenueMode === "withDelivery"
+                                ? entry.netRevenueWithDelivery
+                                : entry.netRevenueWithoutDelivery;
+                            return (
+                              <tr 
+                                key={idx} 
+                                className="border-b border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-gray-700 transition-all"
+                              >
+                                <td className="py-3 px-4 text-gray-600 dark:text-gray-400">{formattedDate}</td>
+                                <td className="py-3 px-4 text-gray-600 dark:text-gray-400 font-medium">
+                                  {formatNumber(entry.orders)}
+                                </td>
+                                <td className="py-3 px-4 text-gray-600 dark:text-gray-400 font-medium">
+                                  {formatNumber(revenueValue)} {t("analytics.revenueUnit")}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>,
+            document.body
+          )}
+      </motion.div>
+    </div>
   );
 };
 
 /* بطاقة عامة */
-const AnalyticsCard = ({ title, value, icon: Icon, unit, formatNumber }) => (
-  <div
-    className="bg-[var(--color-bg-gray)] border border-[var(--color-border)] rounded-2xl p-4 shadow-md transition-all"
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.4 }}
-    whileHover={{ scale: 1.02 }}
-  >
-    <div className="flex justify-between items-center">
-      <div>
-        <p className="text-[var(--color-text)] text-sm font-semibold">{title}</p>
-        <h3 className="text-[var(--color-text-secondary)] text-xl font-bold">
-          {formatNumber(value)} {unit && <span>{unit}</span>}
-        </h3>
+const AnalyticsCard = ({ title, value, icon: Icon, unit, color = "blue", formatNumber }) => {
+  const colorClasses = {
+    blue: "from-blue-500 to-blue-600",
+    purple: "from-purple-500 to-purple-600",
+    green: "from-green-500 to-green-600",
+    orange: "from-orange-500 to-orange-600",
+    yellow: "from-yellow-500 to-yellow-600",
+    pink: "from-pink-500 to-pink-600",
+    red: "from-red-500 to-red-600"
+  };
+
+  return (
+    <motion.div
+      className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ scale: 1.02, y: -2 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="flex justify-between items-center">
+        <div className="flex-1 min-w-0">
+          <p className="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1 truncate">
+            {title}
+          </p>
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-white truncate">
+            {formatNumber(value)} {unit && <span className="text-sm">{unit}</span>}
+          </h3>
+        </div>
+        <div className={`p-3 rounded-xl bg-gradient-to-r ${colorClasses[color]} text-white shadow-lg flex-shrink-0 ml-4`}>
+          <Icon className="w-6 h-6" />
+        </div>
       </div>
-      <div className="bg-[var(--color-bg)] p-3 rounded-xl flex items-center justify-center shadow-inner">
-        <Icon className="w-7 h-7 text-[var(--color-accent)]" />
-      </div>
-    </div>
-  </div>
-);
+    </motion.div>
+  );
+};
+
 /* بطاقة الإيرادات */
 const RevenueCard = ({ revenueMode, setRevenueMode, analyticsData, t, formatNumber, onShowPopup }) => (
-  <div
-    className="bg-[var(--color-bg-gray)] border border-[var(--color-border)] rounded-xl p-5 shadow-md"
-    initial={{ opacity: 0, y: 15 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.4 }}
+  <motion.div
+    className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg"
+    initial={{ opacity: 0, scale: 0.95 }}
+    animate={{ opacity: 1, scale: 1 }}
+    whileHover={{ scale: 1.02 }}
+    transition={{ duration: 0.3 }}
   >
-    {/* العنوان */}
-    <div className="flex justify-between items-center mb-4">
+    <div className="flex justify-between items-start mb-4">
       <div>
-        <p className="text-[var(--color-text)] text-sm font-semibold mb-1">
+        <p className="text-blue-100 text-sm font-medium mb-1">
           {revenueMode === "withDelivery"
             ? t("analytics.netRevenueWithDelivery")
             : t("analytics.netRevenueWithoutDelivery")}
         </p>
-        <h3 className="text-[var(--color-text-secondary)] text-2xl font-bold">
+        <h3 className="text-3xl font-bold">
           {revenueMode === "withDelivery"
             ? formatNumber(analyticsData.revenue.netWithDelivery)
             : formatNumber(analyticsData.revenue.netWithoutDelivery)}{" "}
-          {t("analytics.revenueUnit")}
+          <span className="text-lg">{t("analytics.revenueUnit")}</span>
         </h3>
       </div>
-      <TrendingUp className="w-10 h-10 text-[var(--color-accent)] opacity-70" />
+      <TrendingUp className="w-10 h-10 text-white opacity-80 flex-shrink-0" />
     </div>
 
-    {/* أزرار التحكم */}
-    <div className="flex justify-between items-center flex-wrap gap-3 pt-3">
-      {/* أزرار التبديل */}
-      <div className="flex rounded-lg overflow-hidden border border-[var(--color-border)]">
+    <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
+      <div className="flex rounded-lg overflow-hidden border border-white/20 bg-white/10 backdrop-blur-sm">
         <button
           onClick={() => setRevenueMode("withoutDelivery")}
-          className={`px-4 py-2 text-sm font-medium transition ${
+          className={`px-4 py-2 text-sm font-medium transition-all ${
             revenueMode === "withoutDelivery"
-              ? "bg-[var(--color-accent)] text-[var(--color-on-accent)]"
-              : "bg-transparent text-[var(--color-text)] hover:bg-[var(--color-bg)]"
+              ? "bg-white text-blue-600"
+              : "text-blue-100 hover:bg-white/20"
           }`}
         >
           {t("analytics.withoutDelivery")}
         </button>
         <button
           onClick={() => setRevenueMode("withDelivery")}
-          className={`px-4 py-2 text-sm font-medium transition ${
+          className={`px-4 py-2 text-sm font-medium transition-all ${
             revenueMode === "withDelivery"
-              ? "bg-[var(--color-accent)] text-[var(--color-on-accent)]"
-              : "bg-transparent text-[var(--color-text)] hover:bg-[var(--color-bg)]"
+              ? "bg-white text-blue-600"
+              : "text-blue-100 hover:bg-white/20"
           }`}
         >
           {t("analytics.withDelivery")}
         </button>
       </div>
 
-      {/* زر عرض السجل */}
       <button
         onClick={onShowPopup}
-        className="px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2 border border-[var(--color-border)] text-[var(--color-text)] hover:bg-[var(--color-accent)] hover:text-[var(--color-on-accent)] transition"
+        className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 border border-white/30 text-white hover:bg-white/20 transition-all backdrop-blur-sm"
       >
         <List className="w-4 h-4" />
         {t("analytics.revenueHistory")}
       </button>
     </div>
-  </div>
+  </motion.div>
 );
 
 export default AnalyticsTab;
