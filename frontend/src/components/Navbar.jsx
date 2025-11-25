@@ -57,6 +57,10 @@ const Navbar = () => {
 
   const searchContainerRef = useRef(null);
   const searchInputRefLocal = useRef(null);
+  const langMenuRef = useRef(null);
+  const adminMenuRef = useRef(null);
+  const langButtonRef = useRef(null);
+  const adminButtonRef = useRef(null);
 
   // افترض أن لديك store للمفضلة
   const [favorites] = useState([]); // استبدل هذا بـ useFavoritesStore إذا كان لديك
@@ -117,12 +121,24 @@ const Navbar = () => {
     }
   };
 
-  // إغلاق القوائم المنسدلة عند النقر خارجها - تم إزالة الإغلاق التلقائي للبحث
+  // إغلاق القوائم المنسدلة عند النقر خارجها
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // فقط إغلاق قوائم اللغة والإدارة عند النقر خارجها
-      if (isLangMenuOpen || isAdminMenuOpen) {
+      // إغلاق قائمة اللغة إذا تم النقر خارجها وخارج الزر
+      if (isLangMenuOpen && 
+          langMenuRef.current && 
+          !langMenuRef.current.contains(event.target) &&
+          langButtonRef.current &&
+          !langButtonRef.current.contains(event.target)) {
         setIsLangMenuOpen(false);
+      }
+
+      // إغلاق قائمة الأدمن إذا تم النقر خارجها وخارج الزر
+      if (isAdminMenuOpen && 
+          adminMenuRef.current && 
+          !adminMenuRef.current.contains(event.target) &&
+          adminButtonRef.current &&
+          !adminButtonRef.current.contains(event.target)) {
         setIsAdminMenuOpen(false);
       }
     };
@@ -180,17 +196,17 @@ const Navbar = () => {
               <Menu size={24} />
             </button>
 
-{/* Logo */}
-<Link to="/" className="flex items-center gap-3 flex-shrink-0 min-w-0">
-  <div className="relative">
-    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-sm opacity-75"></div>
-    <img
-      src={logo}
-      alt="Zoubir"
-      className="relative h-10 w-28 md:h-12 md:w-32 rounded-2xl object-cover border-2 border-white dark:border-gray-800 shadow-lg max-w-[100px] md:max-w-none"
-    />
-  </div>
-</Link>
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-3 flex-shrink-0 min-w-0">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-sm opacity-75"></div>
+                <img
+                  src={logo}
+                  alt="Zoubir"
+                  className="relative h-10 w-28 md:h-12 md:w-32 rounded-2xl object-cover border-2 border-white dark:border-gray-800 shadow-lg max-w-[100px] md:max-w-none"
+                />
+              </div>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
@@ -287,6 +303,7 @@ const Navbar = () => {
             {/* Language Selector - Hidden on small screens */}
             <div className="hidden sm:relative sm:block">
               <button
+                ref={langButtonRef}
                 onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
                 className="flex items-center gap-2 p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
               >
@@ -298,7 +315,10 @@ const Navbar = () => {
               </button>
 
               {isLangMenuOpen && (
-                <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
+                <div 
+                  ref={langMenuRef}
+                  className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
+                >
                   {languages.map(lang => (
                     <button
                       key={lang.code}
@@ -330,6 +350,7 @@ const Navbar = () => {
             {!checkingAuth && isAdmin && (
               <div className="relative hidden sm:block">
                 <button
+                  ref={adminButtonRef}
                   onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
                   className="flex items-center gap-2 p-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg transition-all duration-200"
                 >
@@ -339,7 +360,10 @@ const Navbar = () => {
                 </button>
 
                 {isAdminMenuOpen && (
-                  <div className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
+                  <div 
+                    ref={adminMenuRef}
+                    className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
+                  >
                     <Link
                       to="/dash"
                       className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all text-gray-700 dark:text-gray-300"
