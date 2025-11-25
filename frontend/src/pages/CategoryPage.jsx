@@ -32,13 +32,11 @@ const CategoryPage = () => {
   }, [categories.length, fetchMetaData]);
 
   useEffect(() => {
-    if (category && categories.length > 0) {
+    if (category) {
       const foundCategory = categories.find(c => 
-        c && (
-          c._id === category || 
-          c.slug === category || 
-          c.name?.toLowerCase() === category.toLowerCase()
-        )
+        c._id === category || 
+        c.slug === category || 
+        c.name.toLowerCase() === category.toLowerCase()
       );
 
       if (foundCategory) {
@@ -51,20 +49,16 @@ const CategoryPage = () => {
   }, [category, categories, fetchProductsByCategory]);
 
   const currentCategory = categories.find(c => 
-    c && (
-      c._id === category || 
-      c.slug === category || 
-      c.name?.toLowerCase() === category?.toLowerCase()
-    )
+    c._id === category || 
+    c.slug === category || 
+    c.name.toLowerCase() === category.toLowerCase()
   );
 
   const translatedCategoryName = currentCategory 
     ? t(`categories.${currentCategory.name}`, currentCategory.name)
-    : category 
-      ? t(`categories.${category}`, category.charAt(0)?.toUpperCase() + category.slice(1))
-      : t('categoryPage.unknownCategory');
+    : t(`categories.${category}`, category?.charAt(0)?.toUpperCase() + category?.slice(1));
 
-  if (categoriesLoading) {
+  if (categoriesLoading ) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <LoadingSpinner size="xl" />
@@ -121,7 +115,7 @@ const CategoryPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            {translatedCategoryName}
+            {t('categoryPage.title', { category: translatedCategoryName })}
           </motion.h1>
         )}
 
