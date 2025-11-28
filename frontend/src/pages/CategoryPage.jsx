@@ -1,210 +1,478 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
 import { useProductStore } from "../stores/useProductStore";
 import useSettingStore from "../stores/useSettingStore";
+import { Link, useParams } from "react-router-dom";
+import { ArrowLeft, ShoppingBag, Filter, Grid, List, Home, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "../components/ProductCard";
-import LoadingSpinner from "../components/LoadingSpinner";
-import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft, Filter, Grid, List } from "lucide-react";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const CategoryPage = () => {
-  const { t, i18n } = useTranslation();
-  const { category } = useParams();
-  const navigate = useNavigate();
-  
   const { 
-    products = [], 
     fetchProductsByCategory, 
-    loading 
+    products = [], 
+    isLoading: productsLoading 
   } = useProductStore();
   
-  const { categories = [] } = useSettingStore();
+  const { 
+    categories = [],
+    loadingMeta: categoriesLoading,
+    fetchMetaData
+  } = useSettingStore();
   
-  const [categoryInfo, setCategoryInfo] = useState(null);
+  const { category } = useParams();
+  const { t } = useTranslation();
+  const [categoryNotFound, setCategoryNotFound] = useState(false);
   const [viewMode, setViewMode] = useState('grid');
-  const [sortBy, setSortBy] = useState('name');
+  const [sortBy, setSortBy] = useState('popular');
+  const [hasFetched, setHasFetched] = useState(false);
 
-  // تحقق من وجود category
-  useEffect(() => {
-    console.log("Category parameter:", category);
-    
-    if (!category) {
-      console.error("No category parameter found in URL");
-      navigate("/");
-      return;
+  // تحسين: استخدام useCallback لمنع إعادة التحميل غير الضروري
+  const loadCategories = useCallback(async () => {
+    if (categories.length === 0 && !categoriesLoading) {
+      await fetchMetaData();
     }
-  }, [category, navigate]);
+  }, [categories.length, categoriesLoading, fetchMetaData]);
 
+  // تحسين: جلب التصنيفات مرة واحدة
   useEffect(() => {
-    const loadCategoryData = async () => {
-      if (category) {
+    loadCategories();
+  }, [loadCategories]);
+
+  // تحسين: منطق البحث عن التصنيف وجلب المنتجات
+  useEffect(() => {
+    const findAndLoadCategory = async () => {
+      if (!category || categories.length === 0 || hasFetched || categoryNotFound) {
+        return;
+      }
+
+      console.log('Searching for category:', category);
+      console.log('Available categories:', categories);
+
+      // تحسين البحث عن التصنيف
+      const foundCategory = categories.find(c => {
+        if (!c || !c._id) return false;
+        
+        const categoryId = String(c._id).toLowerCase().trim();
+        const categorySlug = String(c.slug || '').toLowerCase().trim();
+        const categoryName = String(c.name || '').toLowerCase().trim();
+        const param = String(category || '').toLowerCase().trim();
+        
+        return categoryId === param || 
+               categorySlug === param || 
+               categoryName === param ||
+               categoryId.includes(param) ||
+               categoryName.includes(param);
+      });
+
+      if (foundCategory) {
+        console.log('Category found:', foundCategory);
         try {
-          console.log("Fetching products for category:", category);
-          await fetchProductsByCategory(category);
-          
-          // البحث عن معلومات التصنيف
-          const foundCategory = categories.find(cat => 
-            cat._id === category || 
-            cat.slug === category ||
-            (cat.name && typeof cat.name === 'object' && cat.name[i18n.language] === category)
-          );
-          
-          console.log("Found category info:", foundCategory);
-          setCategoryInfo(foundCategory || null);
+          await fetchProductsByCategory(foundCategory._id);
+          setCategoryNotFound(false);
+          setHasFetched(true);
         } catch (error) {
-          console.error("Error loading category data:", error);
+          console.error('Error fetching products:', error);
+          setCategoryNotFound(true);
+          setHasFetched(true);
         }
+      } else {
+        console.log('Category not found:', category);
+        setCategoryNotFound(true);
+        setHasFetched(true);
       }
     };
-    
-    loadCategoryData();
-  }, [category, fetchProductsByCategory, categories, i18n.language]);
 
-  // تحقق من أن products مصفوفة
-  const safeProducts = Array.isArray(products) ? products : [];
-  
-  // فرز المنتجات
-  const sortedProducts = [...safeProducts].sort((a, b) => {
-    switch (sortBy) {
-      case 'price-low':
-        return (a.priceAfterDiscount || a.price) - (b.priceAfterDiscount || b.price);
-      case 'price-high':
-        return (b.priceAfterDiscount || b.price) - (a.priceAfterDiscount || a.price);
-      case 'name':
-      default:
-        return (a.name || '').localeCompare(b.name || '');
-    }
+    findAndLoadCategory();
+  }, [category, categories, fetchProductsByCategory, hasFetched, categoryNotFound]);
+
+  // إعادة التعيين عند تغيير التصنيف
+  useEffect(() => {
+    setHasFetched(false);
+    setCategoryNotFound(false);
+  }, [category]);
+
+  // تحسين البحث عن التصنيف الحالي
+  const currentCategory = categories.find(c => {
+    if (!c || !c._id) return false;
+    
+    const categoryId = String(c._id).toLowerCase().trim();
+    const categorySlug = String(c.slug || '').toLowerCase().trim();
+    const categoryName = String(c.name || '').toLowerCase().trim();
+    const param = String(category || '').toLowerCase().trim();
+    
+    return categoryId === param || 
+           categorySlug === param || 
+           categoryName === param ||
+           categoryId.includes(param) ||
+           categoryName.includes(param);
   });
 
-  if (loading) {
+  const translatedCategoryName = currentCategory 
+    ? t(`categories.${currentCategory.name}`, currentCategory.name)
+    : category
+    ? t(`categories.${category}`, category.charAt(0)?.toUpperCase() + category?.slice(1))
+    : t('categoryPage.unknownCategory');
+
+  // تحسين شروط التحميل
+  const isLoading = (categoriesLoading && categories.length === 0) || 
+                   (productsLoading && !hasFetched && !categoryNotFound);
+
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner size="lg" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
+        <LoadingSpinner size="xl" />
+      </div>
+    );
+  }
+
+  // حالة عدم وجود تصنيفات
+  if (!categoriesLoading && categories.length === 0) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="text-center"
+        >
+          <div className="w-32 h-32 bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900/20 dark:to-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <ShoppingBag className="w-12 h-12 text-orange-500" />
+          </div>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            {t('categoryPage.noCategories')}
+          </h1>
+          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+            {t('categoryPage.noCategoriesMessage')}
+          </p>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-lg transition-all duration-300"
+          >
+            <ArrowLeft size={20} />
+            {t("categoryPage.backToHome")}
+          </Link>
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (categoryNotFound) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="text-center"
+        >
+          <div className="w-32 h-32 bg-gradient-to-r from-red-100 to-pink-100 dark:from-red-900/20 dark:to-pink-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <ShoppingBag className="w-12 h-12 text-red-500" />
+          </div>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            {t('categoryPage.notFound')}
+          </h1>
+          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+            {t('categoryPage.notFoundMessage', { category: translatedCategoryName })}
+          </p>
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-lg transition-all duration-300"
+          >
+            <ArrowLeft size={20} />
+            {t("categoryPage.backToHome")}
+          </Link>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* رأس الصفحة */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white mb-4"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            {t('common.back')}
-          </button>
-          
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            {categoryInfo ? 
-              (categoryInfo.name?.[i18n.language] || categoryInfo.name || category) 
-              : category
-            }
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300">
-            {t('category.showingProducts', { count: safeProducts.length })}
-          </p>
-        </motion.div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-8">
+          <Link to="/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+            {t("breadcrumb.home")}
+          </Link>
+          <span>/</span>
+          <span className="text-blue-600 dark:text-blue-400 font-medium">
+            {translatedCategoryName}
+          </span>
+        </nav>
 
-        {/* أدوات التحكم */}
-        {safeProducts.length > 0 && (
+        {/* Category Header */}
+        {currentCategory?.imageUrl && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"
+            className="relative h-80 w-full mb-12 rounded-3xl overflow-hidden shadow-2xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
           >
-            <div className="flex items-center gap-4">
-              {/* تغيير طريقة العرض */}
-              <div className="flex bg-white dark:bg-gray-800 rounded-lg p-1">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded ${viewMode === 'grid' ? 'bg-blue-500 text-white' : 'text-gray-600 dark:text-gray-300'}`}
+            <img
+              src={currentCategory.imageUrl}
+              alt={currentCategory.name}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.target.src = '/default-category.jpg';
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-8">
+              <div className="text-white">
+                <motion.h1
+                  className="text-5xl sm:text-6xl font-bold mb-4"
+                  initial={{ y: 30, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
                 >
-                  <Grid className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 rounded ${viewMode === 'list' ? 'bg-blue-500 text-white' : 'text-gray-600 dark:text-gray-300'}`}
-                >
-                  <List className="w-5 h-5" />
-                </button>
+                  {translatedCategoryName}
+                </motion.h1>
+                {currentCategory.description && (
+                  <motion.p
+                    className="text-xl text-gray-200 max-w-2xl"
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.5 }}
+                  >
+                    {currentCategory.description}
+                  </motion.p>
+                )}
               </div>
-
-              {/* الفرز */}
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm"
-              >
-                <option value="name">{t('category.sortByName')}</option>
-                <option value="price-low">{t('category.sortByPriceLow')}</option>
-                <option value="price-high">{t('category.sortByPriceHigh')}</option>
-              </select>
             </div>
           </motion.div>
         )}
 
-        {/* شبكة المنتجات */}
-        {safeProducts.length > 0 ? (
+        {!currentCategory?.imageUrl && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className={`
-              ${viewMode === 'grid' 
-                ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' 
-                : 'space-y-4'
-              }
-            `}
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
           >
-            {sortedProducts.map((product, index) => (
+            <h1 className="text-5xl sm:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+              {translatedCategoryName}
+            </h1>
+            <p className="text-xl text-gray-600 dark:text-gray-300">
+              {t('categoryPage.subtitle')}
+            </p>
+          </motion.div>
+        )}
+
+        {/* Products Grid */}
+        {productsLoading && hasFetched ? (
+          <div className="flex justify-center py-20">
+            <LoadingSpinner size="xl" />
+          </div>
+        ) : (
+          <>
+            <AnimatePresence>
+              {(products.length === 0 && hasFetched) && (
+                <motion.div 
+                  className="text-center py-16"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                >
+                  {/* Floating Animation Container */}
+                  <motion.div
+                    className="relative mb-8"
+                    animate={{ 
+                      y: [0, -10, 0],
+                    }}
+                    transition={{ 
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <div className="relative w-32 h-32 mx-auto">
+                      {/* Main Icon */}
+                      <motion.div
+                        className="w-32 h-32 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-full flex items-center justify-center shadow-2xl border border-purple-200/50 dark:border-purple-700/30"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <ShoppingBag className="w-16 h-16 text-purple-500 dark:text-purple-400" />
+                      </motion.div>
+                      
+                      {/* Floating Particles */}
+                      <motion.div
+                        className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg"
+                        animate={{ 
+                          scale: [1, 1.2, 1],
+                          rotate: [0, 180, 360]
+                        }}
+                        transition={{ 
+                          duration: 4,
+                          repeat: Infinity,
+                          ease: "linear"
+                        }}
+                      >
+                        <Sparkles className="w-4 h-4 text-white" />
+                      </motion.div>
+                      
+                      <motion.div
+                        className="absolute -bottom-2 -left-2 w-6 h-6 bg-blue-400 rounded-full shadow-lg"
+                        animate={{ 
+                          scale: [1, 1.3, 1],
+                          y: [0, -5, 0]
+                        }}
+                        transition={{ 
+                          duration: 3,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                          delay: 0.5
+                        }}
+                      />
+                    </div>
+                  </motion.div>
+
+                  {/* Text Content */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                  >
+                    <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-purple-600 dark:from-white dark:to-purple-400 bg-clip-text text-transparent mb-4">
+                      {t('categoryPage.noProducts')}
+                    </h2>
+                    <p className="text-lg text-gray-600 dark:text-gray-300 mb-2 max-w-md mx-auto leading-relaxed">
+                      {t('categoryPage.noProductsDescription')}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
+                      {t('categoryPage.noProductsHint')}
+                    </p>
+                  </motion.div>
+
+                  {/* Animated Back to Home Button */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8, type: "spring", stiffness: 200 }}
+                  >
+                    <Link
+                      to='/'
+                      className="group inline-flex items-center gap-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-2xl transition-all duration-500 relative overflow-hidden"
+                    >
+                      {/* Background Shine Effect */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                      
+                      {/* Icon with Animation */}
+                      <motion.div
+                        className="flex items-center justify-center"
+                        whileHover={{ 
+                          scale: 1.1,
+                          rotate: -5
+                        }}
+                        transition={{ type: "spring", stiffness: 400 }}
+                      >
+                        <Home className="w-6 h-6" />
+                      </motion.div>
+                      
+                      {/* Text */}
+                      <span className="relative z-10 text-lg">
+                        {t("categoryPage.exploreOtherCategories")}
+                      </span>
+                      
+                      {/* Arrow with Animation */}
+                      <motion.div
+                        animate={{ x: [0, 5, 0] }}
+                        transition={{ 
+                          duration: 1.5, 
+                          repeat: Infinity,
+                          repeatType: "reverse"
+                        }}
+                      >
+                        <ArrowLeft className="w-5 h-5 transform rotate-180" />
+                      </motion.div>
+                    </Link>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {products.length > 0 && (
               <motion.div
-                key={product._id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className={viewMode === 'list' ? 'max-w-4xl mx-auto' : ''}
+                transition={{ duration: 0.8, delay: 0.2 }}
               >
-                <ProductCard 
-                  product={product} 
-                  viewMode={viewMode}
-                />
+                {/* Controls Bar */}
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center gap-4">
+                    <p className="text-gray-600 dark:text-gray-300">
+                      {t('categoryPage.productsCount', { count: products.length })}
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-center gap-4">
+                    {/* View Mode Toggle */}
+                    <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-2xl p-1">
+                      <button
+                        onClick={() => setViewMode('grid')}
+                        className={`p-2 rounded-xl transition-all ${
+                          viewMode === 'grid' 
+                            ? 'bg-white dark:bg-gray-600 shadow-sm text-blue-600' 
+                            : 'text-gray-500 dark:text-gray-400'
+                        }`}
+                      >
+                        <Grid className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => setViewMode('list')}
+                        className={`p-2 rounded-xl transition-all ${
+                          viewMode === 'list' 
+                            ? 'bg-white dark:bg-gray-600 shadow-sm text-blue-600' 
+                            : 'text-gray-500 dark:text-gray-400'
+                        }`}
+                      >
+                        <List className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Sort Dropdown */}
+                    <div className="flex items-center gap-2">
+                      <Filter className="w-4 h-4 text-gray-500" />
+                      <select 
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-2xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white"
+                      >
+                        <option value="popular">{t('categoryPage.sortOptions.popular')}</option>
+                        <option value="newest">{t('categoryPage.sortOptions.newest')}</option>
+                        <option value="priceLow">{t('categoryPage.sortOptions.priceLow')}</option>
+                        <option value="priceHigh">{t('categoryPage.sortOptions.priceHigh')}</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Products Grid/List */}
+                <div className={viewMode === 'grid' 
+                  ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' 
+                  : 'space-y-4'
+                }>
+                  {products.map((product, index) => (
+                    <motion.div
+                      key={product._id || index}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      className={viewMode === 'list' ? 'bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700' : ''}
+                    >
+                      <ProductCard 
+                        product={product} 
+                        categoryName={currentCategory?.name}
+                        viewMode={viewMode}
+                      />
+                    </motion.div>
+                  ))}
+                </div>
               </motion.div>
-            ))}
-          </motion.div>
-        ) : (
-          // حالة عدم وجود منتجات
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-16"
-          >
-            <div className="max-w-md mx-auto">
-              <div className="w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Filter className="w-12 h-12 text-gray-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                {t('category.noProducts')}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
-                {t('category.noProductsDescription')}
-              </p>
-              <button
-                onClick={() => navigate('/')}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors"
-              >
-                {t('category.continueShopping')}
-              </button>
-            </div>
-          </motion.div>
+            )}
+          </>
         )}
       </div>
     </div>
