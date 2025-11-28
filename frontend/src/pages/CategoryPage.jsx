@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useProductStore } from "../stores/useProductStore";
 import useSettingStore from "../stores/useSettingStore";
 import { Link, useParams } from "react-router-dom";
@@ -23,10 +23,18 @@ const CategoryPage = () => {
   
   const { category } = useParams();
   const { t } = useTranslation();
-  const [categoryNotFound, setCategoryNotFound] = useState(false);
-  const [viewMode, setViewMode] = useState('grid');
-  const [sortBy, setSortBy] = useState('popular');
-  const [hasFetched, setHasFetched] = useState(false);
+  
+  // ✅ إصلاح useState - استخدام دالة تهيئة
+  const [categoryNotFound, setCategoryNotFound] = useState(() => false);
+  const [viewMode, setViewMode] = useState(() => 'grid');
+  const [sortBy, setSortBy] = useState(() => 'popular');
+  const [hasFetched, setHasFetched] = useState(() => false);
+
+  // ✅ استخدام useCallback لمنع إعادة التصيير غير الضرورية
+  const initializeStates = useCallback(() => {
+    setHasFetched(false);
+    setCategoryNotFound(false);
+  }, []);
 
   // جلب البيانات الأساسية إذا لم تكن موجودة
   useEffect(() => {
@@ -58,11 +66,10 @@ const CategoryPage = () => {
     }
   }, [category, categories, hasFetched, fetchProductsByCategory]);
 
-  // إعادة تعيين hasFetched عندما يتغير الـ category
+  // ✅ إصلاح: استخدام دالة واضحة لإعادة التعيين
   useEffect(() => {
-    setHasFetched(false);
-    setCategoryNotFound(false);
-  }, [category]);
+    initializeStates();
+  }, [category, initializeStates]);
 
   const currentCategory = categories.find(c => {
     if (!c) return false;
@@ -75,11 +82,16 @@ const CategoryPage = () => {
 
   const translatedCategoryName = currentCategory 
     ? t(`categories.${currentCategory.name}`, currentCategory.name)
-    : t(`categories.${category}`, category?.charAt(0)?.toUpperCase() + category?.slice(1));
+    : category 
+      ? t(`categories.${category}`, category.charAt(0)?.toUpperCase() + category?.slice(1))
+      : '';
 
-  // تحسين شروط التحميل
-  const isLoading = categoriesLoading || (!hasFetched && !categoryNotFound && categories.length > 0);
+  // ✅ تحسين شروط التحميل مع التحقق من القيم
+  const isLoading = categoriesLoading || 
+                   (!hasFetched && !categoryNotFound && categories.length > 0) ||
+                   !Array.isArray(products);
 
+  // ✅ إضافة تحقق إضافي لمنع الأخطاء
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
@@ -117,6 +129,9 @@ const CategoryPage = () => {
       </div>
     );
   }
+
+  // ✅ التحقق من أن products مصفوفة قبل استخدام .map
+  const safeProducts = Array.isArray(products) ? products : [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
@@ -197,7 +212,7 @@ const CategoryPage = () => {
         ) : (
           <>
             <AnimatePresence>
-              {(products.length === 0) && (
+              {(safeProducts.length === 0) && (
                 <motion.div 
                   className="text-center py-16"
                   initial={{ opacity: 0, scale: 0.8 }}
@@ -323,7 +338,7 @@ const CategoryPage = () => {
               )}
             </AnimatePresence>
 
-            {products.length > 0 && (
+            {safeProducts.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -333,7 +348,7 @@ const CategoryPage = () => {
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
                   <div className="flex items-center gap-4">
                     <p className="text-gray-600 dark:text-gray-300">
-                      {t('categoryPage.productsCount', { count: products.length })}
+                      {t('categoryPage.productsCount', { count: safeProducts.length })}
                     </p>
                   </div>
                   
@@ -384,9 +399,9 @@ const CategoryPage = () => {
                   ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' 
                   : 'space-y-4'
                 }>
-                  {products.map((product, index) => (
+                  {safeProducts.map((product, index) => (
                     <motion.div
-                      key={product._id || index}
+                      key={product._id || `product-${index}`}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: index * 0.1 }}
