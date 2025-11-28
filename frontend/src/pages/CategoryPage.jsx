@@ -9,17 +9,23 @@ import { useTranslation } from "react-i18next";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const CategoryPage = () => {
-  const { 
-    fetchProductsByCategory, 
-    products = [], 
-    isLoading: productsLoading 
-  } = useProductStore();
+  // إصلاح: استخدام destructuring آمن
+  const productStore = useProductStore();
+  const settingStore = useSettingStore();
   
   const { 
-    categories = [],
-    loadingMeta: categoriesLoading,
-    fetchMetaData
-  } = useSettingStore();
+    fetchProductsByCategory, 
+    isLoading: productsLoading 
+  } = productStore;
+  
+  const { 
+    fetchMetaData,
+    loadingMeta: categoriesLoading 
+  } = settingStore;
+  
+  // إصلاح: الحصول على البيانات بعد التأكد من وجودها
+  const products = Array.isArray(productStore.products) ? productStore.products : [];
+  const categories = Array.isArray(settingStore.categories) ? settingStore.categories : [];
   
   const { category } = useParams();
   const { t } = useTranslation();
@@ -28,57 +34,59 @@ const CategoryPage = () => {
   const [sortBy, setSortBy] = useState('popular');
   const [hasFetched, setHasFetched] = useState(false);
 
-  // تحسين: استخدام useCallback لمنع إعادة التحميل غير الضروري
+  // إصلاح: استخدام callback آمن
   const loadCategories = useCallback(async () => {
-    if (categories.length === 0 && !categoriesLoading) {
-      await fetchMetaData();
+    try {
+      if (categories.length === 0 && !categoriesLoading) {
+        await fetchMetaData();
+      }
+    } catch (error) {
+      console.error('Error loading categories:', error);
     }
   }, [categories.length, categoriesLoading, fetchMetaData]);
 
-  // تحسين: جلب التصنيفات مرة واحدة
+  // تحميل التصنيفات
   useEffect(() => {
     loadCategories();
   }, [loadCategories]);
 
-  // تحسين: منطق البحث عن التصنيف وجلب المنتجات
+  // البحث عن التصنيف وجلب المنتجات
   useEffect(() => {
     const findAndLoadCategory = async () => {
       if (!category || categories.length === 0 || hasFetched || categoryNotFound) {
         return;
       }
 
-      console.log('Searching for category:', category);
-      console.log('Available categories:', categories);
+      console.log('🔍 Searching for category:', category);
+      console.log('📁 Available categories:', categories);
 
-      // تحسين البحث عن التصنيف
-      const foundCategory = categories.find(c => {
-        if (!c || !c._id) return false;
-        
-        const categoryId = String(c._id).toLowerCase().trim();
-        const categorySlug = String(c.slug || '').toLowerCase().trim();
-        const categoryName = String(c.name || '').toLowerCase().trim();
-        const param = String(category || '').toLowerCase().trim();
-        
-        return categoryId === param || 
-               categorySlug === param || 
-               categoryName === param ||
-               categoryId.includes(param) ||
-               categoryName.includes(param);
-      });
+      try {
+        // البحث عن التصنيف
+        const foundCategory = categories.find(c => {
+          if (!c || !c._id) return false;
+          
+          const categoryId = String(c._id).toLowerCase().trim();
+          const categorySlug = String(c.slug || '').toLowerCase().trim();
+          const categoryName = String(c.name || '').toLowerCase().trim();
+          const param = String(category || '').toLowerCase().trim();
+          
+          return categoryId === param || 
+                 categorySlug === param || 
+                 categoryName === param;
+        });
 
-      if (foundCategory) {
-        console.log('Category found:', foundCategory);
-        try {
+        if (foundCategory) {
+          console.log('✅ Category found:', foundCategory);
           await fetchProductsByCategory(foundCategory._id);
           setCategoryNotFound(false);
           setHasFetched(true);
-        } catch (error) {
-          console.error('Error fetching products:', error);
+        } else {
+          console.log('❌ Category not found');
           setCategoryNotFound(true);
           setHasFetched(true);
         }
-      } else {
-        console.log('Category not found:', category);
+      } catch (error) {
+        console.error('❌ Error in category search:', error);
         setCategoryNotFound(true);
         setHasFetched(true);
       }
@@ -93,7 +101,7 @@ const CategoryPage = () => {
     setCategoryNotFound(false);
   }, [category]);
 
-  // تحسين البحث عن التصنيف الحالي
+  // البحث عن التصنيف الحالي
   const currentCategory = categories.find(c => {
     if (!c || !c._id) return false;
     
@@ -104,9 +112,7 @@ const CategoryPage = () => {
     
     return categoryId === param || 
            categorySlug === param || 
-           categoryName === param ||
-           categoryId.includes(param) ||
-           categoryName.includes(param);
+           categoryName === param;
   });
 
   const translatedCategoryName = currentCategory 
@@ -115,11 +121,12 @@ const CategoryPage = () => {
     ? t(`categories.${category}`, category.charAt(0)?.toUpperCase() + category?.slice(1))
     : t('categoryPage.unknownCategory');
 
-  // تحسين شروط التحميل
-  const isLoading = (categoriesLoading && categories.length === 0) || 
-                   (productsLoading && !hasFetched && !categoryNotFound);
+  // شروط التحميل المحسنة
+  const showLoading = 
+    (categoriesLoading && categories.length === 0) || 
+    (productsLoading && !hasFetched && !categoryNotFound);
 
-  if (isLoading) {
+  if (showLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
         <LoadingSpinner size="xl" />
@@ -187,6 +194,9 @@ const CategoryPage = () => {
       </div>
     );
   }
+
+  // إصلاح: تأكد من أن products مصفوفة
+  const displayProducts = Array.isArray(products) ? products : [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
@@ -267,7 +277,7 @@ const CategoryPage = () => {
         ) : (
           <>
             <AnimatePresence>
-              {(products.length === 0 && hasFetched) && (
+              {(displayProducts.length === 0 && hasFetched) && (
                 <motion.div 
                   className="text-center py-16"
                   initial={{ opacity: 0, scale: 0.8 }}
@@ -275,20 +285,13 @@ const CategoryPage = () => {
                   exit={{ opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
                 >
-                  {/* Floating Animation Container */}
+                  {/* No Products Animation */}
                   <motion.div
                     className="relative mb-8"
-                    animate={{ 
-                      y: [0, -10, 0],
-                    }}
-                    transition={{ 
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                   >
                     <div className="relative w-32 h-32 mx-auto">
-                      {/* Main Icon */}
                       <motion.div
                         className="w-32 h-32 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-full flex items-center justify-center shadow-2xl border border-purple-200/50 dark:border-purple-700/30"
                         whileHover={{ scale: 1.05 }}
@@ -296,40 +299,9 @@ const CategoryPage = () => {
                       >
                         <ShoppingBag className="w-16 h-16 text-purple-500 dark:text-purple-400" />
                       </motion.div>
-                      
-                      {/* Floating Particles */}
-                      <motion.div
-                        className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg"
-                        animate={{ 
-                          scale: [1, 1.2, 1],
-                          rotate: [0, 180, 360]
-                        }}
-                        transition={{ 
-                          duration: 4,
-                          repeat: Infinity,
-                          ease: "linear"
-                        }}
-                      >
-                        <Sparkles className="w-4 h-4 text-white" />
-                      </motion.div>
-                      
-                      <motion.div
-                        className="absolute -bottom-2 -left-2 w-6 h-6 bg-blue-400 rounded-full shadow-lg"
-                        animate={{ 
-                          scale: [1, 1.3, 1],
-                          y: [0, -5, 0]
-                        }}
-                        transition={{ 
-                          duration: 3,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                          delay: 0.5
-                        }}
-                      />
                     </div>
                   </motion.div>
 
-                  {/* Text Content */}
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -338,62 +310,30 @@ const CategoryPage = () => {
                     <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-purple-600 dark:from-white dark:to-purple-400 bg-clip-text text-transparent mb-4">
                       {t('categoryPage.noProducts')}
                     </h2>
-                    <p className="text-lg text-gray-600 dark:text-gray-300 mb-2 max-w-md mx-auto leading-relaxed">
+                    <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-md mx-auto leading-relaxed">
                       {t('categoryPage.noProductsDescription')}
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
-                      {t('categoryPage.noProductsHint')}
                     </p>
                   </motion.div>
 
-                  {/* Animated Back to Home Button */}
                   <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8, type: "spring", stiffness: 200 }}
+                    transition={{ delay: 0.8 }}
                   >
                     <Link
                       to='/'
-                      className="group inline-flex items-center gap-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-2xl transition-all duration-500 relative overflow-hidden"
+                      className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-2xl transition-all duration-300"
                     >
-                      {/* Background Shine Effect */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                      
-                      {/* Icon with Animation */}
-                      <motion.div
-                        className="flex items-center justify-center"
-                        whileHover={{ 
-                          scale: 1.1,
-                          rotate: -5
-                        }}
-                        transition={{ type: "spring", stiffness: 400 }}
-                      >
-                        <Home className="w-6 h-6" />
-                      </motion.div>
-                      
-                      {/* Text */}
-                      <span className="relative z-10 text-lg">
-                        {t("categoryPage.exploreOtherCategories")}
-                      </span>
-                      
-                      {/* Arrow with Animation */}
-                      <motion.div
-                        animate={{ x: [0, 5, 0] }}
-                        transition={{ 
-                          duration: 1.5, 
-                          repeat: Infinity,
-                          repeatType: "reverse"
-                        }}
-                      >
-                        <ArrowLeft className="w-5 h-5 transform rotate-180" />
-                      </motion.div>
+                      <Home className="w-5 h-5" />
+                      <span>{t("categoryPage.exploreOtherCategories")}</span>
+                      <ArrowLeft className="w-5 h-5 transform rotate-180" />
                     </Link>
                   </motion.div>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {products.length > 0 && (
+            {displayProducts.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -403,7 +343,7 @@ const CategoryPage = () => {
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
                   <div className="flex items-center gap-4">
                     <p className="text-gray-600 dark:text-gray-300">
-                      {t('categoryPage.productsCount', { count: products.length })}
+                      {t('categoryPage.productsCount', { count: displayProducts.length })}
                     </p>
                   </div>
                   
@@ -454,9 +394,9 @@ const CategoryPage = () => {
                   ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' 
                   : 'space-y-4'
                 }>
-                  {products.map((product, index) => (
+                  {displayProducts.map((product, index) => (
                     <motion.div
-                      key={product._id || index}
+                      key={product._id || `product-${index}`}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: index * 0.1 }}
