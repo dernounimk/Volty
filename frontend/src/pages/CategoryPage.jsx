@@ -28,35 +28,41 @@ const CategoryPage = () => {
   const [sortBy, setSortBy] = useState('popular');
   const [hasFetched, setHasFetched] = useState(false);
 
-  // إصلاح: استخدام useCallback لتجنب إعادة التحميل
+  // جلب البيانات الأساسية إذا لم تكن موجودة
   useEffect(() => {
     if (categories.length === 0 && !categoriesLoading) {
       fetchMetaData();
     }
   }, [categories.length, categoriesLoading, fetchMetaData]);
 
-useEffect(() => {
-  if (category && categories.length > 0 && !hasFetched) {
-    const foundCategory = categories.find(c => {
-      if (!c) return false;
-      return (
-        c._id === category || 
-        c.slug === category || 
-        c.name?.toLowerCase() === category?.toLowerCase()
-      );
-    });
+  // جلب المنتجات عند توفر الفئة
+  useEffect(() => {
+    if (category && categories.length > 0) {
+      const foundCategory = categories.find(c => {
+        if (!c) return false;
+        return (
+          c._id === category || 
+          c.slug === category || 
+          c.name?.toLowerCase() === category?.toLowerCase()
+        );
+      });
 
-    if (foundCategory) {
-      fetchProductsByCategory(foundCategory._id);
-      setCategoryNotFound(false);
-      setHasFetched(true);
-    } else {
-      setCategoryNotFound(true);
-      setHasFetched(true);
+      if (foundCategory && !hasFetched) {
+        fetchProductsByCategory(foundCategory._id);
+        setCategoryNotFound(false);
+        setHasFetched(true);
+      } else if (!foundCategory && !hasFetched) {
+        setCategoryNotFound(true);
+        setHasFetched(true);
+      }
     }
-  }
-}, [category, categories, hasFetched]); // ✔️ قم بإزالة fetchProductsByCategory
+  }, [category, categories, hasFetched, fetchProductsByCategory]);
 
+  // إعادة تعيين hasFetched عندما يتغير الـ category
+  useEffect(() => {
+    setHasFetched(false);
+    setCategoryNotFound(false);
+  }, [category]);
 
   const currentCategory = categories.find(c => {
     if (!c) return false;
@@ -71,8 +77,10 @@ useEffect(() => {
     ? t(`categories.${currentCategory.name}`, currentCategory.name)
     : t(`categories.${category}`, category?.charAt(0)?.toUpperCase() + category?.slice(1));
 
-  // إصلاح: تحسين شروط التحميل
-  if (categoriesLoading || (!hasFetched && !categoryNotFound)) {
+  // تحسين شروط التحميل
+  const isLoading = categoriesLoading || (!hasFetched && !categoryNotFound && categories.length > 0);
+
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
         <LoadingSpinner size="xl" />
