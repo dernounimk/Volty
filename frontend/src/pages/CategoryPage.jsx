@@ -1,132 +1,98 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useProductStore } from "../stores/useProductStore";
 import useSettingStore from "../stores/useSettingStore";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, ShoppingBag, Filter, Grid, List, Home, Sparkles } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeft, ShoppingBag, Filter, Grid, List, Home } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import { useTranslation } from "react-i18next";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const CategoryPage = () => {
-  // إصلاح: استخدام destructuring آمن
   const productStore = useProductStore();
   const settingStore = useSettingStore();
   
-  const { 
-    fetchProductsByCategory, 
-    isLoading: productsLoading 
-  } = productStore;
-  
-  const { 
-    fetchMetaData,
-    loadingMeta: categoriesLoading 
-  } = settingStore;
-  
-  // إصلاح: الحصول على البيانات بعد التأكد من وجودها
-  const products = Array.isArray(productStore.products) ? productStore.products : [];
-  const categories = Array.isArray(settingStore.categories) ? settingStore.categories : [];
-  
   const { category } = useParams();
   const { t } = useTranslation();
+  
+  // إصلاح: استخدام useState بشكل منفصل
   const [categoryNotFound, setCategoryNotFound] = useState(false);
-  const [viewMode, setViewMode] = useState('grid');
-  const [sortBy, setSortBy] = useState('popular');
+  const [viewMode, setViewMode] = useState("grid");
+  const [sortBy, setSortBy] = useState("popular");
   const [hasFetched, setHasFetched] = useState(false);
 
-  // إصلاح: استخدام callback آمن
-  const loadCategories = useCallback(async () => {
-    try {
-      if (categories.length === 0 && !categoriesLoading) {
-        await fetchMetaData();
-      }
-    } catch (error) {
-      console.error('Error loading categories:', error);
-    }
-  }, [categories.length, categoriesLoading, fetchMetaData]);
+  // الحصول على البيانات بشكل آمن
+  const products = Array.isArray(productStore.products) ? productStore.products : [];
+  const categories = Array.isArray(settingStore.categories) ? settingStore.categories : [];
+  const productsLoading = Boolean(productStore.isLoading);
+  const categoriesLoading = Boolean(settingStore.loadingMeta);
 
   // تحميل التصنيفات
   useEffect(() => {
-    loadCategories();
-  }, [loadCategories]);
+    if (categories.length === 0 && !categoriesLoading) {
+      settingStore.fetchMetaData?.();
+    }
+  }, [categories.length, categoriesLoading, settingStore]);
 
-  // البحث عن التصنيف وجلب المنتجات
+  // البحث عن التصنيف
   useEffect(() => {
-    const findAndLoadCategory = async () => {
-      if (!category || categories.length === 0 || hasFetched || categoryNotFound) {
-        return;
-      }
+    if (!category || categories.length === 0 || hasFetched || categoryNotFound) {
+      return;
+    }
 
-      console.log('🔍 Searching for category:', category);
-      console.log('📁 Available categories:', categories);
+    const categoryParam = String(category).toLowerCase().trim();
+    
+    const foundCategory = categories.find(cat => {
+      if (!cat || !cat._id) return false;
+      
+      const catId = String(cat._id).toLowerCase().trim();
+      const catName = String(cat.name || "").toLowerCase().trim();
+      const catSlug = String(cat.slug || "").toLowerCase().trim();
+      
+      return catId === categoryParam || 
+             catName === categoryParam || 
+             catSlug === categoryParam;
+    });
 
-      try {
-        // البحث عن التصنيف
-        const foundCategory = categories.find(c => {
-          if (!c || !c._id) return false;
-          
-          const categoryId = String(c._id).toLowerCase().trim();
-          const categorySlug = String(c.slug || '').toLowerCase().trim();
-          const categoryName = String(c.name || '').toLowerCase().trim();
-          const param = String(category || '').toLowerCase().trim();
-          
-          return categoryId === param || 
-                 categorySlug === param || 
-                 categoryName === param;
-        });
+    if (foundCategory) {
+      productStore.fetchProductsByCategory?.(foundCategory._id);
+      setCategoryNotFound(false);
+      setHasFetched(true);
+    } else {
+      setCategoryNotFound(true);
+      setHasFetched(true);
+    }
+  }, [category, categories, hasFetched, categoryNotFound, productStore]);
 
-        if (foundCategory) {
-          console.log('✅ Category found:', foundCategory);
-          await fetchProductsByCategory(foundCategory._id);
-          setCategoryNotFound(false);
-          setHasFetched(true);
-        } else {
-          console.log('❌ Category not found');
-          setCategoryNotFound(true);
-          setHasFetched(true);
-        }
-      } catch (error) {
-        console.error('❌ Error in category search:', error);
-        setCategoryNotFound(true);
-        setHasFetched(true);
-      }
-    };
-
-    findAndLoadCategory();
-  }, [category, categories, fetchProductsByCategory, hasFetched, categoryNotFound]);
-
-  // إعادة التعيين عند تغيير التصنيف
+  // إعادة التعيين عند تغيير المعلمة
   useEffect(() => {
     setHasFetched(false);
     setCategoryNotFound(false);
   }, [category]);
 
   // البحث عن التصنيف الحالي
-  const currentCategory = categories.find(c => {
-    if (!c || !c._id) return false;
+  const currentCategory = categories.find(cat => {
+    if (!cat || !cat._id) return false;
+    const categoryParam = String(category || "").toLowerCase().trim();
+    const catId = String(cat._id).toLowerCase().trim();
+    const catName = String(cat.name || "").toLowerCase().trim();
+    const catSlug = String(cat.slug || "").toLowerCase().trim();
     
-    const categoryId = String(c._id).toLowerCase().trim();
-    const categorySlug = String(c.slug || '').toLowerCase().trim();
-    const categoryName = String(c.name || '').toLowerCase().trim();
-    const param = String(category || '').toLowerCase().trim();
-    
-    return categoryId === param || 
-           categorySlug === param || 
-           categoryName === param;
+    return catId === categoryParam || 
+           catName === categoryParam || 
+           catSlug === categoryParam;
   });
 
   const translatedCategoryName = currentCategory 
     ? t(`categories.${currentCategory.name}`, currentCategory.name)
     : category
-    ? t(`categories.${category}`, category.charAt(0)?.toUpperCase() + category?.slice(1))
-    : t('categoryPage.unknownCategory');
+    ? t(`categories.${category}`, category)
+    : t("categoryPage.unknownCategory");
 
-  // شروط التحميل المحسنة
-  const showLoading = 
-    (categoriesLoading && categories.length === 0) || 
-    (productsLoading && !hasFetched && !categoryNotFound);
+  // شروط التحميل
+  const isLoading = (categoriesLoading && categories.length === 0) || 
+                   (productsLoading && !hasFetched);
 
-  if (showLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
         <LoadingSpinner size="xl" />
@@ -134,47 +100,11 @@ const CategoryPage = () => {
     );
   }
 
-  // حالة عدم وجود تصنيفات
-  if (!categoriesLoading && categories.length === 0) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="text-center"
-        >
-          <div className="w-32 h-32 bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900/20 dark:to-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <ShoppingBag className="w-12 h-12 text-orange-500" />
-          </div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            {t('categoryPage.noCategories')}
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-            {t('categoryPage.noCategoriesMessage')}
-          </p>
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-lg transition-all duration-300"
-          >
-            <ArrowLeft size={20} />
-            {t("categoryPage.backToHome")}
-          </Link>
-        </motion.div>
-      </div>
-    );
-  }
-
   if (categoryNotFound) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="text-center"
-        >
-          <div className="w-32 h-32 bg-gradient-to-r from-red-100 to-pink-100 dark:from-red-900/20 dark:to-pink-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="text-center">
+          <div className="w-32 h-32 bg-gradient-to-r from-red-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <ShoppingBag className="w-12 h-12 text-red-500" />
           </div>
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -185,18 +115,15 @@ const CategoryPage = () => {
           </p>
           <Link
             to="/"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-lg transition-all duration-300"
+            className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
           >
             <ArrowLeft size={20} />
             {t("categoryPage.backToHome")}
           </Link>
-        </motion.div>
+        </div>
       </div>
     );
   }
-
-  // إصلاح: تأكد من أن products مصفوفة
-  const displayProducts = Array.isArray(products) ? products : [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
@@ -213,206 +140,124 @@ const CategoryPage = () => {
         </nav>
 
         {/* Category Header */}
-        {currentCategory?.imageUrl && (
-          <motion.div
-            className="relative h-80 w-full mb-12 rounded-3xl overflow-hidden shadow-2xl"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
+        {currentCategory?.imageUrl ? (
+          <div className="relative h-64 w-full mb-8 rounded-xl overflow-hidden shadow-lg">
             <img
               src={currentCategory.imageUrl}
               alt={currentCategory.name}
               className="w-full h-full object-cover"
               onError={(e) => {
-                e.target.src = '/default-category.jpg';
+                e.target.style.display = 'none';
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-8">
-              <div className="text-white">
-                <motion.h1
-                  className="text-5xl sm:text-6xl font-bold mb-4"
-                  initial={{ y: 30, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                >
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
+              <div>
+                <h1 className="text-4xl font-bold text-white mb-2">
                   {translatedCategoryName}
-                </motion.h1>
+                </h1>
                 {currentCategory.description && (
-                  <motion.p
-                    className="text-xl text-gray-200 max-w-2xl"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.5 }}
-                  >
+                  <p className="text-gray-200">
                     {currentCategory.description}
-                  </motion.p>
+                  </p>
                 )}
               </div>
             </div>
-          </motion.div>
-        )}
-
-        {!currentCategory?.imageUrl && (
-          <motion.div
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <h1 className="text-5xl sm:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+          </div>
+        ) : (
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
               {translatedCategoryName}
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300">
+            <p className="text-gray-600 dark:text-gray-300">
               {t('categoryPage.subtitle')}
             </p>
-          </motion.div>
+          </div>
         )}
 
-        {/* Products Grid */}
-        {productsLoading && hasFetched ? (
+        {/* Products Section */}
+        {productsLoading ? (
           <div className="flex justify-center py-20">
             <LoadingSpinner size="xl" />
           </div>
-        ) : (
-          <>
-            <AnimatePresence>
-              {(displayProducts.length === 0 && hasFetched) && (
-                <motion.div 
-                  className="text-center py-16"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
+        ) : products.length > 0 ? (
+          <div>
+            {/* Controls */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+              <p className="text-gray-600 dark:text-gray-300">
+                {t('categoryPage.productsCount', { count: products.length })}
+              </p>
+              
+              <div className="flex items-center gap-4">
+                {/* View Toggle */}
+                <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className={`p-2 rounded ${viewMode === "grid" ? "bg-white dark:bg-gray-600 text-blue-600 shadow" : "text-gray-500"}`}
+                  >
+                    <Grid size={16} />
+                  </button>
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={`p-2 rounded ${viewMode === "list" ? "bg-white dark:bg-gray-600 text-blue-600 shadow" : "text-gray-500"}`}
+                  >
+                    <List size={16} />
+                  </button>
+                </div>
+
+                {/* Sort */}
+                <div className="flex items-center gap-2">
+                  <Filter size={16} className="text-gray-500" />
+                  <select 
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="popular">{t('categoryPage.sortOptions.popular')}</option>
+                    <option value="newest">{t('categoryPage.sortOptions.newest')}</option>
+                    <option value="priceLow">{t('categoryPage.sortOptions.priceLow')}</option>
+                    <option value="priceHigh">{t('categoryPage.sortOptions.priceHigh')}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Products Grid */}
+            <div className={viewMode === "grid" 
+              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" 
+              : "space-y-4"
+            }>
+              {products.map((product, index) => (
+                <div
+                  key={product._id || `product-${index}`}
+                  className={viewMode === "list" ? "bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700" : ""}
                 >
-                  {/* No Products Animation */}
-                  <motion.div
-                    className="relative mb-8"
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                  >
-                    <div className="relative w-32 h-32 mx-auto">
-                      <motion.div
-                        className="w-32 h-32 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-full flex items-center justify-center shadow-2xl border border-purple-200/50 dark:border-purple-700/30"
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ type: "spring", stiffness: 300 }}
-                      >
-                        <ShoppingBag className="w-16 h-16 text-purple-500 dark:text-purple-400" />
-                      </motion.div>
-                    </div>
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6 }}
-                  >
-                    <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-purple-600 dark:from-white dark:to-purple-400 bg-clip-text text-transparent mb-4">
-                      {t('categoryPage.noProducts')}
-                    </h2>
-                    <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-md mx-auto leading-relaxed">
-                      {t('categoryPage.noProductsDescription')}
-                    </p>
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.8 }}
-                  >
-                    <Link
-                      to='/'
-                      className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-2xl transition-all duration-300"
-                    >
-                      <Home className="w-5 h-5" />
-                      <span>{t("categoryPage.exploreOtherCategories")}</span>
-                      <ArrowLeft className="w-5 h-5 transform rotate-180" />
-                    </Link>
-                  </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {displayProducts.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                {/* Controls Bar */}
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center gap-4">
-                    <p className="text-gray-600 dark:text-gray-300">
-                      {t('categoryPage.productsCount', { count: displayProducts.length })}
-                    </p>
-                  </div>
-                  
-                  <div className="flex items-center gap-4">
-                    {/* View Mode Toggle */}
-                    <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-2xl p-1">
-                      <button
-                        onClick={() => setViewMode('grid')}
-                        className={`p-2 rounded-xl transition-all ${
-                          viewMode === 'grid' 
-                            ? 'bg-white dark:bg-gray-600 shadow-sm text-blue-600' 
-                            : 'text-gray-500 dark:text-gray-400'
-                        }`}
-                      >
-                        <Grid className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => setViewMode('list')}
-                        className={`p-2 rounded-xl transition-all ${
-                          viewMode === 'list' 
-                            ? 'bg-white dark:bg-gray-600 shadow-sm text-blue-600' 
-                            : 'text-gray-500 dark:text-gray-400'
-                        }`}
-                      >
-                        <List className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    {/* Sort Dropdown */}
-                    <div className="flex items-center gap-2">
-                      <Filter className="w-4 h-4 text-gray-500" />
-                      <select 
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                        className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-2xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white"
-                      >
-                        <option value="popular">{t('categoryPage.sortOptions.popular')}</option>
-                        <option value="newest">{t('categoryPage.sortOptions.newest')}</option>
-                        <option value="priceLow">{t('categoryPage.sortOptions.priceLow')}</option>
-                        <option value="priceHigh">{t('categoryPage.sortOptions.priceHigh')}</option>
-                      </select>
-                    </div>
-                  </div>
+                  <ProductCard 
+                    product={product} 
+                    viewMode={viewMode}
+                  />
                 </div>
-
-                {/* Products Grid/List */}
-                <div className={viewMode === 'grid' 
-                  ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' 
-                  : 'space-y-4'
-                }>
-                  {displayProducts.map((product, index) => (
-                    <motion.div
-                      key={product._id || `product-${index}`}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
-                      className={viewMode === 'list' ? 'bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700' : ''}
-                    >
-                      <ProductCard 
-                        product={product} 
-                        categoryName={currentCategory?.name}
-                        viewMode={viewMode}
-                      />
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="text-center py-16">
+            <div className="w-24 h-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
+              <ShoppingBag className="w-12 h-12 text-gray-400" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              {t('categoryPage.noProducts')}
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-md mx-auto">
+              {t('categoryPage.noProductsDescription')}
+            </p>
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            >
+              <Home size={20} />
+              {t("categoryPage.backToHome")}
+            </Link>
+          </div>
         )}
       </div>
     </div>
