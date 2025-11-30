@@ -165,7 +165,7 @@ const ShippingInfoPage = () => {
       : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen dark:from-gray-900 dark:to-blue-900 py-8 px-4 sm:px-6 lg:px-8">
       {cart.length === 0 ? (
         <EmptyCartUI t={t} />
       ) : (

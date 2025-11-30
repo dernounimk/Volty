@@ -44,7 +44,7 @@ const FeaturedProducts = ({ featured }) => {
 
   if (isLoading) {
     return (
-      <div className="min-h-96 flex items-center justify-center">
+      <div className="min-h-96 flex items-center justify-center pt-24">
         <LoadingSpinner />
       </div>
     );
@@ -53,7 +53,7 @@ const FeaturedProducts = ({ featured }) => {
   if (!featured || featured.length === 0) {
     return (
       <motion.div
-        className="text-center py-20 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-blue-900/20 rounded-3xl"
+        className="text-center py-20 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 mt-24"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -122,35 +122,14 @@ const FeaturedProducts = ({ featured }) => {
     }
   };
 
-  const slideVariants = {
-    enter: (direction) => ({
-      x: direction > 0 ? 300 : -300,
-      opacity: 0
-    }),
-    center: {
-      x: 0,
-      opacity: 1
-    },
-    exit: (direction) => ({
-      x: direction < 0 ? 300 : -300,
-      opacity: 0
-    })
-  };
-
   return (
     <motion.section
-      className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900/20 rounded-3xl p-6 md:p-8 lg:p-12 shadow-2xl border border-gray-200/50 dark:border-gray-700/50"
+      className="relative pt-24 pb-16 px-4"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
       variants={containerVariants}
     >
-      {/* Background Decoration */}
-      <div className="absolute inset-0 overflow-hidden rounded-3xl">
-        <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-200/30 dark:bg-blue-400/10 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-purple-200/30 dark:bg-purple-400/10 rounded-full blur-3xl"></div>
-      </div>
-
       {/* Header */}
       <motion.div
         className="text-center mb-12 relative z-10"
@@ -167,31 +146,25 @@ const FeaturedProducts = ({ featured }) => {
           </span>
           <Zap className="w-5 h-5" />
         </motion.div>
-        
-        <motion.h2 
-          className="text-4xl sm:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 via-blue-600 to-purple-600 dark:from-white dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-6"
-          whileInView={{ scale: [0.9, 1] }}
-          transition={{ duration: 0.5 }}
-        >
-          {t("featured.title")}
-        </motion.h2>
-        
-        <motion.p 
-          className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed"
-          variants={itemVariants}
-        >
-          {t("featured.subtitle")}
-        </motion.p>
+
+               <div className="text-center mb-12">
+                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                  {t("homepage.featuredProducts")}
+                </h2>
+                <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                  {t("homepage.featuredDescription")}
+                </p>
+              </div>
       </motion.div>
 
       {/* Carousel Container */}
-      <div className="relative">
+      <div className="relative max-w-7xl mx-auto">
         {/* Navigation Buttons */}
         {!isStartDisabled && (
           <>
             <motion.button
               onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-300/50 dark:border-gray-600/50 rounded-2xl shadow-2xl flex items-center justify-center hover:bg-white dark:hover:bg-gray-700 transition-all duration-300 z-20"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-300 dark:border-gray-600 rounded-2xl shadow-lg flex items-center justify-center hover:bg-white dark:hover:bg-gray-700 transition-all duration-300 z-20"
               whileHover={{ 
                 scale: 1.15,
                 x: -2
@@ -205,7 +178,7 @@ const FeaturedProducts = ({ featured }) => {
 
             <motion.button
               onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-300/50 dark:border-gray-600/50 rounded-2xl shadow-2xl flex items-center justify-center hover:bg-white dark:hover:bg-gray-700 transition-all duration-300 z-20"
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-300 dark:border-gray-600 rounded-2xl shadow-lg flex items-center justify-center hover:bg-white dark:hover:bg-gray-700 transition-all duration-300 z-20"
               whileHover={{ 
                 scale: 1.15,
                 x: 2
@@ -307,12 +280,12 @@ const FeaturedProducts = ({ featured }) => {
       {/* Progress Bar */}
       {!isStartDisabled && isAutoPlaying && (
         <motion.div 
-          className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1 mt-6 overflow-hidden"
+          className="w-full max-w-7xl mx-auto rounded-full h-1 mt-6 overflow-hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
           <motion.div
-            className="h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"
+            className="h-full rounded-full"
             initial={{ width: "0%" }}
             animate={{ width: "100%" }}
             transition={{ 

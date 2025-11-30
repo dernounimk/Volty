@@ -30,7 +30,7 @@ const NotFoundPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
+    <div className="min-h-screen flex items-center justify-center px-6 dark:from-gray-900 dark:to-blue-900">
       <motion.div
         className="max-w-2xl w-full text-center"
         variants={containerVariants}
@@ -60,7 +60,7 @@ const NotFoundPage = () => {
                 }}
                 className="text-8xl mb-4"
               >
-                👻
+                <Ghost className="w-6 h-6 text-purple-500" />
               </motion.div>
               <motion.div
                 initial={{ scale: 0 }}

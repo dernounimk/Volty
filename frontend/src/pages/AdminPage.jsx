@@ -55,7 +55,7 @@ const AdminPage = () => {
 
   if (checkingAuth) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
+      <div className="min-h-screen flex items-center justify-center dark:from-gray-900 dark:to-blue-900">
         <LoadingSpinner size="xl" />
       </div>
     );
@@ -64,7 +64,7 @@ const AdminPage = () => {
   if (!admin) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
+    <div className="min-h-screen dark:from-gray-900 dark:to-blue-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <motion.div

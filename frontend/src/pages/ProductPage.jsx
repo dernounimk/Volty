@@ -164,7 +164,7 @@ const ProductPage = () => {
 
   if (!product) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
+      <div className="flex justify-center items-center min-h-screen dark:from-gray-900 dark:to-blue-900">
         <div className="text-center">
           <div className="text-6xl mb-4">😔</div>
           <p className="text-xl text-gray-600 dark:text-gray-300">{t("product.notFound")}</p>
@@ -227,7 +227,7 @@ const ProductPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen dark:from-gray-900 dark:to-blue-900 py-8 px-4 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
       <nav className="max-w-7xl mx-auto mb-8">
         <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
@@ -320,12 +320,6 @@ const ProductPage = () => {
             <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
               {product.name}
             </h1>
-            <div className="flex items-center gap-4 mb-4">
-              <StarRating rating={product.averageRating || 0} />
-              <span className="text-gray-600 dark:text-gray-300">
-                ({product.numReviews || 0} {t("product.reviews")})
-              </span>
-            </div>
             <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
               {product.description}
             </p>

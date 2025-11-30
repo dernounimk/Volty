@@ -1,8 +1,8 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useProductStore } from "../stores/useProductStore";
 import useSettingStore from "../stores/useSettingStore";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, ShoppingBag, Filter, Grid, List, Home, Sparkles } from "lucide-react";
+import { ArrowLeft, ShoppingBag, Grid, List, Home, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "../components/ProductCard";
 import { useTranslation } from "react-i18next";
@@ -23,29 +23,20 @@ const CategoryPage = () => {
   
   const { category } = useParams();
   const { t } = useTranslation();
-  
-  // ✅ إصلاح useState - استخدام دالة تهيئة
-  const [categoryNotFound, setCategoryNotFound] = useState(() => false);
-  const [viewMode, setViewMode] = useState(() => 'grid');
-  const [sortBy, setSortBy] = useState(() => 'popular');
-  const [hasFetched, setHasFetched] = useState(() => false);
+  const [categoryNotFound, setCategoryNotFound] = useState(false);
+  const [viewMode, setViewMode] = useState('grid');
+  const [hasFetched, setHasFetched] = useState(false);
 
-  // ✅ استخدام useCallback لمنع إعادة التصيير غير الضرورية
-  const initializeStates = useCallback(() => {
-    setHasFetched(false);
-    setCategoryNotFound(false);
-  }, []);
-
-  // جلب البيانات الأساسية إذا لم تكن موجودة
+  // إصلاح: استخدام useCallback لتجنب إعادة التحميل
   useEffect(() => {
     if (categories.length === 0 && !categoriesLoading) {
       fetchMetaData();
     }
   }, [categories.length, categoriesLoading, fetchMetaData]);
 
-  // جلب المنتجات عند توفر الفئة
+  // إصلاح: تحسين منطق البحث عن التصنيف
   useEffect(() => {
-    if (category && categories.length > 0) {
+    if (category && categories.length > 0 && !hasFetched) {
       const foundCategory = categories.find(c => {
         if (!c) return false;
         return (
@@ -55,21 +46,16 @@ const CategoryPage = () => {
         );
       });
 
-      if (foundCategory && !hasFetched) {
+      if (foundCategory) {
         fetchProductsByCategory(foundCategory._id);
         setCategoryNotFound(false);
         setHasFetched(true);
-      } else if (!foundCategory && !hasFetched) {
+      } else {
         setCategoryNotFound(true);
         setHasFetched(true);
       }
     }
-  }, [category, categories, hasFetched, fetchProductsByCategory]);
-
-  // ✅ إصلاح: استخدام دالة واضحة لإعادة التعيين
-  useEffect(() => {
-    initializeStates();
-  }, [category, initializeStates]);
+  }, [category, categories, fetchProductsByCategory, hasFetched]);
 
   const currentCategory = categories.find(c => {
     if (!c) return false;
@@ -82,19 +68,12 @@ const CategoryPage = () => {
 
   const translatedCategoryName = currentCategory 
     ? t(`categories.${currentCategory.name}`, currentCategory.name)
-    : category 
-      ? t(`categories.${category}`, category.charAt(0)?.toUpperCase() + category?.slice(1))
-      : '';
+    : t(`categories.${category}`, category?.charAt(0)?.toUpperCase() + category?.slice(1));
 
-  // ✅ تحسين شروط التحميل مع التحقق من القيم
-  const isLoading = categoriesLoading || 
-                   (!hasFetched && !categoryNotFound && categories.length > 0) ||
-                   !Array.isArray(products);
-
-  // ✅ إضافة تحقق إضافي لمنع الأخطاء
-  if (isLoading) {
+  // إصلاح: تحسين شروط التحميل
+  if (categoriesLoading || (!hasFetched && !categoryNotFound)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
+      <div className="min-h-screen flex items-center justify-center dark:from-gray-900 dark:to-blue-900">
         <LoadingSpinner size="xl" />
       </div>
     );
@@ -102,7 +81,7 @@ const CategoryPage = () => {
 
   if (categoryNotFound) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
+      <div className="min-h-screen flex flex-col items-center justify-center dark:from-gray-900 dark:to-blue-900">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -130,11 +109,8 @@ const CategoryPage = () => {
     );
   }
 
-  // ✅ التحقق من أن products مصفوفة قبل استخدام .map
-  const safeProducts = Array.isArray(products) ? products : [];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900">
+    <div className="min-h-screen dark:from-gray-900 dark:to-blue-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-8">
@@ -212,7 +188,7 @@ const CategoryPage = () => {
         ) : (
           <>
             <AnimatePresence>
-              {(safeProducts.length === 0) && (
+              {(products.length === 0) && (
                 <motion.div 
                   className="text-center py-16"
                   initial={{ opacity: 0, scale: 0.8 }}
@@ -338,7 +314,7 @@ const CategoryPage = () => {
               )}
             </AnimatePresence>
 
-            {safeProducts.length > 0 && (
+            {products.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -348,7 +324,7 @@ const CategoryPage = () => {
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
                   <div className="flex items-center gap-4">
                     <p className="text-gray-600 dark:text-gray-300">
-                      {t('categoryPage.productsCount', { count: safeProducts.length })}
+                      {t('categoryPage.productsCount', { count: products.length })}
                     </p>
                   </div>
                   
@@ -376,21 +352,6 @@ const CategoryPage = () => {
                         <List className="w-4 h-4" />
                       </button>
                     </div>
-
-                    {/* Sort Dropdown */}
-                    <div className="flex items-center gap-2">
-                      <Filter className="w-4 h-4 text-gray-500" />
-                      <select 
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                        className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-2xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white"
-                      >
-                        <option value="popular">{t('categoryPage.sortOptions.popular')}</option>
-                        <option value="newest">{t('categoryPage.sortOptions.newest')}</option>
-                        <option value="priceLow">{t('categoryPage.sortOptions.priceLow')}</option>
-                        <option value="priceHigh">{t('categoryPage.sortOptions.priceHigh')}</option>
-                      </select>
-                    </div>
                   </div>
                 </div>
 
@@ -399,9 +360,9 @@ const CategoryPage = () => {
                   ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' 
                   : 'space-y-4'
                 }>
-                  {safeProducts.map((product, index) => (
+                  {products.map((product, index) => (
                     <motion.div
-                      key={product._id || `product-${index}`}
+                      key={product._id || index}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: index * 0.1 }}

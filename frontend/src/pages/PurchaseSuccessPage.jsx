@@ -1,4 +1,4 @@
-import { ArrowRight, CheckCircle, HandHeart, Truck, Copy, ShoppingBag } from "lucide-react";
+import { ArrowRight, CheckCircle, HandHeart, Truck, Copy, ShoppingBag, Coins } from "lucide-react";
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useCartStore } from "../stores/useCartStore";
@@ -59,7 +59,7 @@ const PurchaseSuccessPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-900 dark:to-emerald-900 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center py-5 dark:from-gray-900 dark:to-emerald-900 relative overflow-hidden">
       <Confetti
         width={window.innerWidth}
         height={window.innerHeight}
@@ -161,7 +161,7 @@ const PurchaseSuccessPage = () => {
               {/* Payment Method */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                  <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+                  <Coins className="w-4 h-4" />
                   <span className="text-sm font-medium">
                     {t("purchaseSuccess.paymentMethod")}
                   </span>
@@ -202,16 +202,6 @@ const PurchaseSuccessPage = () => {
               <ArrowRight className={isRTL ? "mr-2" : "ml-2"} size={20} />
             </Link>
           </motion.div>
-
-          {/* Additional Info */}
-          <motion.p
-            className="text-center text-gray-500 dark:text-gray-400 text-sm mt-6"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
-          >
-            {t("purchaseSuccess.additionalInfo")}
-          </motion.p>
         </div>
       </motion.div>
     </div>

@@ -31,7 +31,7 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center dark:from-gray-900 dark:to-blue-900 px-4 sm:px-6 lg:px-8">
       <motion.div
         className="max-w-md w-full space-y-8"
         initial={{ opacity: 0, scale: 0.9 }}
@@ -172,18 +172,6 @@ const AdminLogin = () => {
               {t("adminLogin.backToHome")}
             </Link>
           </motion.div>
-        </motion.div>
-
-        {/* Security Note */}
-        <motion.div
-          className="text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 1 }}
-        >
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            {t("adminLogin.securityNote")}
-          </p>
         </motion.div>
       </motion.div>
     </div>

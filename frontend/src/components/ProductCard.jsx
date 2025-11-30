@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 
-const ProductCard = ({ product, onFavoriteToggle }) => {
+const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid' }) => {
   const { t } = useTranslation();
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -39,15 +39,140 @@ const ProductCard = ({ product, onFavoriteToggle }) => {
     // هنا يمكنك إضافة منطق إضافة المنتج للسلة
     toast.success(t("addedToCart"));
   };
-  
+
+  // Grid View Layout
+  if (viewMode === 'grid') {
+    return (
+      <div dir="ltr" className="h-full flex">
+        <Link
+          to={`/product/${product._id}`}
+          className="group flex flex-col bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-blue-300 dark:hover:border-blue-700 h-full w-full max-w-[340px] mx-auto backdrop-blur-sm"
+        >
+          {/* صورة المنتج مع العلامات */}
+          <div className="relative w-full h-60 overflow-hidden">
+            <img
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              src={
+                Array.isArray(product.images) && product.images.length > 0
+                  ? product.images[0]
+                  : product.image
+              }
+              alt={product.name}
+            />
+
+            {/* طبقة تدرج على الصورة */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+            {/* علامة التخفيض */}
+            {product.priceBeforeDiscount &&
+              product.priceBeforeDiscount > (product.priceAfterDiscount ?? product.priceBeforeDiscount) && (
+                <div className="absolute top-3 left-3 bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1.5 rounded-xl text-sm font-bold shadow-lg">
+                  {Math.round(
+                    100 -
+                      ((product.priceAfterDiscount ?? product.priceBeforeDiscount) /
+                        product.priceBeforeDiscount) *
+                        100
+                  )}
+                  % OFF
+                </div>
+              )}
+
+            {/* زر المفضلة */}
+            <button
+              onClick={toggleFavorite}
+              className={`absolute top-3 right-3 rounded-xl p-2.5 flex items-center justify-center transition-all duration-200 backdrop-blur-sm ${
+                isFavorite
+                  ? "bg-gradient-to-r from-pink-500 to-red-500 text-white shadow-lg scale-110"
+                  : "bg-black/40 text-white hover:bg-black/60 hover:scale-110"
+              }`}
+            >
+              <Heart size={20} fill={isFavorite ? "currentColor" : "none"} />
+            </button>
+
+            {/* زر إضافة إلى السلة */}
+            <button
+              onClick={addToCart}
+              className="absolute bottom-3 right-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl p-2.5 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:shadow-lg hover:scale-110"
+            >
+              <ShoppingBag size={20} />
+            </button>
+          </div>
+
+          {/* تفاصيل المنتج */}
+          <div className="flex flex-col flex-grow p-5">
+            <div className="mb-4 flex-grow">
+              <h5 className="text-gray-900 dark:text-white text-lg font-semibold mb-3 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                {product.name}
+              </h5>
+
+              {/* تقييم المنتج */}
+              <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => {
+                    const rating = product.averageRating || 0;
+                    const full = i + 1 <= Math.floor(rating);
+                    const half = i < rating && i + 1 > rating;
+                    return (
+                      <Star
+                        key={i}
+                        size={16}
+                        className={`${
+                          full 
+                            ? "text-yellow-400 fill-yellow-400" 
+                            : half 
+                              ? "text-yellow-400 fill-yellow-400 fill-opacity-50" 
+                              : "text-gray-300 dark:text-gray-600"
+                        }`}
+                        fill="currentColor"
+                      />
+                    );
+                  })}
+                </div>
+                <span className="text-sm text-gray-500 dark:text-gray-400">
+                  ({product.reviewCount || 0})
+                </span>
+              </div>
+            </div>
+
+            {/* سعر المنتج */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-900 dark:text-white text-xl font-bold">
+                  {product.priceAfterDiscount ?? product.priceBeforeDiscount} DA
+                </span>
+
+                {product.priceBeforeDiscount &&
+                  product.priceBeforeDiscount >
+                    (product.priceAfterDiscount ?? product.priceBeforeDiscount) && (
+                    <span className="text-gray-500 dark:text-gray-400 text-sm line-through opacity-70">
+                      {product.priceBeforeDiscount} DA
+                    </span>
+                  )}
+              </div>
+
+              {/* زر سريع للإضافة إلى السلة (للشاشات الصغيرة) */}
+              <button
+                onClick={addToCart}
+                className="lg:hidden bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl p-2.5 hover:shadow-lg transition-all duration-200"
+              >
+                <ShoppingCart size={18} />
+              </button>
+            </div>
+          </div>
+        </Link>
+      </div>
+    );
+  }
+
+  // List View Layout
   return (
     <div dir="ltr" className="h-full flex">
       <Link
         to={`/product/${product._id}`}
-        className="group flex flex-col bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-blue-300 dark:hover:border-blue-700 h-full w-full max-w-[340px] mx-auto backdrop-blur-sm"
+        className="group flex bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-blue-300 dark:hover:border-blue-700 h-full w-full backdrop-blur-sm"
       >
-        {/* صورة المنتج مع العلامات */}
-        <div className="relative w-full h-60 overflow-hidden">
+        {/* صورة المنتج */}
+        <div className="relative w-48 h-48 overflow-hidden flex-shrink-0">
           <img
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             src={
@@ -74,86 +199,86 @@ const ProductCard = ({ product, onFavoriteToggle }) => {
                 % OFF
               </div>
             )}
-
-          {/* زر المفضلة */}
-          <button
-            onClick={toggleFavorite}
-            className={`absolute top-3 right-3 rounded-xl p-2.5 flex items-center justify-center transition-all duration-200 backdrop-blur-sm ${
-              isFavorite
-                ? "bg-gradient-to-r from-pink-500 to-red-500 text-white shadow-lg scale-110"
-                : "bg-black/40 text-white hover:bg-black/60 hover:scale-110"
-            }`}
-          >
-            <Heart size={20} fill={isFavorite ? "currentColor" : "none"} />
-          </button>
-
-          {/* زر إضافة إلى السلة */}
-          <button
-            onClick={addToCart}
-            className="absolute bottom-3 right-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl p-2.5 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:shadow-lg hover:scale-110"
-          >
-            <ShoppingBag size={20} />
-          </button>
         </div>
 
         {/* تفاصيل المنتج */}
-        <div className="flex flex-col flex-grow p-5">
-          <div className="mb-4 flex-grow">
-            <h5 className="text-gray-900 dark:text-white text-lg font-semibold mb-3 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+        <div className="flex flex-col flex-grow p-6">
+          <div className="flex justify-between items-start mb-3">
+            <h5 className="text-gray-900 dark:text-white text-xl font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors flex-grow pr-4">
               {product.name}
             </h5>
 
-            {/* تقييم المنتج */}
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex items-center gap-1">
-                {[...Array(5)].map((_, i) => {
-                  const rating = product.averageRating || 0;
-                  const full = i + 1 <= Math.floor(rating);
-                  const half = i < rating && i + 1 > rating;
-                  return (
-                    <Star
-                      key={i}
-                      size={16}
-                      className={`${
-                        full 
-                          ? "text-yellow-400 fill-yellow-400" 
-                          : half 
-                            ? "text-yellow-400 fill-yellow-400 fill-opacity-50" 
-                            : "text-gray-300 dark:text-gray-600"
-                      }`}
-                      fill="currentColor"
-                    />
-                  );
-                })}
-              </div>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                ({product.reviewCount || 0})
-              </span>
-            </div>
+            {/* زر المفضلة */}
+            <button
+              onClick={toggleFavorite}
+              className={`rounded-xl p-2.5 flex items-center justify-center transition-all duration-200 ${
+                isFavorite
+                  ? "bg-gradient-to-r from-pink-500 to-red-500 text-white shadow-lg scale-110"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-110"
+              }`}
+            >
+              <Heart size={20} fill={isFavorite ? "currentColor" : "none"} />
+            </button>
           </div>
 
-          {/* سعر المنتج */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-gray-900 dark:text-white text-xl font-bold">
+          {/* تقييم المنتج */}
+          <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-1">
+              {[...Array(5)].map((_, i) => {
+                const rating = product.averageRating || 0;
+                const full = i + 1 <= Math.floor(rating);
+                const half = i < rating && i + 1 > rating;
+                return (
+                  <Star
+                    key={i}
+                    size={18}
+                    className={`${
+                      full 
+                        ? "text-yellow-400 fill-yellow-400" 
+                        : half 
+                          ? "text-yellow-400 fill-yellow-400 fill-opacity-50" 
+                          : "text-gray-300 dark:text-gray-600"
+                    }`}
+                    fill="currentColor"
+                  />
+                );
+              })}
+            </div>
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              ({product.reviewCount || 0})
+            </span>
+          </div>
+
+          {/* الوصف (اختياري) */}
+          {product.description && (
+            <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2 flex-grow">
+              {product.description}
+            </p>
+          )}
+
+          {/* سعر المنتج وأزرار الإجراء */}
+          <div className="flex items-center justify-between mt-auto">
+            <div className="flex items-center gap-3">
+              <span className="text-gray-900 dark:text-white text-2xl font-bold">
                 {product.priceAfterDiscount ?? product.priceBeforeDiscount} DA
               </span>
 
               {product.priceBeforeDiscount &&
                 product.priceBeforeDiscount >
                   (product.priceAfterDiscount ?? product.priceBeforeDiscount) && (
-                  <span className="text-gray-500 dark:text-gray-400 text-sm line-through opacity-70">
+                  <span className="text-gray-500 dark:text-gray-400 text-lg line-through opacity-70">
                     {product.priceBeforeDiscount} DA
                   </span>
                 )}
             </div>
 
-            {/* زر سريع للإضافة إلى السلة (للشاشات الصغيرة) */}
+            {/* زر إضافة إلى السلة */}
             <button
               onClick={addToCart}
-              className="lg:hidden bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl p-2.5 hover:shadow-lg transition-all duration-200"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl px-6 py-3 hover:shadow-lg transition-all duration-200 flex items-center gap-2"
             >
-              <ShoppingCart size={18} />
+              <ShoppingBag size={20} />
+              <span className="font-semibold">{t("addToCart")}</span>
             </button>
           </div>
         </div>

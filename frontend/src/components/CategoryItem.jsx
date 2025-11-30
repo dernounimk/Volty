@@ -40,21 +40,12 @@ const CategoryItem = ({ category, href, index = 0 }) => {
   return (
     <motion.div
       className="group relative overflow-hidden rounded-3xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 border border-gray-200/50 dark:border-gray-700/50"
-      initial={{ opacity: 0, y: 30, scale: 0.9 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
       whileHover={{ 
         scale: 1.03, 
         y: -8,
         transition: { type: "spring", stiffness: 400, damping: 25 }
       }}
       whileTap={{ scale: 0.98 }}
-      transition={{ 
-        duration: 0.6, 
-        delay: index * 0.1,
-        type: "spring", 
-        stiffness: 300, 
-        damping: 25 
-      }}
     >
       <Link to={categoryHref} className="block h-full">
         <div className="relative h-72 w-full cursor-pointer overflow-hidden rounded-3xl">
@@ -68,14 +59,11 @@ const CategoryItem = ({ category, href, index = 0 }) => {
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 z-10" />
           
           {/* صورة التصنيف */}
-          <motion.img
+          <img
             src={imageUrl}
             alt={translatedName}
             className="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-110"
             loading="lazy"
-            initial={{ scale: 1.1 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.8 }}
             onError={(e) => {
               e.target.src = '/default-category.jpg';
             }}
@@ -86,25 +74,15 @@ const CategoryItem = ({ category, href, index = 0 }) => {
             {/* العنوان والأيقونة */}
             <div className="flex items-start justify-between">
               <div className="flex-1 space-y-2">
-                <motion.h3 
-                  className="text-white text-2xl lg:text-3xl font-bold drop-shadow-2xl leading-tight"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 + 0.2 }}
-                >
+                <h3 className="text-white text-2xl lg:text-3xl font-bold drop-shadow-2xl leading-tight">
                   {translatedName}
-                </motion.h3>
+                </h3>
                 
                 {/* وصف التصنيف (إذا وجد) */}
                 {fullCategory?.description && (
-                  <motion.p 
-                    className="text-white/80 text-sm leading-relaxed line-clamp-2 drop-shadow-lg"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: index * 0.1 + 0.3 }}
-                  >
+                  <p className="text-white/80 text-sm leading-relaxed line-clamp-2 drop-shadow-lg">
                     {fullCategory.description}
-                  </motion.p>
+                  </p>
                 )}
               </div>
               
@@ -116,9 +94,6 @@ const CategoryItem = ({ category, href, index = 0 }) => {
                   rotate: isRTL ? -5 : 5,
                   transition: { type: "spring", stiffness: 500 }
                 }}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.1 + 0.4 }}
               >
                 <ArrowRight className={`w-6 h-6 text-white ${isRTL ? 'rotate-180' : ''}`} />
               </motion.div>
@@ -129,49 +104,34 @@ const CategoryItem = ({ category, href, index = 0 }) => {
               <div className="flex items-center gap-4">
                 {/* عدد المنتجات */}
                 {fullCategory?.productCount !== undefined && (
-                  <motion.div 
-                    className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 + 0.5 }}
-                  >
+                  <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5">
                     <ShoppingBag className="w-4 h-4 text-white" />
                     <span className="text-white text-sm font-medium">
                       {t("category.productsCount", { count: fullCategory.productCount })}
                     </span>
-                  </motion.div>
+                  </div>
                 )}
                 
                 {/* التصنيف المميز */}
                 {fullCategory?.featured && (
-                  <motion.div 
-                    className="flex items-center gap-2 bg-amber-500/20 backdrop-blur-sm rounded-full px-3 py-1.5"
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: index * 0.1 + 0.6 }}
-                  >
+                  <div className="flex items-center gap-2 bg-amber-500/20 backdrop-blur-sm rounded-full px-3 py-1.5">
                     <Star className="w-4 h-4 text-amber-400" />
                     <span className="text-amber-400 text-sm font-medium">
                       {t("category.featured")}
                     </span>
-                  </motion.div>
+                  </div>
                 )}
               </div>
               
               {/* مؤشر النشاط */}
-              <motion.div 
-                className="flex items-center gap-2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 + 0.7 }}
-              >
+              <div className="flex items-center gap-2">
                 {fullCategory?.trending && (
                   <TrendingUp className="w-4 h-4 text-green-400" />
                 )}
                 {fullCategory?.recent && (
                   <Clock className="w-4 h-4 text-blue-400" />
                 )}
-              </motion.div>
+              </div>
             </div>
           </div>
 
@@ -184,7 +144,7 @@ const CategoryItem = ({ category, href, index = 0 }) => {
       </Link>
 
       {/* تأثير ظل متحرك */}
-      <motion.div 
+      <div 
         className="absolute inset-0 rounded-3xl shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"
         style={{
           background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.3) 0%, transparent 70%)'

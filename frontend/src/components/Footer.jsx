@@ -366,18 +366,4 @@ const Footer = () => {
   );
 };
 
-// Add missing icon component
-const HeadphonesIcon = ({ size = 24, className = "" }) => (
-  <svg 
-    width={size} 
-    height={size} 
-    className={className}
-    fill="none" 
-    stroke="currentColor" 
-    viewBox="0 0 24 24"
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12h2m0 0h2m-2 0v6m0-6v6m0 0h2m-2 0H3m16-6h-2m0 0h-2m2 0v6m0-6v6m0 0h-2m2 0h2M9 8h6m-6 0v8m6-8v8" />
-  </svg>
-);
-
 export default Footer;

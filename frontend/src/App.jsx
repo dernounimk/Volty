@@ -24,6 +24,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import NotFoundPage from "./pages/NotFoundPage";
 import FavoritesPage from "./pages/FavoritesPage";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import Background from "./components/Background";
 
 function App() {
   const { i18n } = useTranslation();
@@ -39,18 +40,16 @@ function App() {
   }, []);
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900 text-gray-900 dark:text-white relative' dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
-      {/* Background Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-r from-blue-200 to-purple-200 dark:from-blue-800 dark:to-purple-800 rounded-full blur-3xl opacity-30"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-r from-green-200 to-cyan-200 dark:from-green-800 dark:to-cyan-800 rounded-full blur-3xl opacity-30"></div>
-      </div>
+    <div className='min-h-screen bg-transparent text-gray-900 dark:text-white relative' dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
+      
+      {/* الخلفية الثابتة لجميع الصفحات */}
+      <Background />
 
       <ScrollToTop/>
       <div className='relative z-50'>
         <Navbar />
-        {/* إضافة pb-8 للهواتف لتعويض مساحة البحث */}
-        <main className="pt-20 pb-8 md:pb-0 min-h-screen">
+        {/* زيادة padding-top لتعويض ارتفاع الـ Navbar */}
+        <main className="pt-24 pb-8 md:pb-0 min-h-screen"> {/* تغيير من pt-20 إلى pt-24 */}
           <Routes>
             <Route path='/' element={<HomePage />} />
             <Route path='/contact' element={<Contact />} />
