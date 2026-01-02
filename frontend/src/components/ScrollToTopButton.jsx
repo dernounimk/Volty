@@ -36,8 +36,8 @@ const ScrollToTopButton = () => {
             damping: 15
           }}
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-[9999] p-3 rounded-2xl
-            backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 
+          className="fixed bottom-6 right-6 z-[9999] p-1 rounded-2xl
+            backdrop-blur-xl
             border border-gray-200 dark:border-gray-700
             shadow-lg hover:shadow-xl
             transition-all duration-300

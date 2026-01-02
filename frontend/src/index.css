@@ -73,7 +73,7 @@ body {
 }
 
 ::selection {
-  background-color: var(--color-accent);
+  background-color: var(--color-electric);
   color: var(--color-on-accent);
 }
 

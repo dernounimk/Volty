@@ -129,7 +129,7 @@ const Footer = () => {
               </motion.div>
               <div>
                 <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                  Zoubir Shop
+                  Volty
                 </h2>
                 <p className="text-blue-200 text-sm">{t("footer.tagline")}</p>
               </div>
@@ -149,7 +149,7 @@ const Footer = () => {
               {[
                 { 
                   icon: Instagram, 
-                  href: "https://instagram.com/zoubir__trends", 
+                  href: "https://instagram.com/volty_store_dz", 
                   label: "Instagram", 
                   color: "hover:bg-pink-500/20 hover:text-pink-400",
                   bgColor: "bg-pink-500/10"
@@ -288,11 +288,11 @@ const Footer = () => {
                 },
                 {
                   icon: Instagram,
-                  title: "zoubir__trends",
+                  title: "volty_store_dz",
                   subtitle: "Instagram",
                   color: "text-pink-400",
                   bgColor: "bg-pink-500/20",
-                  href: "https://instagram.com/zoubir__trends"
+                  href: "https://instagram.com/volty_store_dz"
                 },
                 {
                   icon: MapPin,
@@ -336,7 +336,7 @@ const Footer = () => {
             className="text-blue-200 text-sm flex items-center gap-2"
             whileHover={{ scale: 1.02 }}
           >
-            <span>© 2024 Zoubir Shop. {t("footer.allRightsReserved")}</span>
+            <span>© 2024 Volty Store. {t("footer.allRightsReserved")}</span>
             <motion.span
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 2, repeat: Infinity }}

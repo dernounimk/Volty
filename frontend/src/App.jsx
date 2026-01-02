@@ -25,6 +25,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import FavoritesPage from "./pages/FavoritesPage";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import Background from "./components/Background";
+import SearchResultsPage from "./pages/SearchResultsPage";
 
 function App() {
   const { i18n } = useTranslation();
@@ -52,6 +53,7 @@ function App() {
         <main className="pt-24 pb-8 md:pb-0 min-h-screen"> {/* تغيير من pt-20 إلى pt-24 */}
           <Routes>
             <Route path='/' element={<HomePage />} />
+            <Route path="/search" element={<SearchResultsPage />} />
             <Route path='/contact' element={<Contact />} />
             <Route path='/dash' element={<AdminPage />} />
             <Route path='/category/:category' element={<CategoryPage />} />

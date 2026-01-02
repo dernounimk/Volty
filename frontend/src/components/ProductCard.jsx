@@ -1,28 +1,53 @@
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Star, Heart, ShoppingBag } from "lucide-react";
+import { ShoppingCart, Star, Heart, ShoppingBag, Eye, Zap, Clock, Check } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
-import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid' }) => {
-  const { t } = useTranslation();
+const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryName }) => {
+  const { t, i18n } = useTranslation();
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isInCart, setIsInCart] = useState(false);
+  const isRTL = i18n.dir() === 'rtl';
 
+  // التحقق من المفضلة عند التحميل
   useEffect(() => {
     const storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
     setIsFavorite(storedFavorites.some((item) => item._id === product._id));
   }, [product._id]);
 
-  const toggleFavorite = (e) => {
+  // التحقق من وجود المنتج في السلة
+  useEffect(() => {
+    const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+    setIsInCart(cartItems.some((item) => item._id === product._id));
+  }, [product._id]);
+
+  const toggleFavorite = useCallback((e) => {
     e.preventDefault();
+    e.stopPropagation();
+    
     let storedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
 
     if (isFavorite) {
       storedFavorites = storedFavorites.filter((item) => item._id !== product._id);
-      toast.success(t("removedFromFavorites"));
+      toast.success(t("removedFromFavorites"), {
+        icon: '❤️',
+        style: {
+          background: '#fef2f2',
+          color: '#dc2626',
+        },
+      });
     } else {
       storedFavorites.push(product);
-      toast.success(t("addedToFavorites"));
+      toast.success(t("addedToFavorites"), {
+        icon: '❤️',
+        style: {
+          background: '#f0f9ff',
+          color: '#0369a1',
+        },
+      });
     }
 
     localStorage.setItem("favorites", JSON.stringify(storedFavorites));
@@ -31,91 +56,361 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid' }) => {
     if (onFavoriteToggle) {
       onFavoriteToggle();
     }
-  };
+  }, [isFavorite, product, t, onFavoriteToggle]);
 
-  const addToCart = (e) => {
+  const addToCart = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
-    // هنا يمكنك إضافة منطق إضافة المنتج للسلة
-    toast.success(t("addedToCart"));
-  };
+    
+    let cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+    
+    if (!isInCart) {
+      cartItems.push({ ...product, quantity: 1 });
+      localStorage.setItem("cart", JSON.stringify(cartItems));
+      setIsInCart(true);
+      
+      toast.success(t("addedToCart"), {
+        icon: '🛒',
+        style: {
+          background: '#f0f9ff',
+          color: '#0369a1',
+        },
+      });
+      
+      // اهتزاز ناعم للتفاعل
+      if ('vibrate' in navigator) {
+        navigator.vibrate(30);
+      }
+    } else {
+      // إذا كان موجود بالفعل، إزالة من السلة
+      cartItems = cartItems.filter((item) => item._id !== product._id);
+      localStorage.setItem("cart", JSON.stringify(cartItems));
+      setIsInCart(false);
+      
+      toast.success(t("removedFromCart"), {
+        icon: '🗑️',
+        style: {
+          background: '#fef2f2',
+          color: '#dc2626',
+        },
+      });
+    }
+  }, [isInCart, product, t]);
+
+  // حساب نسبة الخصم
+  const discountPercentage = useMemo(() => {
+    if (product.priceBeforeDiscount > (product.priceAfterDiscount ?? product.priceBeforeDiscount)) {
+      return Math.round(
+        100 - ((product.priceAfterDiscount ?? product.priceBeforeDiscount) / product.priceBeforeDiscount) * 100
+      );
+    }
+    return 0;
+  }, [product.priceBeforeDiscount, product.priceAfterDiscount]);
+
+  // الحصول على الصورة الرئيسية
+  const mainImage = useMemo(() => {
+    if (Array.isArray(product.images) && product.images.length > 0) {
+      return product.images[0];
+    }
+    return product.image || 'https://via.placeholder.com/300x300?text=No+Image';
+  }, [product.images, product.image]);
+
+  // الحصول على تقييم المنتج
+  const rating = useMemo(() => {
+    return product.averageRating || 0;
+  }, [product.averageRating]);
+
+  // الحصول على عدد المراجعات
+  const reviewCount = useMemo(() => {
+    return product.reviewCount || 0;
+  }, [product.reviewCount]);
+
+  // السعر النهائي
+  const finalPrice = useMemo(() => {
+    return product.priceAfterDiscount ?? product.priceBeforeDiscount;
+  }, [product.priceAfterDiscount, product.priceBeforeDiscount]);
 
   // Grid View Layout
   if (viewMode === 'grid') {
     return (
-      <div dir="ltr" className="h-full flex">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        whileHover={{ scale: 1.02 }}
+        transition={{ type: "spring", stiffness: 300 }}
+        className="h-full"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <Link
           to={`/product/${product._id}`}
-          className="group flex flex-col bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-blue-300 dark:hover:border-blue-700 h-full w-full max-w-[340px] mx-auto backdrop-blur-sm"
+          className="group flex flex-col bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:border-blue-300 dark:hover:border-blue-700 h-full relative"
+          dir={isRTL ? "rtl" : "ltr"}
         >
-          {/* صورة المنتج مع العلامات */}
-          <div className="relative w-full h-60 overflow-hidden">
-            <img
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              src={
-                Array.isArray(product.images) && product.images.length > 0
-                  ? product.images[0]
-                  : product.image
-              }
-              alt={product.name}
-            />
-
-            {/* طبقة تدرج على الصورة */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-            {/* علامة التخفيض */}
-            {product.priceBeforeDiscount &&
-              product.priceBeforeDiscount > (product.priceAfterDiscount ?? product.priceBeforeDiscount) && (
-                <div className="absolute top-3 left-3 bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1.5 rounded-xl text-sm font-bold shadow-lg">
-                  {Math.round(
-                    100 -
-                      ((product.priceAfterDiscount ?? product.priceBeforeDiscount) /
-                        product.priceBeforeDiscount) *
-                        100
-                  )}
-                  % OFF
-                </div>
-              )}
-
-            {/* زر المفضلة */}
-            <button
-              onClick={toggleFavorite}
-              className={`absolute top-3 right-3 rounded-xl p-2.5 flex items-center justify-center transition-all duration-200 backdrop-blur-sm ${
-                isFavorite
-                  ? "bg-gradient-to-r from-pink-500 to-red-500 text-white shadow-lg scale-110"
-                  : "bg-black/40 text-white hover:bg-black/60 hover:scale-110"
-              }`}
-            >
-              <Heart size={20} fill={isFavorite ? "currentColor" : "none"} />
-            </button>
-
-            {/* زر إضافة إلى السلة */}
-            <button
-              onClick={addToCart}
-              className="absolute bottom-3 right-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl p-2.5 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:shadow-lg hover:scale-110"
-            >
-              <ShoppingBag size={20} />
-            </button>
+          {/* Badges Container */}
+          <div className="absolute top-2 left-2 z-10 flex flex-col gap-1 sm:gap-2">
+            {/* Discount Badge */}
+            {discountPercentage > 0 && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs sm:text-sm font-bold shadow-lg"
+              >
+                {discountPercentage}% OFF
+              </motion.div>
+            )}
+            
+            {/* Stock Status */}
+            {product.stock <= 5 && product.stock > 0 && (
+              <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-2 py-1 rounded-lg text-xs font-bold shadow-lg">
+                {t('lowStock')}
+              </div>
+            )}
+            
+            {/* Fast Shipping */}
+            {product.fastShipping && (
+              <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-2 py-1 rounded-lg text-xs font-bold shadow-lg">
+                <Zap className="w-3 h-3 inline mr-1" />
+                {t('fastShipping')}
+              </div>
+            )}
           </div>
 
-          {/* تفاصيل المنتج */}
-          <div className="flex flex-col flex-grow p-5">
-            <div className="mb-4 flex-grow">
-              <h5 className="text-gray-900 dark:text-white text-lg font-semibold mb-3 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+          {/* Image Container */}
+          <div className="relative w-full h-48 sm:h-56 md:h-60 overflow-hidden bg-gray-100 dark:bg-gray-800">
+            <motion.img
+              className="w-full h-full object-cover"
+              src={mainImage}
+              alt={product.name}
+              whileHover={{ scale: 1.1 }}
+              transition={{ duration: 0.3 }}
+            />
+
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+            {/* Favorite Button */}
+            <motion.button
+              onClick={toggleFavorite}
+              whileTap={{ scale: 0.9 }}
+              className={`absolute top-2 right-2 rounded-xl p-2 flex items-center justify-center transition-all duration-200 backdrop-blur-sm ${
+                isFavorite
+                  ? "bg-gradient-to-r from-pink-500 to-red-500 text-white shadow-lg"
+                  : "bg-white/90 dark:bg-black/50 text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-black/70"
+              }`}
+            >
+              <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
+            </motion.button>
+
+            {/* Quick Actions - Appear on Hover */}
+            <AnimatePresence>
+              {isHovered && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute bottom-2 right-2 flex gap-2"
+                >
+                  <motion.button
+                    onClick={addToCart}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className={`rounded-xl p-2.5 flex items-center justify-center transition-all duration-200 ${
+                      isInCart
+                        ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg"
+                        : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg"
+                    }`}
+                  >
+                    {isInCart ? <Check size={18} /> : <ShoppingBag size={18} />}
+                  </motion.button>
+                  
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="rounded-xl p-2.5 bg-white/90 dark:bg-black/50 text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-black/70 backdrop-blur-sm"
+                  >
+                    <Eye size={18} />
+                  </motion.button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Product Details */}
+          <div className="flex flex-col flex-grow p-3 sm:p-4 md:p-5">
+            {/* Category & Name */}
+            <div className="mb-3 flex-grow">
+              {categoryName && (
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1 truncate">
+                  {categoryName}
+                </p>
+              )}
+              <h5 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
                 {product.name}
               </h5>
+            </div>
 
-              {/* تقييم المنتج */}
+            {/* Rating */}
+            <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center gap-0.5">
+                {[...Array(5)].map((_, i) => {
+                  const full = i + 1 <= Math.floor(rating);
+                  const half = i < rating && i + 1 > rating;
+                  return (
+                    <Star
+                      key={i}
+                      size={12}
+                      className={`${
+                        full 
+                          ? "text-yellow-400 fill-yellow-400" 
+                          : half 
+                            ? "text-yellow-400 fill-yellow-400 fill-opacity-50" 
+                            : "text-gray-300 dark:text-gray-600"
+                      }`}
+                    />
+                  );
+                })}
+              </div>
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                ({reviewCount})
+              </span>
+            </div>
+
+            {/* Price & Actions */}
+            <div className="flex items-center justify-between">
+              {/* Price */}
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <span className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
+                    {finalPrice?.toLocaleString()} DA
+                  </span>
+                  {discountPercentage > 0 && (
+                    <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 line-through opacity-70">
+                      {product.priceBeforeDiscount?.toLocaleString()} DA
+                    </span>
+                  )}
+                </div>
+                {product.originalPrice && product.originalPrice > finalPrice && (
+                  <p className="text-xs text-green-600 dark:text-green-400 font-medium">
+                    {t('youSave')} {(product.originalPrice - finalPrice)?.toLocaleString()} DA
+                  </p>
+                )}
+              </div>
+
+              {/* Quick Add to Cart Button (Mobile) */}
+              <motion.button
+                onClick={addToCart}
+                whileTap={{ scale: 0.9 }}
+                className={`lg:hidden rounded-xl p-2 flex items-center justify-center transition-all duration-200 ${
+                  isInCart
+                    ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg"
+                    : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg"
+                }`}
+              >
+                {isInCart ? <Check size={16} /> : <ShoppingCart size={16} />}
+              </motion.button>
+            </div>
+
+            {/* Stock Indicator */}
+            {product.stock !== undefined && (
+              <div className="mt-3">
+                <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
+                  <span>{t('stock')}:</span>
+                  <span className={`font-medium ${
+                    product.stock > 10 ? 'text-green-600' : 
+                    product.stock > 0 ? 'text-yellow-600' : 
+                    'text-red-600'
+                  }`}>
+                    {product.stock > 0 ? `${product.stock} ${t('inStock')}` : t('outOfStock')}
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                  <div 
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      product.stock > 10 ? 'bg-green-500' : 
+                      product.stock > 0 ? 'bg-yellow-500' : 
+                      'bg-red-500'
+                    }`}
+                    style={{ 
+                      width: `${Math.min((product.stock / 50) * 100, 100)}%` 
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        </Link>
+      </motion.div>
+    );
+  }
+
+  // List View Layout
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4 }}
+      transition={{ type: "spring", stiffness: 300 }}
+      className="h-full"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <Link
+        to={`/product/${product._id}`}
+        className="group flex flex-col sm:flex-row bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:border-blue-300 dark:hover:border-blue-700 h-full"
+        dir={isRTL ? "rtl" : "ltr"}
+      >
+        {/* Image Container */}
+        <div className="relative w-full sm:w-48 md:w-56 h-48 sm:h-auto overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0">
+          <motion.img
+            className="w-full h-full object-cover"
+            src={mainImage}
+            alt={product.name}
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3 }}
+          />
+
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+          {/* Discount Badge */}
+          {discountPercentage > 0 && (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="absolute top-2 left-2 bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1.5 rounded-lg text-sm font-bold shadow-lg"
+            >
+              {discountPercentage}% OFF
+            </motion.div>
+          )}
+        </div>
+
+        {/* Product Details */}
+        <div className="flex flex-col flex-grow p-4 sm:p-5 md:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-3">
+            <div className="flex-grow">
+              {/* Category */}
+              {categoryName && (
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                  {categoryName}
+                </p>
+              )}
+              
+              {/* Product Name */}
+              <h5 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                {product.name}
+              </h5>
+              
+              {/* Rating */}
               <div className="flex items-center gap-2 mb-3">
                 <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => {
-                    const rating = product.averageRating || 0;
                     const full = i + 1 <= Math.floor(rating);
                     const half = i < rating && i + 1 > rating;
                     return (
                       <Star
                         key={i}
-                        size={16}
+                        size={14}
                         className={`${
                           full 
                             ? "text-yellow-400 fill-yellow-400" 
@@ -123,167 +418,140 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid' }) => {
                               ? "text-yellow-400 fill-yellow-400 fill-opacity-50" 
                               : "text-gray-300 dark:text-gray-600"
                         }`}
-                        fill="currentColor"
                       />
                     );
                   })}
                 </div>
                 <span className="text-sm text-gray-500 dark:text-gray-400">
-                  ({product.reviewCount || 0})
+                  ({reviewCount})
                 </span>
               </div>
             </div>
 
-            {/* سعر المنتج */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-gray-900 dark:text-white text-xl font-bold">
-                  {product.priceAfterDiscount ?? product.priceBeforeDiscount} DA
-                </span>
-
-                {product.priceBeforeDiscount &&
-                  product.priceBeforeDiscount >
-                    (product.priceAfterDiscount ?? product.priceBeforeDiscount) && (
-                    <span className="text-gray-500 dark:text-gray-400 text-sm line-through opacity-70">
-                      {product.priceBeforeDiscount} DA
-                    </span>
-                  )}
-              </div>
-
-              {/* زر سريع للإضافة إلى السلة (للشاشات الصغيرة) */}
-              <button
-                onClick={addToCart}
-                className="lg:hidden bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl p-2.5 hover:shadow-lg transition-all duration-200"
-              >
-                <ShoppingCart size={18} />
-              </button>
-            </div>
-          </div>
-        </Link>
-      </div>
-    );
-  }
-
-  // List View Layout
-  return (
-    <div dir="ltr" className="h-full flex">
-      <Link
-        to={`/product/${product._id}`}
-        className="group flex bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-blue-300 dark:hover:border-blue-700 h-full w-full backdrop-blur-sm"
-      >
-        {/* صورة المنتج */}
-        <div className="relative w-48 h-48 overflow-hidden flex-shrink-0">
-          <img
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            src={
-              Array.isArray(product.images) && product.images.length > 0
-                ? product.images[0]
-                : product.image
-            }
-            alt={product.name}
-          />
-
-          {/* طبقة تدرج على الصورة */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-          {/* علامة التخفيض */}
-          {product.priceBeforeDiscount &&
-            product.priceBeforeDiscount > (product.priceAfterDiscount ?? product.priceBeforeDiscount) && (
-              <div className="absolute top-3 left-3 bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1.5 rounded-xl text-sm font-bold shadow-lg">
-                {Math.round(
-                  100 -
-                    ((product.priceAfterDiscount ?? product.priceBeforeDiscount) /
-                      product.priceBeforeDiscount) *
-                      100
-                )}
-                % OFF
-              </div>
-            )}
-        </div>
-
-        {/* تفاصيل المنتج */}
-        <div className="flex flex-col flex-grow p-6">
-          <div className="flex justify-between items-start mb-3">
-            <h5 className="text-gray-900 dark:text-white text-xl font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors flex-grow pr-4">
-              {product.name}
-            </h5>
-
-            {/* زر المفضلة */}
-            <button
+            {/* Favorite Button */}
+            <motion.button
               onClick={toggleFavorite}
-              className={`rounded-xl p-2.5 flex items-center justify-center transition-all duration-200 ${
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className={`self-start rounded-xl p-2.5 flex items-center justify-center transition-all duration-200 ${
                 isFavorite
-                  ? "bg-gradient-to-r from-pink-500 to-red-500 text-white shadow-lg scale-110"
-                  : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-110"
+                  ? "bg-gradient-to-r from-pink-500 to-red-500 text-white shadow-lg"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
               }`}
             >
               <Heart size={20} fill={isFavorite ? "currentColor" : "none"} />
-            </button>
+            </motion.button>
           </div>
 
-          {/* تقييم المنتج */}
-          <div className="flex items-center gap-2 mb-4">
-            <div className="flex items-center gap-1">
-              {[...Array(5)].map((_, i) => {
-                const rating = product.averageRating || 0;
-                const full = i + 1 <= Math.floor(rating);
-                const half = i < rating && i + 1 > rating;
-                return (
-                  <Star
-                    key={i}
-                    size={18}
-                    className={`${
-                      full 
-                        ? "text-yellow-400 fill-yellow-400" 
-                        : half 
-                          ? "text-yellow-400 fill-yellow-400 fill-opacity-50" 
-                          : "text-gray-300 dark:text-gray-600"
-                    }`}
-                    fill="currentColor"
-                  />
-                );
-              })}
-            </div>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              ({product.reviewCount || 0})
-            </span>
-          </div>
-
-          {/* الوصف (اختياري) */}
+          {/* Description */}
           {product.description && (
-            <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2 flex-grow">
+            <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2 flex-grow text-sm sm:text-base">
               {product.description}
             </p>
           )}
 
-          {/* سعر المنتج وأزرار الإجراء */}
-          <div className="flex items-center justify-between mt-auto">
-            <div className="flex items-center gap-3">
-              <span className="text-gray-900 dark:text-white text-2xl font-bold">
-                {product.priceAfterDiscount ?? product.priceBeforeDiscount} DA
+          {/* Additional Info */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {product.fastShipping && (
+              <span className="inline-flex items-center gap-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs px-2 py-1 rounded-md">
+                <Zap size={12} />
+                {t('fastShipping')}
               </span>
+            )}
+            {product.isNew && (
+              <span className="inline-flex items-center gap-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs px-2 py-1 rounded-md">
+                <Clock size={12} />
+                {t('newArrival')}
+              </span>
+            )}
+          </div>
 
-              {product.priceBeforeDiscount &&
-                product.priceBeforeDiscount >
-                  (product.priceAfterDiscount ?? product.priceBeforeDiscount) && (
-                  <span className="text-gray-500 dark:text-gray-400 text-lg line-through opacity-70">
-                    {product.priceBeforeDiscount} DA
+          {/* Price & Actions */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-auto">
+            {/* Price */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+                  {finalPrice?.toLocaleString()} DA
+                </span>
+                {discountPercentage > 0 && (
+                  <span className="text-base sm:text-lg text-gray-500 dark:text-gray-400 line-through opacity-70">
+                    {product.priceBeforeDiscount?.toLocaleString()} DA
                   </span>
                 )}
+              </div>
+              {product.originalPrice && product.originalPrice > finalPrice && (
+                <p className="text-sm text-green-600 dark:text-green-400 font-medium">
+                  {t('youSave')} {(product.originalPrice - finalPrice)?.toLocaleString()} DA
+                </p>
+              )}
             </div>
 
-            {/* زر إضافة إلى السلة */}
-            <button
-              onClick={addToCart}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl px-6 py-3 hover:shadow-lg transition-all duration-200 flex items-center gap-2"
-            >
-              <ShoppingBag size={20} />
-              <span className="font-semibold">{t("addToCart")}</span>
-            </button>
+            {/* Actions */}
+            <div className="flex items-center gap-2">
+              <motion.button
+                onClick={addToCart}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={`flex-1 sm:flex-none flex items-center justify-center gap-2 rounded-xl px-4 sm:px-6 py-3 font-semibold transition-all duration-200 ${
+                  isInCart
+                    ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg"
+                    : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg"
+                }`}
+              >
+                {isInCart ? (
+                  <>
+                    <Check size={18} />
+                    <span>{t('addedToCart')}</span>
+                  </>
+                ) : (
+                  <>
+                    <ShoppingBag size={18} />
+                    <span>{t('addToCart')}</span>
+                  </>
+                )}
+              </motion.button>
+              
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="hidden sm:flex items-center justify-center p-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+              >
+                <Eye size={18} />
+              </motion.button>
+            </div>
           </div>
+
+          {/* Stock Info */}
+          {product.stock !== undefined && (
+            <div className="mt-4">
+              <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-1">
+                <span>{t('availability')}:</span>
+                <span className={`font-medium ${
+                  product.stock > 10 ? 'text-green-600' : 
+                  product.stock > 0 ? 'text-yellow-600' : 
+                  'text-red-600'
+                }`}>
+                  {product.stock > 0 ? `${product.stock} ${t('inStock')}` : t('outOfStock')}
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div 
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    product.stock > 10 ? 'bg-green-500' : 
+                    product.stock > 0 ? 'bg-yellow-500' : 
+                    'bg-red-500'
+                  }`}
+                  style={{ 
+                    width: `${Math.min((product.stock / 50) * 100, 100)}%` 
+                  }}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </Link>
-    </div>
+    </motion.div>
   );
 };
 
