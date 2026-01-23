@@ -30,7 +30,7 @@ const NotFoundPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 dark:from-gray-900 dark:to-blue-900">
+    <div className="min-h-screen flex items-center justify-center px-6">
       <motion.div
         className="max-w-2xl w-full text-center"
         variants={containerVariants}
@@ -44,10 +44,10 @@ const NotFoundPage = () => {
         >
           <div className="relative inline-block">
             {/* تأثير الخلفية */}
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur-3xl opacity-20 animate-pulse"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] rounded-full blur-3xl opacity-20 animate-pulse"></div>
             
             {/* الرمز الرئيسي */}
-            <div className="relative bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700">
+            <div className="relative bg-[var(--color-bg)] p-8 rounded-3xl shadow-2xl border border-[var(--color-border)]">
               <motion.div
                 animate={{
                   y: [0, -10, 0],
@@ -60,13 +60,13 @@ const NotFoundPage = () => {
                 }}
                 className="text-8xl mb-4"
               >
-                <Ghost className="w-6 h-6 text-purple-500" />
+                <Ghost className="w-6 h-6 text-[var(--color-accent)]" />
               </motion.div>
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.5, type: "spring" }}
-                className="text-9xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+                className="text-9xl font-bold bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] bg-clip-text text-transparent"
               >
                 404
               </motion.div>
@@ -76,10 +76,10 @@ const NotFoundPage = () => {
 
         {/* العنوان والرسالة */}
         <motion.div variants={itemVariants} className="mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-text)] mb-4">
             {t("notFound.title")}
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-md mx-auto">
+          <p className="text-xl text-[var(--color-text-secondary)] leading-relaxed max-w-md mx-auto">
             {t("notFound.message")}
           </p>
         </motion.div>
@@ -92,7 +92,7 @@ const NotFoundPage = () => {
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link
               to="/"
-              className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+              className="flex items-center justify-center gap-3 px-8 py-4 bg-[var(--color-accent)] text-[var(--color-on-accent)] rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
             >
               <Home className="w-5 h-5" />
               {t("notFound.homeButton")}
@@ -103,7 +103,7 @@ const NotFoundPage = () => {
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <button
               onClick={openNavbarAndFocusSearch}
-              className="flex items-center justify-center gap-3 px-8 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-2 border-gray-200 dark:border-gray-700 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:border-blue-500"
+              className="flex items-center justify-center gap-3 px-8 py-4 bg-[var(--color-bg)] text-[var(--color-text)] border-2 border-[var(--color-border)] rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:border-[var(--color-accent)]"
             >
               <Search className="w-5 h-5" />
               {t("notFound.searchButton")}
@@ -114,21 +114,21 @@ const NotFoundPage = () => {
         {/* معلومات إضافية */}
         <motion.div
           variants={itemVariants}
-          className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 max-w-md mx-auto"
+          className="bg-[var(--color-bg)] rounded-2xl p-6 shadow-lg border border-[var(--color-border)] max-w-md mx-auto"
         >
           <div className="flex items-center justify-center gap-3 mb-3">
-            <Ghost className="w-6 h-6 text-purple-500" />
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <Ghost className="w-6 h-6 text-[var(--color-accent)]" />
+            <h3 className="text-lg font-semibold text-[var(--color-text)]">
               {t("notFound.tipsTitle")}
             </h3>
           </div>
-          <ul className="text-gray-600 dark:text-gray-300 text-left space-y-2">
+          <ul className="text-[var(--color-text-secondary)] text-left space-y-2">
             <li className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-[var(--color-electric)] rounded-full"></div>
               {t("notFound.tip1")}
             </li>
             <li className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-[var(--color-accent)] rounded-full"></div>
               {t("notFound.tip2")}
             </li>
             <li className="flex items-center gap-2">
@@ -151,7 +151,7 @@ const NotFoundPage = () => {
             repeatType: "loop",
           }}
         >
-          <div className="w-20 h-20 mx-auto border-4 border-dashed border-blue-500 rounded-full"></div>
+          <div className="w-20 h-20 mx-auto border-4 border-dashed border-[var(--color-accent)] rounded-full"></div>
         </motion.div>
       </motion.div>
     </div>

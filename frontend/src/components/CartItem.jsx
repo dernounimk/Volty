@@ -46,7 +46,7 @@ const CartItem = ({ item, index }) => {
 
   return (
     <motion.div
-      className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300"
+      className="relative bg-[var(--color-bg-opacity)] backdrop-blur-xl rounded-2xl shadow-lg border border-[var(--color-border)] p-6 hover:shadow-xl transition-all duration-300"
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -20, scale: 0.95 }}
@@ -75,7 +75,7 @@ const CartItem = ({ item, index }) => {
           <Link to={`/product/${item._id}`} className="block">
             <div className="relative">
               <img
-                className="h-28 w-28 md:h-32 md:w-32 rounded-2xl object-cover cursor-pointer border-2 border-gray-200 dark:border-gray-600 shadow-md"
+                className="h-28 w-28 md:h-32 md:w-32 rounded-2xl object-cover cursor-pointer border-2 border-[var(--color-border)] shadow-md"
                 src={Array.isArray(item.images) ? item.images[0] : item.image}
                 alt={item.name}
               />
@@ -96,7 +96,7 @@ const CartItem = ({ item, index }) => {
               to={`/product/${item._id}`}
               className="block group"
             >
-              <h3 className="text-xl font-bold text-gray-800 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-200 line-clamp-2">
+              <h3 className="text-xl font-bold text-[var(--color-text)] group-hover:text-[var(--color-accent)] transition-colors duration-200 line-clamp-2">
                 {item.name}
               </h3>
             </Link>
@@ -106,7 +106,7 @@ const CartItem = ({ item, index }) => {
           <div className="flex items-center gap-4 flex-wrap">
             {isSelectedSizeValid && (
               <motion.span 
-                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-xl shadow-md min-w-[50px] text-center"
+                className="px-4 py-2 bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] text-white font-semibold rounded-xl shadow-md min-w-[50px] text-center"
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
               >
@@ -116,7 +116,7 @@ const CartItem = ({ item, index }) => {
                       
             {selectedColorObj && (
               <motion.div 
-                className="flex items-center gap-3 bg-gray-50 dark:bg-gray-700 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600"
+                className="flex items-center gap-3 bg-[var(--color-bg-gray)] px-4 py-2 rounded-xl border border-[var(--color-border)]"
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
               >
@@ -124,7 +124,7 @@ const CartItem = ({ item, index }) => {
                   className="w-6 h-6 rounded-full border-2 border-gray-300 dark:border-gray-500 shadow-sm"
                   style={{ backgroundColor: selectedColorObj.hex }}
                 />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <span className="text-sm font-medium text-[var(--color-text)]">
                   {selectedColorObj.name}
                 </span>
               </motion.div>
@@ -135,9 +135,9 @@ const CartItem = ({ item, index }) => {
           <div className="flex items-center justify-between pt-4 md:hidden">
             {/* Quantity Controls */}
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-700 rounded-xl px-4 py-2 border border-gray-200 dark:border-gray-600">
+              <div className="flex items-center gap-3 bg-[var(--color-bg-gray)] rounded-xl px-4 py-2 border border-[var(--color-border)]">
                 <motion.button
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white dark:bg-gray-600 border border-[var(--color-border)] hover:bg-[var(--color-bg-gray)] text-[var(--color-text)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={handleDecrease}
                   disabled={item.quantity <= 1}
                   aria-label={t("cart.decreaseQuantity")}
@@ -147,12 +147,12 @@ const CartItem = ({ item, index }) => {
                   <Minus size={16} />
                 </motion.button>
                 
-                <span className="min-w-[30px] text-center font-bold text-lg text-gray-800 dark:text-white">
+                <span className="min-w-[30px] text-center font-bold text-lg text-[var(--color-text)]">
                   {item.quantity}
                 </span>
                 
                 <motion.button
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 transition-all duration-200"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-white dark:bg-gray-600 border border-[var(--color-border)] hover:bg-[var(--color-bg-gray)] text-[var(--color-text)] transition-all duration-200"
                   onClick={handleIncrease}
                   aria-label={t("cart.increaseQuantity")}
                   whileHover={{ scale: 1.1 }}
@@ -165,11 +165,11 @@ const CartItem = ({ item, index }) => {
 
             {/* Price for Mobile */}
             <div className="text-end">
-              <p className="text-xl font-bold text-gray-800 dark:text-white">
+              <p className="text-xl font-bold text-[var(--color-text)]">
                 {totalPrice.toLocaleString()} DA
               </p>
               {hasDiscount && (
-                <p className="text-sm line-through text-gray-400">
+                <p className="text-sm line-through text-[var(--color-text-secondary)]">
                   {(item.priceBeforeDiscount * item.quantity).toLocaleString()} DA
                 </p>
               )}
@@ -181,12 +181,9 @@ const CartItem = ({ item, index }) => {
             <div className="flex items-center gap-6">
               {/* Quantity Controls */}
               <div className="flex items-center gap-4">
-                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  {t("cart.quantity")}:
-                </span>
-                <div className="flex items-center gap-4 bg-gray-50 dark:bg-gray-700 rounded-xl px-5 py-3 border border-gray-200 dark:border-gray-600">
+                <div className="flex items-center gap-4 bg-[var(--color-bg-gray)] rounded-xl px-5 py-3 border border-[var(--color-border)]">
                   <motion.button
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white dark:bg-gray-600 border border-[var(--color-border)] hover:bg-[var(--color-bg-gray)] text-[var(--color-text)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={handleDecrease}
                     disabled={item.quantity <= 1}
                     aria-label={t("cart.decreaseQuantity")}
@@ -196,12 +193,12 @@ const CartItem = ({ item, index }) => {
                     <Minus size={20} />
                   </motion.button>
                   
-                  <span className="min-w-[40px] text-center font-bold text-xl text-gray-800 dark:text-white">
+                  <span className="min-w-[40px] text-center font-bold text-xl text-[var(--color-text)]">
                     {item.quantity}
                   </span>
                   
                   <motion.button
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 hover:bg-gray-50 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 transition-all duration-200"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white dark:bg-gray-600 border border-[var(--color-border)] hover:bg-[var(--color-bg-gray)] text-[var(--color-text)] transition-all duration-200"
                     onClick={handleIncrease}
                     aria-label={t("cart.increaseQuantity")}
                     whileHover={{ scale: 1.1 }}
@@ -211,38 +208,21 @@ const CartItem = ({ item, index }) => {
                   </motion.button>
                 </div>
               </div>
-
-              {/* Unit Price */}
-              <div className="text-center">
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                  {t("cart.unitPrice")}
-                </p>
-                <div className="flex items-center gap-2">
-                  <p className="text-lg font-semibold text-gray-800 dark:text-white">
-                    {unitPrice.toLocaleString()} DA
-                  </p>
-                  {hasDiscount && (
-                    <p className="text-sm line-through text-gray-400">
-                      {item.priceBeforeDiscount.toLocaleString()} DA
-                    </p>
-                  )}
-                </div>
-              </div>
             </div>
 
             {/* Total Price for Desktop */}
             <div className="text-end">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+              <p className="text-sm text-[var(--color-text-secondary)] mb-2">
                 {t("cart.total")}
               </p>
               <div className="flex items-center gap-3">
                 <ShoppingBag className="w-5 h-5 text-green-500" />
                 <div>
-                  <p className="text-2xl font-bold text-gray-800 dark:text-white">
+                  <p className="text-2xl font-bold text-[var(--color-text)]">
                     {totalPrice.toLocaleString()} DA
                   </p>
                   {hasDiscount && (
-                    <p className="text-sm line-through text-gray-400">
+                    <p className="text-sm line-through text-[var(--color-text-secondary)]">
                       {(item.priceBeforeDiscount * item.quantity).toLocaleString()} DA
                     </p>
                   )}
@@ -252,18 +232,6 @@ const CartItem = ({ item, index }) => {
           </div>
         </div>
       </div>
-
-      {/* Savings Badge */}
-      {hasDiscount && (
-        <motion.div
-          className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-1 rounded-full text-sm font-semibold shadow-lg"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          {t("cart.youSave")} {((item.priceBeforeDiscount - unitPrice) * item.quantity).toLocaleString()} DA
-        </motion.div>
-      )}
     </motion.div>
   );
 };

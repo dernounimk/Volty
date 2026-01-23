@@ -13,7 +13,7 @@ const Contact = () => {
       value: "@volty_store",
       href: "https://instagram.com/volty",
       color: "from-pink-500 to-purple-500",
-      bgColor: "bg-gradient-to-br from-pink-500 to-purple-500"
+      bgColor: "bg-gradient-to-br from-[var(--color-accent)] to-purple-500"
     },
     {
       icon: Phone,
@@ -21,7 +21,7 @@ const Contact = () => {
       value: "0553512070",
       href: "tel:0553512070",
       color: "from-green-500 to-emerald-500",
-      bgColor: "bg-gradient-to-br from-green-500 to-emerald-500"
+      bgColor: "bg-gradient-to-br from-[var(--color-electric)] to-[var(--color-accent)]"
     },
     {
       icon: MapPin,
@@ -29,7 +29,7 @@ const Contact = () => {
       value: "زقاق بن رمضان بسكرة",
       href: "https://www.google.com/maps?q=زقاق+بن+رمضان+بسكرة",
       color: "from-blue-500 to-cyan-500",
-      bgColor: "bg-gradient-to-br from-blue-500 to-cyan-500"
+      bgColor: "bg-gradient-to-br from-[var(--color-electric)] to-cyan-500"
     },
     {
       icon: MessageCircle,
@@ -37,7 +37,7 @@ const Contact = () => {
       value: "volty_store",
       href: "https://t.me/volty_store",
       color: "from-orange-500 to-red-500",
-      bgColor: "bg-gradient-to-br from-orange-500 to-red-500"
+      bgColor: "bg-gradient-to-br from-[var(--color-accent)] to-red-500"
     }
   ];
 
@@ -55,16 +55,16 @@ const Contact = () => {
         >
           <div className="flex items-center justify-center mb-6">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur-md opacity-75"></div>
-              <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-white/20">
-                <MessageCircle className="w-12 h-12 text-blue-600 dark:text-blue-400" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] rounded-2xl blur-md opacity-75"></div>
+              <div className="relative bg-[var(--color-bg-opacity)] backdrop-blur-sm p-4 rounded-2xl shadow-lg border border-[var(--color-border)]">
+                <MessageCircle className="w-12 h-12 text-[var(--color-electric)]" />
               </div>
             </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-gray-900 to-blue-600 dark:from-white dark:to-blue-400 bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-[var(--color-text)] to-[var(--color-accent)] bg-clip-text text-transparent mb-4">
             {t("contact.title")}
           </h1>
-          <p className="text-xl text-gray-700 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-[var(--color-text)] max-w-2xl mx-auto leading-relaxed">
             {t("contact.subtitle")}
           </p>
         </motion.div>
@@ -82,7 +82,7 @@ const Contact = () => {
               href={item.href}
               target={item.href.startsWith('http') ? '_blank' : '_self'}
               rel={item.href.startsWith('http') ? 'noopener noreferrer' : ''}
-              className="group relative overflow-hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-white/20"
+              className="group relative overflow-hidden bg-[var(--color-bg-opacity)] backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 border border-[var(--color-border)]"
               whileHover={{ y: -5, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -97,10 +97,10 @@ const Contact = () => {
                 </div>
 
                 {/* النص */}
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg font-semibold text-[var(--color-text)] mb-2">
                   {item.title}
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+                <p className="text-[var(--color-text-secondary)] text-sm leading-relaxed">
                   {item.value}
                 </p>
 
@@ -109,7 +109,7 @@ const Contact = () => {
               </div>
 
               {/* تأثير إضافي */}
-              <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/20 rounded-3xl transition-all duration-300"></div>
+              <div className="absolute inset-0 border-2 border-transparent group-hover:border-[var(--color-border)] rounded-3xl transition-all duration-300"></div>
             </motion.a>
           ))}
         </motion.div>
@@ -121,20 +121,20 @@ const Contact = () => {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-16 text-center"
         >
-          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-white/20 max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          <div className="bg-[var(--color-bg-opacity)] backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-[var(--color-border)] max-w-2xl mx-auto">
+            <h3 className="text-2xl font-bold text-[var(--color-text)] mb-4">
               {t("contact.availability")}
             </h3>
-            <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed mb-6">
+            <p className="text-[var(--color-text-secondary)] text-lg leading-relaxed mb-6">
               {t("contact.availabilityText")}
             </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex flex-col sm:flex-row justify-center gap-4 text-sm text-[var(--color-text-secondary)]">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-[var(--color-accent)] rounded-full animate-pulse"></div>
                 {t("contact.responseTime")}
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-[var(--color-electric)] rounded-full"></div>
                 {t("contact.supportHours")}
               </div>
             </div>

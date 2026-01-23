@@ -1,4 +1,75 @@
 {
+  "appPage": {
+    "hero": {
+      "title": "Download Volty App",
+      "subtitle": "Shop faster, smarter, and easier with our mobile app. Exclusive deals, push notifications, and seamless shopping experience."
+    },
+    "features": {
+      "title": "Why Choose Our App",
+      "subtitle": "Experience shopping like never before with our feature-rich mobile application",
+      "fast": "Lightning Fast",
+      "fastDesc": "Optimized for speed with instant loading and smooth navigation",
+      "secure": "Secure Payments",
+      "secureDesc": "Bank-level security for all your transactions and personal data",
+      "notifications": "Smart Notifications",
+      "notificationsDesc": "Get real-time alerts for deals, orders, and important updates",
+      "offline": "Offline Browsing",
+      "offlineDesc": "Browse products and view your cart even without internet connection",
+      "payments": "Multiple Payments",
+      "paymentsDesc": "Support for all local and international payment methods",
+      "multilingual": "Multilingual",
+      "multilingualDesc": "Available in Arabic, English, and French languages"
+    },
+    "howTo": {
+      "title": "How to Download & Install",
+      "subtitle": "Get started with Volty app in just a few simple steps",
+      "steps": {
+        "download": "Download App",
+        "downloadDesc": "Click your store button or scan the QR code",
+        "install": "Install App",
+        "installDesc": "Follow installation instructions on your device",
+        "signup": "Create Account",
+        "signupDesc": "Sign up or log in with your existing credentials",
+        "shop": "Start Shopping",
+        "shopDesc": "Browse products and enjoy exclusive app-only deals"
+      }
+    },
+    "benefits": {
+      "title": "App-Only Benefits",
+      "exclusive": "Exclusive app-only discounts and offers",
+      "push": "Push notifications for flash sales and deals",
+      "faster": "Faster checkout process",
+      "personalized": "Personalized recommendations",
+      "offers": "Special birthday offers and rewards",
+      "appOnly": "App Exclusive Features",
+      "appOnlyDesc": "Enjoy features available only in our mobile application"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "q1": "Is the app free to download?",
+      "a1": "Yes! The Volty app is completely free to download and use. There are no hidden fees or charges.",
+      "q2": "Can I use my existing account?",
+      "a2": "Absolutely! You can log in with the same credentials you use on our website.",
+      "q3": "Is the app available in my country?",
+      "a3": "The Volty app is available worldwide. You can download it from both App Store and Google Play.",
+      "q4": "How much storage space does it need?",
+      "a4": "The app is lightweight and takes approximately 50-70 MB of storage space.",
+      "q5": "Can I switch between languages?",
+      "a5": "Yes! The app supports Arabic, English, and French. You can change language anytime in settings."
+    },
+    "cta": {
+      "title": "Ready to Shop Better?",
+      "subtitle": "Download now and get 15% off your first app purchase!",
+      "note": "Limited time offer for new app users only"
+    },
+    "scanQR": "Scan to download directly",
+    "iosRedirect": "Redirecting to App Store...",
+    "androidRedirect": "Redirecting to Google Play...",
+    "notifyText": "Get notified when new features are added",
+    "emailPlaceholder": "Enter your email",
+    "notifyMe": "Notify Me",
+    "notifySuccess": "You'll be notified when new features arrive!"
+  },
   "deleteOneReviewMessage": "Are you sure you want to delete this review?",
   "deleteAllReviewMessage": "Are you sure you want to delete all reviews for this product?",
   "removedFromFavorites": "Removed from favorites",

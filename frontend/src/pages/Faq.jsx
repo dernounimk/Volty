@@ -22,20 +22,20 @@ function Faq() {
     {
       question: t("faq.q5"),
       answerComponent: (
-        <div className="overflow-x-auto rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <table className="min-w-full text-right text-gray-600 dark:text-gray-300 text-sm">
-            <thead className="bg-gray-50 dark:bg-gray-700">
+        <div className="overflow-x-auto rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)]">
+          <table className="min-w-full text-right text-[var(--color-text-secondary)] text-sm">
+            <thead className="bg-[var(--color-bg-gray)]">
               <tr>
-                <th className="border border-gray-200 dark:border-gray-600 px-4 py-3 font-semibold">
+                <th className="border border-[var(--color-border)] px-4 py-3 font-semibold">
                   {t("faq.state")}
                 </th>
-                <th className="border border-gray-200 dark:border-gray-600 px-4 py-3 font-semibold">
+                <th className="border border-[var(--color-border)] px-4 py-3 font-semibold">
                   {t("faq.officePrice")}
                 </th>
-                <th className="border border-gray-200 dark:border-gray-600 px-4 py-3 font-semibold">
+                <th className="border border-[var(--color-border)] px-4 py-3 font-semibold">
                   {t("faq.homePrice")}
                 </th>
-                <th className="border border-gray-200 dark:border-gray-600 px-4 py-3 font-semibold">
+                <th className="border border-[var(--color-border)] px-4 py-3 font-semibold">
                   {t("faq.deliveryDays")}
                 </th>
               </tr>
@@ -47,18 +47,18 @@ function Faq() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  className="hover:bg-[var(--color-bg-gray)] transition-colors"
                 >
-                  <td className="border border-gray-200 dark:border-gray-600 px-4 py-3 font-medium">
+                  <td className="border border-[var(--color-border)] px-4 py-3 font-medium">
                     {d.state}
                   </td>
-                  <td className="border border-gray-200 dark:border-gray-600 px-4 py-3">
+                  <td className="border border-[var(--color-border)] px-4 py-3">
                     {d.officePrice} {t("revenueUnit")}
                   </td>
-                  <td className="border border-gray-200 dark:border-gray-600 px-4 py-3">
+                  <td className="border border-[var(--color-border)] px-4 py-3">
                     {d.homePrice} {t("revenueUnit")}
                   </td>
-                  <td className="border border-gray-200 dark:border-gray-600 px-4 py-3">
+                  <td className="border border-[var(--color-border)] px-4 py-3">
                     {d.deliveryDays === 1 ? t("day") : d.deliveryDays === 2 ? t("twoDays") : `${d.deliveryDays} ${t("days")}`}
                   </td>
                 </motion.tr>
@@ -92,7 +92,7 @@ function Faq() {
   };
 
   return (
-    <div className="min-h-screen dark:from-gray-900 dark:to-blue-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* العنوان الرئيسي */}
         <motion.div
@@ -103,16 +103,16 @@ function Faq() {
         >
           <div className="flex items-center justify-center mb-6">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur-md opacity-75"></div>
-              <div className="relative bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-lg">
-                <HelpCircle className="w-12 h-12 text-blue-600 dark:text-blue-400" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] rounded-2xl blur-md opacity-75"></div>
+              <div className="relative bg-[var(--color-bg)] p-4 rounded-2xl shadow-lg border border-[var(--color-border)]">
+                <HelpCircle className="w-12 h-12 text-[var(--color-electric)]" />
               </div>
             </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-gray-900 to-blue-600 dark:from-white dark:to-blue-400 bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-[var(--color-text)] to-[var(--color-accent)] bg-clip-text text-transparent mb-4">
             {t("faq.title")}
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-[var(--color-text-secondary)] max-w-2xl mx-auto leading-relaxed">
             {t("faq.subtitle")}
           </p>
         </motion.div>
@@ -128,21 +128,21 @@ function Faq() {
             <motion.div
               key={index}
               variants={itemVariants}
-              className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700"
+              className="bg-[var(--color-bg)] rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-[var(--color-border)]"
             >
               <motion.button
-                className="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                className="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none hover:bg-[var(--color-bg-gray)] transition-colors"
                 onClick={() => toggleAccordion(index)}
                 whileHover={{ scale: 1.005 }}
               >
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white pr-4">
+                <h3 className="text-lg font-semibold text-[var(--color-text)] pr-4">
                   {item.question}
                 </h3>
                 <div className="flex-shrink-0">
                   {activeIndex === index ? (
-                    <ChevronUp className="w-5 h-5 text-blue-500" />
+                    <ChevronUp className="w-5 h-5 text-[var(--color-accent)]" />
                   ) : (
-                    <ChevronDown className="w-5 h-5 text-gray-400" />
+                    <ChevronDown className="w-5 h-5 text-[var(--color-text-secondary)]" />
                   )}
                 </div>
               </motion.button>
@@ -160,7 +160,7 @@ function Faq() {
                   {item.answerComponent ? (
                     item.answerComponent
                   ) : (
-                    <p className="leading-relaxed whitespace-pre-line text-gray-600 dark:text-gray-300 text-lg">
+                    <p className="leading-relaxed whitespace-pre-line text-[var(--color-text-secondary)] text-lg">
                       {item.answer}
                     </p>
                   )}
@@ -175,20 +175,20 @@ function Faq() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.8 }}
-          className="mt-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl p-8 text-center text-white shadow-2xl"
+          className="mt-16 bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] rounded-3xl p-8 text-center text-white shadow-2xl"
         >
           <div className="max-w-2xl mx-auto">
             <MessageCircle className="w-16 h-16 mx-auto mb-4 text-white opacity-90" />
             <h3 className="text-2xl sm:text-3xl font-bold mb-4">
               {t("faq.needHelp")}
             </h3>
-            <p className="text-blue-100 text-lg mb-6 leading-relaxed">
+            <p className="text-[var(--color-on-accent)] text-lg mb-6 leading-relaxed">
               {t("faq.contactText")}
             </p>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
                 to="/contact"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--color-on-accent)] text-[var(--color-accent)] rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 <MessageCircle className="w-5 h-5" />
                 {t("faq.contactButton")}

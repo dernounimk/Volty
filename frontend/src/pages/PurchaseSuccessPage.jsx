@@ -59,7 +59,7 @@ const PurchaseSuccessPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-5 dark:from-gray-900 dark:to-emerald-900 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center py-5 relative overflow-hidden">
       <Confetti
         width={window.innerWidth}
         height={window.innerHeight}
@@ -71,12 +71,12 @@ const PurchaseSuccessPage = () => {
       
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-green-200 dark:bg-green-800 rounded-full blur-3xl opacity-30"></div>
-        <div className="absolute bottom-20 right-10 w-40 h-40 bg-emerald-200 dark:bg-emerald-800 rounded-full blur-3xl opacity-30"></div>
+        <div className="absolute top-20 left-10 w-32 h-32 bg-[var(--color-accent)]/20 rounded-full blur-3xl opacity-30"></div>
+        <div className="absolute bottom-20 right-10 w-40 h-40 bg-[var(--color-electric)]/20 rounded-full blur-3xl opacity-30"></div>
       </div>
 
       <motion.div
-        className="max-w-md w-full bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden relative z-20 border border-green-200 dark:border-green-800"
+        className="max-w-md w-full bg-[var(--color-bg)] rounded-3xl shadow-2xl overflow-hidden relative z-20 border border-[var(--color-border)]"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5, type: "spring" }}
@@ -90,14 +90,14 @@ const PurchaseSuccessPage = () => {
             transition={{ duration: 0.5, delay: 0.2, type: "spring" }}
           >
             <div className="relative">
-              <div className="absolute inset-0 bg-green-500 rounded-full blur-lg opacity-75 animate-pulse"></div>
-              <CheckCircle className="relative w-20 h-20 text-green-500" />
+              <div className="absolute inset-0 bg-[var(--color-accent)] rounded-full blur-lg opacity-75 animate-pulse"></div>
+              <CheckCircle className="relative w-20 h-20 text-[var(--color-accent)]" />
             </div>
           </motion.div>
 
           {/* Title */}
           <motion.h1
-            className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-3"
+            className="text-3xl font-bold text-center text-[var(--color-text)] mb-3"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.3 }}
@@ -107,7 +107,7 @@ const PurchaseSuccessPage = () => {
 
           {/* Subtitle */}
           <motion.p
-            className="text-gray-600 dark:text-gray-300 text-center mb-4 text-lg"
+            className="text-[var(--color-text-secondary)] text-center mb-4 text-lg"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
@@ -117,7 +117,7 @@ const PurchaseSuccessPage = () => {
 
           {/* Thanks Message */}
           <motion.p
-            className="text-green-600 dark:text-green-400 text-center mb-8 flex items-center justify-center font-semibold"
+            className="text-[var(--color-accent)] text-center mb-8 flex items-center justify-center font-semibold"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.5 }}
@@ -128,7 +128,7 @@ const PurchaseSuccessPage = () => {
 
           {/* Order Details Card */}
           <motion.div
-            className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-gray-700 dark:to-emerald-900/20 rounded-2xl p-6 mb-8 border border-green-200 dark:border-green-800"
+            className="bg-gradient-to-r from-[var(--color-bg-gray)] to-emerald-50 dark:from-[var(--color-bg-gray)] dark:to-emerald-900/20 rounded-2xl p-6 mb-8 border border-[var(--color-border)]"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.6 }}
@@ -136,19 +136,19 @@ const PurchaseSuccessPage = () => {
             <div className="space-y-4">
               {/* Order Number */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                <div className="flex items-center gap-2 text-[var(--color-text-secondary)]">
                   <ShoppingBag className="w-4 h-4" />
                   <span className="text-sm font-medium">
                     {t("purchaseSuccess.orderNumber")}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-lg font-bold text-green-600 dark:text-green-400">
+                  <span className="text-lg font-bold text-[var(--color-accent)]">
                     {orderNumber}
                   </span>
                   <motion.button
                     onClick={handleCopy}
-                    className="text-gray-400 hover:text-green-500 transition-colors p-1 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20"
+                    className="text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors p-1 rounded-lg hover:bg-[var(--color-bg-gray)]"
                     title={t("purchaseSuccess.copyNumber")}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
@@ -160,26 +160,26 @@ const PurchaseSuccessPage = () => {
 
               {/* Payment Method */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                <div className="flex items-center gap-2 text-[var(--color-text-secondary)]">
                   <Coins className="w-4 h-4" />
                   <span className="text-sm font-medium">
                     {t("purchaseSuccess.paymentMethod")}
                   </span>
                 </div>
-                <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                <span className="text-sm font-semibold text-[var(--color-text)]">
                   {t("purchaseSuccess.cashOnDelivery")}
                 </span>
               </div>
 
               {/* Estimated Delivery */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+                <div className="flex items-center gap-2 text-[var(--color-text-secondary)]">
                   <Truck className="w-4 h-4" />
                   <span className="text-sm font-medium">
                     {t("purchaseSuccess.estimatedDelivery")}
                   </span>
                 </div>
-                <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                <span className="text-sm font-semibold text-[var(--color-text)]">
                   {deliveryDays
                     ? `${deliveryDays} ${t("purchaseSuccess.days")}`
                     : t("purchaseSuccess.deliveryTime")}
@@ -196,7 +196,7 @@ const PurchaseSuccessPage = () => {
           >
             <Link
               to={"/"}
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-6 rounded-2xl transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
+              className="w-full bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-on-accent)] font-bold py-4 px-6 rounded-2xl transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
             >
               {t("purchaseSuccess.continueShopping")}
               <ArrowRight className={isRTL ? "mr-2" : "ml-2"} size={20} />

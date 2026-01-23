@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { LogIn, Mail, Lock, Loader, Eye, EyeOff, Shield } from "lucide-react";
+import { LogIn, Mail, Lock, Loader, Eye, EyeOff, Shield, ArrowLeft } from "lucide-react";
 import { useAdminAuthStore } from "../stores/useAdminAuthStore";
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -31,7 +31,7 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center dark:from-gray-900 dark:to-blue-900 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
       <motion.div
         className="max-w-md w-full space-y-8"
         initial={{ opacity: 0, scale: 0.9 }}
@@ -47,15 +47,15 @@ const AdminLogin = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur-2xl opacity-75"></div>
-              <div className="relative bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700">
-                <Shield className="w-12 h-12 text-blue-600 dark:text-blue-400" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] rounded-2xl blur-2xl opacity-75"></div>
+              <div className="relative bg-[var(--color-bg)] p-4 rounded-2xl shadow-2xl border border-[var(--color-border)]">
+                <Shield className="w-12 h-12 text-[var(--color-electric)]" />
               </div>
             </div>
           </motion.div>
           
           <motion.h2
-            className="text-3xl font-bold text-gray-900 dark:text-white mb-2"
+            className="text-3xl font-bold text-[var(--color-text)] mb-2"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
@@ -63,7 +63,7 @@ const AdminLogin = () => {
             {t("adminLogin.title")}
           </motion.h2>
           <motion.p
-            className="text-gray-600 dark:text-gray-300"
+            className="text-[var(--color-text-secondary)]"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -74,7 +74,7 @@ const AdminLogin = () => {
 
         {/* Login Form */}
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 p-8"
+          className="bg-[var(--color-bg)] rounded-3xl shadow-2xl border border-[var(--color-border)] p-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
@@ -82,12 +82,12 @@ const AdminLogin = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Field */}
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+              <label htmlFor="email" className="block text-sm font-semibold text-[var(--color-text)]">
                 {t("adminLogin.emailLabel")}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
+                  <Mail className="h-5 w-5 text-[var(--color-text-secondary)]" />
                 </div>
                 <input 
                   id="email" 
@@ -95,7 +95,7 @@ const AdminLogin = () => {
                   required 
                   value={email} 
                   onChange={(e) => setEmail(e.target.value)} 
-                  className="block w-full pl-10 pr-3 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  className="block w-full pl-10 pr-3 py-3 bg-[var(--color-bg-gray)] border border-[var(--color-border)] rounded-2xl text-[var(--color-text)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-all duration-200"
                   placeholder={t("adminLogin.emailPlaceholder")} 
                   dir="ltr"
                 />
@@ -104,12 +104,12 @@ const AdminLogin = () => {
 
             {/* Password Field */}
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+              <label htmlFor="password" className="block text-sm font-semibold text-[var(--color-text)]">
                 {t("adminLogin.passwordLabel")}
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                  <Lock className="h-5 w-5 text-[var(--color-text-secondary)]" />
                 </div>
                 <input 
                   id="password" 
@@ -117,14 +117,14 @@ const AdminLogin = () => {
                   required 
                   value={password} 
                   onChange={(e) => setPassword(e.target.value)} 
-                  className="block w-full pl-10 pr-12 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  className="block w-full pl-10 pr-12 py-3 bg-[var(--color-bg-gray)] border border-[var(--color-border)] rounded-2xl text-[var(--color-text)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-all duration-200"
                   placeholder={t("adminLogin.passwordPlaceholder")} 
                   dir="ltr"
                 />
                 <button
                   type="button"
                   onClick={toggleShowPassword}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--color-text-secondary)] hover:text-[var(--color-text)] transition-colors"
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5" />
@@ -139,7 +139,7 @@ const AdminLogin = () => {
             <motion.button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center items-center gap-3 py-4 px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex justify-center items-center gap-3 py-4 px-6 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-on-accent)] font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
             >
@@ -166,7 +166,7 @@ const AdminLogin = () => {
           >
             <Link
               to="/"
-              className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              className="inline-flex items-center gap-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               {t("adminLogin.backToHome")}
@@ -177,12 +177,5 @@ const AdminLogin = () => {
     </div>
   );
 };
-
-// Add the missing ArrowLeft import
-const ArrowLeft = ({ className }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-  </svg>
-);
 
 export default AdminLogin;

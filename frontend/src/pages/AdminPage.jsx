@@ -55,7 +55,7 @@ const AdminPage = () => {
 
   if (checkingAuth) {
     return (
-      <div className="min-h-screen flex items-center justify-center dark:from-gray-900 dark:to-blue-900">
+      <div className="min-h-screen flex items-center justify-center">
         <LoadingSpinner size="xl" />
       </div>
     );
@@ -64,7 +64,7 @@ const AdminPage = () => {
   if (!admin) return null;
 
   return (
-    <div className="min-h-screen dark:from-gray-900 dark:to-blue-900">
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <motion.div
@@ -75,16 +75,16 @@ const AdminPage = () => {
         >
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur-md opacity-75"></div>
-              <div className="relative bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-lg">
-                <BarChart className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] rounded-2xl blur-md opacity-75"></div>
+              <div className="relative bg-[var(--color-bg)] p-3 rounded-2xl shadow-lg border border-[var(--color-border)]">
+                <BarChart className="w-8 h-8 text-[var(--color-electric)]" />
               </div>
             </div>
             <div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)]">
                 {t("adminPage.title")}
               </h1>
-              <p className="text-gray-600 dark:text-gray-300 mt-1">
+              <p className="text-[var(--color-text-secondary)] mt-1">
                 {t("adminPage.welcome", { name: admin.name || admin.email })}
               </p>
             </div>
@@ -92,7 +92,7 @@ const AdminPage = () => {
 
           <motion.button
             onClick={handleLogout}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+            className="flex items-center gap-2 px-6 py-3 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-on-accent)] rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -114,8 +114,8 @@ const AdminPage = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-3 px-6 py-4 rounded-2xl whitespace-nowrap transition-all duration-300 ${
                 activeTab === tab.id
-                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
-                  : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600"
+                  ? "bg-[var(--color-accent)] text-[var(--color-on-accent)] shadow-lg"
+                  : "bg-[var(--color-bg)] text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-gray)] border border-[var(--color-border)]"
               }`}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -132,7 +132,7 @@ const AdminPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+          className="bg-[var(--color-bg)] rounded-3xl shadow-xl border border-[var(--color-border)] overflow-hidden"
         >
           {activeTab === "create" && <CreateProductForm />}
           {activeTab === "products" && <ProductsList />}

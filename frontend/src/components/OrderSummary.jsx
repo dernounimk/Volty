@@ -18,17 +18,17 @@ const OrderSummary = () => {
 
 	return (
 		<motion.div
-			className="space-y-6 rounded-2xl backdrop-blur-xl bg-white/80 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-800 shadow-lg p-6"
+			className="space-y-6 rounded-2xl backdrop-blur-xl bg-[var(--color-bg-opacity)] border border-[var(--color-border)] shadow-lg p-6"
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.5 }}
 		>
 			{/* Header */}
 			<div className="flex items-center gap-3">
-				<div className="p-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+				<div className="p-2 rounded-xl bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] text-[var(--color-on-accent)]">
 					<Receipt size={24} />
 				</div>
-				<h2 className="text-xl font-bold text-gray-900 dark:text-white">
+				<h2 className="text-xl font-bold text-[var(--color-text)]">
 					{t("orderSummary.title")}
 				</h2>
 			</div>
@@ -37,11 +37,11 @@ const OrderSummary = () => {
 				{/* Price Breakdown */}
 				<div className="space-y-3">
 					{/* Subtotal */}
-					<div className="flex items-center justify-between gap-4 p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
-						<span className="text-base font-medium text-gray-600 dark:text-gray-300">
+					<div className="flex items-center justify-between gap-4 p-3 rounded-xl bg-[var(--color-bg-gray)]">
+						<span className="text-base font-medium text-[var(--color-text-secondary)]">
 							{t("orderSummary.originalPrice")}
 						</span>
-						<span className="text-base font-semibold text-gray-900 dark:text-white">
+						<span className="text-base font-semibold text-[var(--color-text)]">
 							{subtotal} DA
 						</span>
 					</div>
@@ -59,11 +59,11 @@ const OrderSummary = () => {
 					)}
 
 					{/* Total */}
-					<div className="flex items-center justify-between gap-4 p-4 rounded-xl bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800">
-						<span className="text-lg font-bold text-gray-900 dark:text-white">
+					<div className="flex items-center justify-between gap-4 p-4 rounded-xl bg-gradient-to-r from-[var(--color-bg-gray)] to-[var(--color-bg-gray)] border border-[var(--color-border)]">
+						<span className="text-lg font-bold text-[var(--color-text)]">
 							{t("orderSummary.total")}
 						</span>
-						<span className="text-lg font-bold text-blue-600 dark:text-blue-400">
+						<span className="text-lg font-bold text-[var(--color-accent)]">
 							{finalTotal} DA
 						</span>
 					</div>
@@ -71,7 +71,7 @@ const OrderSummary = () => {
 
 				{/* Confirm Order Button */}
 				<motion.button
-					className="flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-3.5 text-base font-semibold text-white hover:shadow-lg transition-all duration-200 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20"
+					className="flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] px-6 py-3.5 text-base font-semibold text-[var(--color-on-accent)] hover:shadow-lg transition-all duration-200 hover:opacity-90 focus:outline-none focus:ring-4 focus:ring-[var(--color-accent)]/20"
 					whileHover={{ scale: 1.02 }}
 					whileTap={{ scale: 0.98 }}
 					onClick={handleGoToShipping}
@@ -82,12 +82,12 @@ const OrderSummary = () => {
 
 				{/* Continue Shopping */}
 				<div className="flex items-center justify-center gap-3 pt-2">
-					<span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+					<span className="text-sm font-medium text-[var(--color-text-secondary)]">
 						{t("orderSummary.or")}
 					</span>
 					<Link
 						to="/"
-						className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:gap-3 transition-all duration-200"
+						className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] hover:gap-3 transition-all duration-200"
 					>
 						{t("orderSummary.continueShopping")}
 						<MoveRight size={16} className={isRTL ? "rotate-180" : ""} />

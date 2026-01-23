@@ -48,18 +48,16 @@ const HomePage = () => {
   
   return (
     <div className="min-h-screen relative overflow-hidden">
-      
-      {/* إزالة NeonGridBackground من هنا */}
 
       {/* Content */}
       <div className="relative z-10">
         
         {/* Categories Section */}
-        <section className="py-12 lg:py-20">
+        <section className="">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <motion.div
-                className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-full mb-4 shadow-lg"
+                className="inline-flex items-center gap-2 bg-[var(--color-accent)] text-[var(--color-on-accent)] px-6 py-3 rounded-full shadow-lg"
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.3 }}
               >
@@ -68,13 +66,6 @@ const HomePage = () => {
                   {t("homepage.categoriesBadge")}
                 </span>
               </motion.div>
-              
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-                {t("homepage.categories")}
-              </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                {t("homepage.categoriesDescription")}
-              </p>
             </div>
 
             {categoriesLoading ? (

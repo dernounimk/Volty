@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useProductStore } from '../stores/useProductStore';
 import { useCartStore } from '../stores/useCartStore';
 import useSettingStore from '../stores/useSettingStore';
-import { ShoppingCart, Minus, Plus, Star, Heart, Share2, Truck, Shield, ArrowLeft } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Heart, Share2, Truck, ArrowLeft, Coins, CoinsIcon } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { Swiper, SwiperSlide } from "swiper/react";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -164,10 +164,10 @@ const ProductPage = () => {
 
   if (!product) {
     return (
-      <div className="flex justify-center items-center min-h-screen dark:from-gray-900 dark:to-blue-900">
+      <div className="flex justify-center items-center min-h-screen">
         <div className="text-center">
           <div className="text-6xl mb-4">😔</div>
-          <p className="text-xl text-gray-600 dark:text-gray-300">{t("product.notFound")}</p>
+          <p className="text-xl text-[var(--color-text-secondary)]">{t("product.notFound")}</p>
         </div>
       </div>
     );
@@ -227,20 +227,7 @@ const ProductPage = () => {
   };
 
   return (
-    <div className="min-h-screen dark:from-gray-900 dark:to-blue-900 py-8 px-4 sm:px-6 lg:px-8">
-      {/* Breadcrumb */}
-      <nav className="max-w-7xl mx-auto mb-8">
-        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-          <Link to="/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-            {t("breadcrumb.home")}
-          </Link>
-          <span>/</span>
-          <span className="text-blue-600 dark:text-blue-400 font-medium">
-            {product.name}
-          </span>
-        </div>
-      </nav>
-
+    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* معرض الصور */}
         <motion.div
@@ -249,7 +236,7 @@ const ProductPage = () => {
           className="space-y-4"
         >
           {/* الصورة الرئيسية */}
-          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+          <div className="bg-[var(--color-bg)] rounded-3xl shadow-xl overflow-hidden border border-[var(--color-border)]">
             <Swiper
               modules={[Navigation, Autoplay, Thumbs]}
               navigation
@@ -257,17 +244,17 @@ const ProductPage = () => {
               spaceBetween={10}
               slidesPerView={1}
               className="w-full rounded-3xl"
-              loop={true}
-              thumbs={{ swiper: thumbsSwiper }}
-              onSlideChange={(swiper) => setActiveImageIndex(swiper.activeIndex)}
+              loop={images.length > 1}
+              thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
+              onSlideChange={(swiper) => setActiveImageIndex(swiper.realIndex)}
               style={{ height: "500px" }}
             >
               {images.map((img, idx) => (
                 <SwiperSlide key={idx} className="w-full h-full">
-                  <div className="w-full h-full flex justify-center items-center p-8">
+                  <div className="w-full h-full flex justify-center items-center">
                     <img
                       src={img}
-                      className="w-full h-full object-contain rounded-2xl"
+                      className="w-full h-full object-contain"
                       alt={`${product.name} - ${idx + 1}`}
                     />
                   </div>
@@ -278,29 +265,36 @@ const ProductPage = () => {
 
           {/* الصور المصغرة */}
           {images.length > 1 && (
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-lg border border-gray-200 dark:border-gray-700">
+            <div className="bg-[var(--color-bg)] rounded-2xl p-4 shadow-lg border border-[var(--color-border)]">
               <Swiper
                 modules={[Thumbs]}
                 watchSlidesProgress
                 onSwiper={setThumbsSwiper}
                 spaceBetween={12}
-                slidesPerView={4}
+                slidesPerView={Math.min(4, images.length)}
                 className="thumbs-swiper"
               >
                 {images.map((img, idx) => (
                   <SwiperSlide key={idx}>
                     <div 
-                      className={`cursor-pointer rounded-xl border-2 transition-all duration-200 ${
+                      className={`cursor-pointer rounded-xl border-2 transition-all duration-200 overflow-hidden ${
                         activeImageIndex === idx 
-                          ? 'border-blue-500 shadow-md' 
-                          : 'border-transparent hover:border-gray-300'
+                          ? 'border-[var(--color-accent)] shadow-md' 
+                          : 'border-transparent hover:border-[var(--color-border)]'
                       }`}
+                      onClick={() => {
+                        if (thumbsSwiper && !thumbsSwiper.destroyed) {
+                          thumbsSwiper.slideTo(idx);
+                        }
+                      }}
                     >
-                      <img
-                        src={img}
-                        className="w-20 h-20 object-cover rounded-lg"
-                        alt={`${product.name} thumbnail ${idx + 1}`}
-                      />
+                      <div className="relative w-full h-20">
+                        <img
+                          src={img}
+                          className="w-full h-full object-cover"
+                          alt={`${product.name} thumbnail ${idx + 1}`}
+                        />
+                      </div>
                     </div>
                   </SwiperSlide>
                 ))}
@@ -317,10 +311,10 @@ const ProductPage = () => {
         >
           {/* العنوان والتقييم */}
           <div>
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
+            <h1 className="text-4xl lg:text-5xl font-bold text-[var(--color-text)] mb-4 leading-tight">
               {product.name}
             </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+            <p className="text-lg text-[var(--color-text-secondary)] leading-relaxed">
               {product.description}
             </p>
           </div>
@@ -329,15 +323,15 @@ const ProductPage = () => {
           <div className="space-y-2">
             <div className="flex items-center gap-4">
               {hasDiscount && (
-                <span className="text-2xl line-through text-gray-500">
+                <span className="text-2xl line-through text-[var(--color-text-secondary)]">
                   {product.priceBeforeDiscount} DA
                 </span>
               )}
-              <span className="text-4xl font-bold text-gray-900 dark:text-white">
+              <span className="text-4xl font-bold text-[var(--color-text)]">
                 {priceAfterDiscount} DA
               </span>
               {hasDiscount && (
-                <span className="px-3 py-1 bg-red-500 text-white text-sm font-bold rounded-full">
+                <span className="px-3 py-1 bg-[var(--color-accent)] text-[var(--color-on-accent)] text-sm font-bold rounded-full">
                   -{discountPercentage}%
                 </span>
               )}
@@ -347,7 +341,7 @@ const ProductPage = () => {
           {/* الألوان */}
           {product?.colors?.length > 0 && (
             <div className="space-y-3">
-              <p className="text-lg font-semibold text-gray-900 dark:text-white">
+              <p className="text-lg font-semibold text-[var(--color-text)]">
                 {t("product.color")}
               </p>
               <div className="flex flex-wrap gap-3">
@@ -357,17 +351,17 @@ const ProductPage = () => {
                     onClick={() => setSelectedColor(color)}
                     className={`flex items-center gap-3 px-4 py-3 rounded-2xl border-2 transition-all ${
                       selectedColor?._id === color._id
-                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-lg"
-                        : "border-gray-200 dark:border-gray-600 hover:border-gray-300"
+                        ? "border-[var(--color-accent)] bg-[var(--color-bg-gray)] shadow-lg"
+                        : "border-[var(--color-border)] hover:border-[var(--color-accent)]"
                     }`}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     <span 
-                      className="w-8 h-8 rounded-full shadow-md border-2 border-white dark:border-gray-700"
+                      className="w-8 h-8 rounded-full shadow-md border-2 border-[var(--color-bg)]"
                       style={{ backgroundColor: color.hex }}
                     />
-                    <span className="font-medium text-gray-900 dark:text-white">
+                    <span className="font-medium text-[var(--color-text)]">
                       {color.name}
                     </span>
                   </motion.button>
@@ -379,7 +373,7 @@ const ProductPage = () => {
           {/* المقاسات */}
           {product.sizes?.length > 0 && (
             <div className="space-y-3">
-              <p className="text-lg font-semibold text-gray-900 dark:text-white">
+              <p className="text-lg font-semibold text-[var(--color-text)]">
                 {t("product.size")}
               </p>
               <div className="flex flex-wrap gap-3">
@@ -389,8 +383,8 @@ const ProductPage = () => {
                     onClick={() => setSelectedSize(size)}
                     className={`px-6 py-3 rounded-2xl border-2 font-medium transition-all ${
                       selectedSize === size
-                        ? "border-blue-500 bg-blue-500 text-white shadow-lg"
-                        : "border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white hover:border-gray-300"
+                        ? "border-[var(--color-accent)] bg-[var(--color-accent)] text-[var(--color-on-accent)] shadow-lg"
+                        : "border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--color-accent)]"
                     }`}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -405,23 +399,23 @@ const ProductPage = () => {
           {/* الكمية والإجراءات */}
           <div className="space-y-4">
             <div className="space-y-2">
-              <p className="text-lg font-semibold text-gray-900 dark:text-white">
+              <p className="text-lg font-semibold text-[var(--color-text)]">
                 {t("product.quantity")}
               </p>
               <div className="flex items-center gap-4">
                 <motion.button
-                  className="w-12 h-12 bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-2xl flex items-center justify-center text-gray-700 dark:text-gray-300 hover:border-blue-500 transition-all"
+                  className="w-12 h-12 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-2xl flex items-center justify-center text-[var(--color-text)] hover:border-[var(--color-accent)] transition-all"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                 >
                   <Minus className="w-5 h-5" />
                 </motion.button>
-                <div className="px-6 py-3 bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-2xl">
-                  <p className="text-xl font-bold text-gray-900 dark:text-white">{quantity}</p>
+                <div className="px-6 py-3 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-2xl">
+                  <p className="text-xl font-bold text-[var(--color-text)]">{quantity}</p>
                 </div>
                 <motion.button
-                  className="w-12 h-12 bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-2xl flex items-center justify-center text-gray-700 dark:text-gray-300 hover:border-blue-500 transition-all"
+                  className="w-12 h-12 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-2xl flex items-center justify-center text-[var(--color-text)] hover:border-[var(--color-accent)] transition-all"
                   onClick={() => setQuantity(quantity + 1)}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
@@ -434,7 +428,7 @@ const ProductPage = () => {
             {/* أزرار الإجراءات */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <motion.button
-                className="flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center justify-center gap-3 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-on-accent)] font-bold py-4 px-8 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handleAddToCart}
                 disabled={
                   (product.colors?.length > 0 && !selectedColor) ||
@@ -449,15 +443,15 @@ const ProductPage = () => {
 
               <div className="flex gap-2">
                 <motion.button
-                  className="flex-1 bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-2xl flex items-center justify-center text-gray-700 dark:text-gray-300 hover:border-blue-500 transition-all"
+                  className="flex-1 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-2xl flex items-center justify-center text-[var(--color-text)] hover:border-[var(--color-accent)] transition-all"
                   onClick={handleToggleFavorite}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Heart className={`w-6 h-6 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
+                  <Heart className={`w-6 h-6 ${isFavorite ? 'fill-[var(--color-accent)] text-[var(--color-accent)]' : ''}`} />
                 </motion.button>
                 <motion.button
-                  className="flex-1 bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-2xl flex items-center justify-center text-gray-700 dark:text-gray-300 hover:border-blue-500 transition-all"
+                  className="flex-1 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-2xl flex items-center justify-center text-[var(--color-text)] hover:border-[var(--color-accent)] transition-all"
                   onClick={handleShare}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -467,32 +461,12 @@ const ProductPage = () => {
               </div>
             </div>
           </div>
-
-          {/* معلومات إضافية */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex items-center gap-3 text-gray-600 dark:text-gray-300">
-              <Truck className="w-6 h-6 text-blue-500" />
-              <div>
-                <p className="font-semibold">{t("product.freeShipping")}</p>
-                <p className="text-sm">{t("product.shippingInfo")}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 text-gray-600 dark:text-gray-300">
-              <Shield className="w-6 h-6 text-green-500" />
-              <div>
-                <p className="font-semibold">{t("product.securePayment")}</p>
-                <p className="text-sm">{t("product.paymentInfo")}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 text-gray-600 dark:text-gray-300">
-              <Star className="w-6 h-6 text-yellow-500" />
-              <div>
-                <p className="font-semibold">{t("product.quality")}</p>
-                <p className="text-sm">{t("product.qualityInfo")}</p>
-              </div>
-            </div>
-          </div>
         </motion.div>
+      </div>
+
+      {/* منتجات قد تعجبك */}
+      <div className="max-w-7xl mx-auto mt-16">
+        <PeopleAlsoBought currentProductId={product._id} category={product.category} />
       </div>
 
       {/* التقييمات والمراجعات */}
@@ -504,11 +478,6 @@ const ProductPage = () => {
           setReviewForm={setReviewForm}
           handleSubmitReview={handleSubmitReview}
         />
-      </div>
-
-      {/* منتجات قد تعجبك */}
-      <div className="max-w-7xl mx-auto mt-16">
-        <PeopleAlsoBought currentProductId={product._id} category={product.category} />
       </div>
     </div>
   );

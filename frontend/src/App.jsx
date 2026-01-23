@@ -26,11 +26,18 @@ import FavoritesPage from "./pages/FavoritesPage";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import Background from "./components/Background";
 import SearchResultsPage from "./pages/SearchResultsPage";
+import AppPage from "./pages/AppPage";
+
+// 🆕 Offline support
+import useOnlineStatus from "./hooks/useOnlineStatus";
+import OfflinePage from "./pages/OfflinePage";
 
 function App() {
   const { i18n } = useTranslation();
   const calculateTotals = useCartStore((state) => state.calculateTotals);
   const checkAuth = useAdminAuthStore((state) => state.checkAuth);
+
+  const isOnline = useOnlineStatus();
 
   useEffect(() => {
     checkAuth();
@@ -40,42 +47,53 @@ function App() {
     calculateTotals();
   }, []);
 
+  // 🔴 إذا لا يوجد إنترنت
+  if (!isOnline) {
+    return <OfflinePage />;
+  }
+
   return (
-    <div className='min-h-screen bg-transparent text-gray-900 dark:text-white relative' dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
-      
-      {/* الخلفية الثابتة لجميع الصفحات */}
+    <div
+      className="min-h-screen bg-transparent text-gray-900 dark:text-white relative"
+      dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}
+    >
+      {/* الخلفية الثابتة */}
       <Background />
 
-      <ScrollToTop/>
-      <div className='relative z-50'>
+      <ScrollToTop />
+
+      <div className="relative z-50">
         <Navbar />
-        {/* زيادة padding-top لتعويض ارتفاع الـ Navbar */}
-        <main className="pt-24 pb-8 md:pb-0 min-h-screen"> {/* تغيير من pt-20 إلى pt-24 */}
+
+        <main className="pt-24 pb-8 md:pb-0 min-h-screen">
           <Routes>
-            <Route path='/' element={<HomePage />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/search" element={<SearchResultsPage />} />
-            <Route path='/contact' element={<Contact />} />
-            <Route path='/dash' element={<AdminPage />} />
-            <Route path='/category/:category' element={<CategoryPage />} />
-            <Route path='/cart' element={<CartPage />} />
-            <Route path='/purchase-success' element={<PurchaseSuccessPage />} />
-            <Route path='/shipping-info' element={<ShippingInfoPage />} />
-            <Route path='/admin/login' element={<AdminLogin/>} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/dash" element={<AdminPage />} />
+            <Route path="/category/:category" element={<CategoryPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/app" element={<AppPage />} />
+            <Route path="/purchase-success" element={<PurchaseSuccessPage />} />
+            <Route path="/shipping-info" element={<ShippingInfoPage />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/product/:id" element={<ProductPage />} />
-            <Route path="/faq" element={<Faq/>} />
-            <Route path="/privacy-policy" element={<Confidentiality/>} />
-            <Route path="/terms-of-use" element={<Terms/>} />
-            <Route path="*" element={<NotFoundPage/>} />
-            <Route path="/favorites" element={<FavoritesPage/>} />
+            <Route path="/faq" element={<Faq />} />
+            <Route path="/privacy-policy" element={<Confidentiality />} />
+            <Route path="/terms-of-use" element={<Terms />} />
+            <Route path="/favorites" element={<FavoritesPage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
-        <Footer/>
+
+        <Footer />
         <ScrollToTopButton />
       </div>
-      <Toaster 
-        containerStyle={{ zIndex: 11000 }} 
+
+      <Toaster
+        containerStyle={{ zIndex: 11000 }}
         toastOptions={{
-          className: 'dark:bg-gray-800 dark:text-white',
+          className: "dark:bg-gray-800 dark:text-white",
         }}
       />
     </div>

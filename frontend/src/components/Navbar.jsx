@@ -19,6 +19,7 @@ import {
   Shield,
   FileText,
   Star,
+  Smartphone,
   ArrowRight,
   Loader2,
   X,
@@ -233,11 +234,13 @@ const Navbar = () => {
   // تعريف روابط التنقل
   const navLinks = [
     { path: "/", label: t("navbar.home"), icon: <Home size={20} /> },
+    { path: "/app", label: "App", icon: <Smartphone size={20} /> },
     { path: "/contact", label: t("navbar.contact"), icon: <Phone size={20} /> },
   ];
 
   const mobileNavLinks = [
     { path: "/", label: t("navbar.home"), icon: <Home size={24} /> },
+    { path: "/app", label: "App", icon: <Smartphone size={24} /> },
     { path: "/contact", label: t("navbar.contact"), icon: <Phone size={24} /> },
     { path: "/faq", label: t("navbar.faq"), icon: <HelpCircle size={24} /> },
   ];
@@ -257,7 +260,7 @@ const Navbar = () => {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
-          className={`absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50 ${
+          className={`absolute top-full left-0 right-0 mt-2 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-2xl shadow-2xl overflow-hidden z-50 ${
             isMobile ? 'max-h-[70vh] overflow-y-auto' : ''
           }`}
           style={{ 
@@ -267,8 +270,8 @@ const Navbar = () => {
         >
           {isSearching ? (
             <div className="flex items-center justify-center py-6">
-              <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
-              <span className="ml-3 text-gray-600 dark:text-gray-300">
+              <Loader2 className="w-6 h-6 text-[var(--color-accent)] animate-spin" />
+              <span className="ml-3 text-[var(--color-text-secondary)]">
                 {t("navbar.searching")}
               </span>
             </div>
@@ -281,7 +284,7 @@ const Navbar = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="flex items-center gap-3 px-4 py-3 text-gray-900 dark:text-white hover:bg-blue-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-600 transition-all cursor-pointer active:bg-blue-100 dark:active:bg-gray-600"
+                    className="flex items-center gap-3 px-4 py-3 text-[var(--color-text)] hover:bg-[var(--color-bg-gray)] border-b border-[var(--color-border)] transition-all cursor-pointer active:bg-[var(--color-bg-opacity)]"
                     onClick={() => handleResultClick(item.id || item._id)}
                   >
                     <div className="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0">
@@ -296,17 +299,17 @@ const Navbar = () => {
                       <div className="min-w-0">
                         <p className="font-medium truncate">{item.name}</p>
                         {item.category?.name && (
-                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                          <p className="text-xs text-[var(--color-text-secondary)] truncate">
                             {item.category.name}
                           </p>
                         )}
                       </div>
                       <div className="flex flex-col items-end ml-2">
-                        <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
+                        <span className="text-sm font-bold text-[var(--color-accent)]">
                           {item.priceAfterDiscount || item.price} DA
                         </span>
                         {item.priceBeforeDiscount && item.priceAfterDiscount < item.priceBeforeDiscount && (
-                          <span className="text-xs text-gray-500 line-through">
+                          <span className="text-xs text-[var(--color-text-secondary)] line-through">
                             {item.priceBeforeDiscount} DA
                           </span>
                         )}
@@ -317,10 +320,10 @@ const Navbar = () => {
               </div>
               
               {/* زر عرض جميع النتائج */}
-              <div className="border-t border-gray-200 dark:border-gray-700">
+              <div className="border-t border-[var(--color-border)]">
                 <button
                   onClick={handleViewAllResults}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700 transition-all font-semibold active:bg-blue-100 dark:active:bg-gray-600"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 text-[var(--color-accent)] hover:bg-[var(--color-bg-gray)] transition-all font-semibold active:bg-[var(--color-bg-opacity)]"
                 >
                   <span>{t("navbar.viewAllResults")}</span>
                   <ArrowRight size={16} />
@@ -329,13 +332,13 @@ const Navbar = () => {
             </>
           ) : searchTerm.trim() && !isSearching ? (
             <div className="px-4 py-6 text-center">
-              <Search className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <p className="text-gray-600 dark:text-gray-300 mb-2">
+              <Search className="w-12 h-12 text-[var(--color-text-secondary)] mx-auto mb-3" />
+              <p className="text-[var(--color-text-secondary)] mb-2">
                 {t("navbar.noResults")} "{searchTerm}"
               </p>
               <button
                 onClick={handleViewAllResults}
-                className="text-blue-600 dark:text-blue-400 hover:underline text-sm font-medium"
+                className="text-[var(--color-accent)] hover:underline text-sm font-medium"
               >
                 {t("navbar.searchAllProducts")}
               </button>
@@ -349,14 +352,14 @@ const Navbar = () => {
   return (
     <header className="fixed top-0 left-0 w-full z-50">
       {/* الشريط العلوي الرئيسي */}
-      <div className="backdrop-blur-xl bg-white/95 dark:bg-gray-900/95 border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm transition-all duration-300">
+      <div className="backdrop-blur-xl bg-[var(--color-bg-opacity)] border-b border-[var(--color-border)] shadow-sm transition-all duration-300">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between gap-4">
             {/* Left Section - Menu & Logo */}
             <div className="flex items-center gap-4 flex-1 min-w-0">
               {/* Menu Button */}
               <button
-                className="p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 lg:hidden flex-shrink-0 relative w-10 h-10"
+                className="p-2 rounded-xl text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-gray)] transition-all duration-300 lg:hidden flex-shrink-0 relative w-10 h-10"
                 onClick={() => setIsMenuOpen((prev) => !prev)}
                 aria-label="Toggle menu"
               >
@@ -381,7 +384,7 @@ const Navbar = () => {
               {/* Logo */}
               <Link to="/" className="flex items-center gap-3 flex-shrink-0 min-w-0">
                 <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-sm opacity-75"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] rounded-2xl blur-sm opacity-75"></div>
                   <img
                     src={currentLogo}
                     alt="Volty"
@@ -400,8 +403,8 @@ const Navbar = () => {
                   className={({ isActive }) =>
                     `flex items-center gap-2 font-medium transition-all duration-200 px-4 py-2 rounded-xl whitespace-nowrap ${
                       isActive
-                        ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20"
-                        : "text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                        ? "text-[var(--color-accent)] bg-[var(--color-bg-gray)]"
+                        : "text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] hover:bg-[var(--color-bg-gray)]"
                     }`
                   }
                 >
@@ -420,8 +423,8 @@ const Navbar = () => {
                   onClick={handleSearchToggle}
                   className={`p-2 rounded-xl transition-all duration-300 flex-shrink-0 ${
                     isSearchOpen 
-                      ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20" 
-                      : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                      ? "text-[var(--color-accent)] bg-[var(--color-bg-gray)]" 
+                      : "text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-gray)]"
                   }`}
                   title={isSearchOpen ? t("navbar.closeSearch") : t("navbar.search")}
                   aria-label={isSearchOpen ? t("navbar.closeSearch") : t("navbar.search")}
@@ -439,11 +442,11 @@ const Navbar = () => {
               <div ref={searchContainerRef} className="hidden md:block relative">
                 <form onSubmit={handleSearchSubmit}>
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--color-text-secondary)] w-5 h-5" />
                     <input
                       ref={searchInputRefLocal}
                       type="text"
-                      className="w-64 lg:w-80 pl-10 pr-10 py-2.5 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-300 shadow-sm"
+                      className="w-64 lg:w-80 pl-10 pr-10 py-2.5 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-2xl text-[var(--color-text)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:border-[var(--color-accent)] transition-all duration-300 shadow-sm"
                       placeholder={t("navbar.searchPlaceholder")}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -453,7 +456,7 @@ const Navbar = () => {
                       <button
                         type="button"
                         onClick={clearSearch}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[var(--color-text-secondary)] hover:text-[var(--color-text)] transition-colors duration-200"
                         title={t("navbar.clearSearch")}
                         aria-label={t("navbar.clearSearch")}
                       >
@@ -468,12 +471,12 @@ const Navbar = () => {
               {/* Favorites */}
               <Link
                 to="/favorites"
-                className="relative p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 flex-shrink-0"
+                className="relative p-2 rounded-xl text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-gray)] transition-all duration-200 flex-shrink-0"
                 title={t("navbar.favorites")}
               >
                 <Heart size={20} className="md:w-6 md:h-6" />
                 {favorites.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-pink-500 to-red-500 text-white rounded-full px-1.5 py-0.5 text-xs font-bold min-w-[18px] text-center">
+                  <span className="absolute -top-1 -right-1 bg-[var(--color-accent)] text-[var(--color-on-accent)] rounded-full px-1.5 py-0.5 text-xs font-bold min-w-[18px] text-center">
                     {favorites.length}
                   </span>
                 )}
@@ -482,12 +485,12 @@ const Navbar = () => {
               {/* Cart */}
               <Link
                 to="/cart"
-                className="relative p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 flex-shrink-0"
+                className="relative p-2 rounded-xl text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-gray)] transition-all duration-200 flex-shrink-0"
                 title={t("navbar.cart")}
               >
                 <ShoppingCart size={20} className="md:w-6 md:h-6" />
                 {cart.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-full px-1.5 py-0.5 text-xs font-bold min-w-[18px] text-center">
+                  <span className="absolute -top-1 -right-1 bg-[var(--color-accent)] text-[var(--color-on-accent)] rounded-full px-1.5 py-0.5 text-xs font-bold min-w-[18px] text-center">
                     {cart.length}
                   </span>
                 )}
@@ -498,7 +501,7 @@ const Navbar = () => {
                 <button
                   ref={langButtonRef}
                   onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-                  className="flex items-center gap-2 p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
+                  className="flex items-center gap-2 p-2 rounded-xl text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-gray)] transition-all duration-200"
                   aria-label={t("navbar.language")}
                 >
                   <Globe size={18} className="md:w-5 md:h-5" />
@@ -511,16 +514,16 @@ const Navbar = () => {
                 {isLangMenuOpen && (
                   <div 
                     ref={langMenuRef}
-                    className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
+                    className="absolute top-full right-0 mt-2 w-48 bg-[var(--color-bg)] rounded-2xl shadow-2xl border border-[var(--color-border)] overflow-hidden z-50"
                   >
                     {languages.map(lang => (
                       <button
                         key={lang.code}
                         onClick={() => changeLanguage(lang.code)}
-                        className={`flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-all ${
+                        className={`flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-[var(--color-bg-gray)] transition-all ${
                           i18n.language === lang.code 
-                            ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' 
-                            : 'text-gray-700 dark:text-gray-300'
+                            ? 'bg-[var(--color-bg-gray)] text-[var(--color-accent)]' 
+                            : 'text-[var(--color-text)]'
                         }`}
                       >
                         <Globe size={16} />
@@ -534,7 +537,7 @@ const Navbar = () => {
               {/* Dark Mode Toggle */}
               <button
                 onClick={() => setIsDarkMode(!isDarkMode)}
-                className="p-2 rounded-xl text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 flex-shrink-0"
+                className="p-2 rounded-xl text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-gray)] transition-all duration-200 flex-shrink-0"
                 title={isDarkMode ? t("navbar.lightMode") : t("navbar.darkMode")}
                 aria-label={isDarkMode ? t("navbar.lightMode") : t("navbar.darkMode")}
               >
@@ -552,7 +555,7 @@ const Navbar = () => {
                   <button
                     ref={adminButtonRef}
                     onClick={() => setIsAdminMenuOpen(!isAdminMenuOpen)}
-                    className="flex items-center gap-2 p-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg transition-all duration-200"
+                    className="flex items-center gap-2 p-2 rounded-xl bg-[var(--color-accent)] text-[var(--color-on-accent)] hover:bg-[var(--color-accent-hover)] shadow-lg transition-all duration-200"
                     aria-label={t("navbar.admin")}
                   >
                     <Lock size={16} className="md:w-5 md:h-5" />
@@ -563,11 +566,11 @@ const Navbar = () => {
                   {isAdminMenuOpen && (
                     <div 
                       ref={adminMenuRef}
-                      className="absolute top-full right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
+                      className="absolute top-full right-0 mt-2 w-56 bg-[var(--color-bg)] rounded-2xl shadow-2xl border border-[var(--color-border)] overflow-hidden z-50"
                     >
                       <Link
                         to="/dash"
-                        className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all text-gray-700 dark:text-gray-300"
+                        className="flex items-center gap-3 px-4 py-3 hover:bg-[var(--color-bg-gray)] transition-all text-[var(--color-text)]"
                         onClick={() => setIsAdminMenuOpen(false)}
                       >
                         <KeyRound size={18} />
@@ -579,7 +582,7 @@ const Navbar = () => {
                           toast.success(t("logout.success"));
                           setIsAdminMenuOpen(false);
                         }}
-                        className="flex items-center gap-3 w-full px-4 py-3 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 transition-all font-medium"
+                        className="flex items-center gap-3 w-full px-4 py-3 hover:bg-[var(--color-bg-gray)] text-[var(--color-accent)] transition-all font-medium"
                       >
                         <LogOut size={18} />
                         <span>{t("navbar.logout")}</span>
@@ -604,11 +607,11 @@ const Navbar = () => {
                 <div className="relative pt-4">
                   <form onSubmit={handleSearchSubmit}>
                     <div className="relative">
-                      <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                      <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[var(--color-text-secondary)] w-5 h-5" />
                       <input
                         ref={searchInputRefLocal}
                         type="text"
-                        className="w-full pl-12 pr-12 py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-300 shadow-sm text-base"
+                        className="w-full pl-12 pr-12 py-3 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-2xl text-[var(--color-text)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:border-[var(--color-accent)] transition-all duration-300 shadow-sm text-base"
                         placeholder={t("navbar.searchPlaceholder")}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -619,7 +622,7 @@ const Navbar = () => {
                         <button
                           type="button"
                           onClick={clearSearch}
-                          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200"
+                          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[var(--color-text-secondary)] hover:text-[var(--color-text)] transition-colors duration-200"
                           title={t("navbar.clearSearch")}
                           aria-label={t("navbar.clearSearch")}
                         >
@@ -646,7 +649,7 @@ const Navbar = () => {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="lg:hidden w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden"
+            className="lg:hidden w-full bg-[var(--color-bg)] border-b border-[var(--color-border)] shadow-2xl overflow-hidden"
           >
             <div className="container mx-auto px-4 py-6">
               {/* Mobile Navigation */}
@@ -659,8 +662,8 @@ const Navbar = () => {
                     className={({ isActive }) =>
                       `flex flex-col items-center gap-2 p-3 rounded-2xl transition-all ${
                         isActive
-                          ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
-                          : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                          ? "bg-[var(--color-bg-gray)] text-[var(--color-accent)]"
+                          : "text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-gray)]"
                       }`
                     }
                   >
@@ -671,8 +674,8 @@ const Navbar = () => {
               </nav>
 
               {/* Language Selector in Mobile Menu */}
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-                <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3 flex items-center gap-2">
+              <div className="border-t border-[var(--color-border)] pt-4">
+                <h3 className="text-sm font-medium text-[var(--color-text-secondary)] mb-3 flex items-center gap-2">
                   <Globe size={16} />
                   {t("navbar.language")}
                 </h3>
@@ -683,8 +686,8 @@ const Navbar = () => {
                       onClick={() => changeLanguage(lang.code)}
                       className={`flex items-center justify-center gap-1 p-2 rounded-xl text-center transition-all ${
                         i18n.language === lang.code 
-                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800' 
-                          : 'bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
+                          ? 'bg-[var(--color-bg-gray)] text-[var(--color-accent)] border border-[var(--color-border)]' 
+                          : 'bg-[var(--color-bg-gray)] text-[var(--color-text)] border border-[var(--color-border)] hover:bg-[var(--color-bg)]'
                       }`}
                     >
                       <Globe size={14} />
@@ -700,16 +703,16 @@ const Navbar = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4"
+                  className="border-t border-[var(--color-border)] pt-4 mt-4"
                 >
-                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3 flex items-center gap-2">
+                  <h3 className="text-sm font-medium text-[var(--color-text-secondary)] mb-3 flex items-center gap-2">
                     <Lock size={16} />
                     {t("navbar.admin")}
                   </h3>
                   <div className="space-y-2">
                     <Link
                       to="/dash"
-                      className="flex items-center gap-3 px-3 py-2 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all"
+                      className="flex items-center gap-3 px-3 py-2 rounded-xl bg-[var(--color-bg-gray)] text-[var(--color-accent)] hover:bg-[var(--color-bg)] transition-all"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       <KeyRound size={18} />
@@ -721,7 +724,7 @@ const Navbar = () => {
                         toast.success(t("logout.success"));
                         setIsMenuOpen(false);
                       }}
-                      className="flex items-center gap-3 w-full px-3 py-2 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 transition-all font-medium"
+                      className="flex items-center gap-3 w-full px-3 py-2 rounded-xl bg-[var(--color-bg-gray)] text-[var(--color-accent)] hover:bg-[var(--color-bg)] transition-all font-medium"
                     >
                       <LogOut size={18} />
                       <span>{t("navbar.logout")}</span>

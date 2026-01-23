@@ -1,4 +1,75 @@
 {
+  "appPage": {
+    "hero": {
+      "title": "Télécharger l'application Volty",
+      "subtitle": "Achetez plus vite, plus intelligemment et plus facilement avec notre application mobile. Offres exclusives, notifications push et expérience d'achat fluide."
+    },
+    "features": {
+      "title": "Pourquoi choisir notre application",
+      "subtitle": "Vivez le shopping comme jamais auparavant avec notre application mobile riche en fonctionnalités",
+      "fast": "Ultra Rapide",
+      "fastDesc": "Optimisé pour la vitesse avec chargement instantané et navigation fluide",
+      "secure": "Paiements Sécurisés",
+      "secureDesc": "Sécurité de niveau bancaire pour toutes vos transactions et données personnelles",
+      "notifications": "Notifications Intelligentes",
+      "notificationsDesc": "Recevez des alertes en temps réel pour les offres, commandes et mises à jour importantes",
+      "offline": "Navigation Hors Ligne",
+      "offlineDesc": "Parcourez les produits et consultez votre panier même sans connexion Internet",
+      "payments": "Paiements Multiples",
+      "paymentsDesc": "Prise en charge de toutes les méthodes de paiement locales et internationales",
+      "multilingual": "Multilingue",
+      "multilingualDesc": "Disponible en arabe, anglais et français"
+    },
+    "howTo": {
+      "title": "Comment Télécharger et Installer",
+      "subtitle": "Commencez avec l'application Volty en quelques étapes simples",
+      "steps": {
+        "download": "Télécharger l'App",
+        "downloadDesc": "Cliquez sur le bouton de votre store ou scannez le code QR",
+        "install": "Installer l'App",
+        "installDesc": "Suivez les instructions d'installation sur votre appareil",
+        "signup": "Créer un Compte",
+        "signupDesc": "Inscrivez-vous ou connectez-vous avec vos identifiants existants",
+        "shop": "Commencer les Achats",
+        "shopDesc": "Parcourez les produits et profitez des offres exclusives réservées à l'app"
+      }
+    },
+    "benefits": {
+      "title": "Avantages Exclusifs à l'App",
+      "exclusive": "Remises et offres exclusives réservées à l'application",
+      "push": "Notifications push pour les ventes flash et offres",
+      "faster": "Processus de paiement plus rapide",
+      "personalized": "Recommandations personnalisées",
+      "offers": "Offres spéciales d'anniversaire et récompenses",
+      "appOnly": "Fonctionnalités Exclusives à l'App",
+      "appOnlyDesc": "Profitez des fonctionnalités disponibles uniquement dans notre application mobile"
+    },
+    "faq": {
+      "title": "Questions Fréquentes",
+      "q1": "L'application est-elle gratuite à télécharger ?",
+      "a1": "Oui ! L'application Volty est totalement gratuite à télécharger et à utiliser. Aucun frais caché.",
+      "q2": "Puis-je utiliser mon compte existant ?",
+      "a2": "Absolument ! Vous pouvez vous connecter avec les mêmes identifiants que sur notre site web.",
+      "q3": "L'application est-elle disponible dans mon pays ?",
+      "a3": "L'application Volty est disponible dans le monde entier. Vous pouvez la télécharger sur l'App Store et Google Play.",
+      "q4": "Combien d'espace de stockage nécessite-t-elle ?",
+      "a4": "L'application est légère et prend environ 50-70 Mo d'espace de stockage.",
+      "q5": "Puis-je changer de langue ?",
+      "a5": "Oui ! L'application prend en charge l'arabe, l'anglais et le français. Vous pouvez changer la langue à tout moment dans les paramètres."
+    },
+    "cta": {
+      "title": "Prêt à Acheter Mieux ?",
+      "subtitle": "Téléchargez maintenant et obtenez 15% de réduction sur votre premier achat via l'application !",
+      "note": "Offre à durée limitée pour les nouveaux utilisateurs de l'app uniquement"
+    },
+    "scanQR": "Scannez pour télécharger directement",
+    "iosRedirect": "Redirection vers l'App Store...",
+    "androidRedirect": "Redirection vers Google Play...",
+    "notifyText": "Soyez notifié lorsque de nouvelles fonctionnalités sont ajoutées",
+    "emailPlaceholder": "Entrez votre email",
+    "notifyMe": "Me Notifier",
+    "notifySuccess": "Vous serez notifié lorsque de nouvelles fonctionnalités arriveront !"
+  },
   "deleteOneReviewMessage": "Êtes-vous sûr de vouloir supprimer cet avis ?",
   "deleteAllReviewMessage": "Êtes-vous sûr de vouloir supprimer tous les avis pour ce produit ?",
   "removedFromFavorites": "Retiré des favoris",

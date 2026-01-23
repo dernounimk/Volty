@@ -65,7 +65,7 @@ const GiftCouponCard = () => {
 
   return (
     <motion.div
-      className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-all duration-300"
+      className="bg-[var(--color-bg-opacity)] backdrop-blur-xl rounded-2xl shadow-lg border border-[var(--color-border)] p-6 hover:shadow-xl transition-all duration-300"
       initial={{ opacity: 0, y: 20, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.5, delay: 0.2 }}
@@ -78,14 +78,14 @@ const GiftCouponCard = () => {
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <div className="p-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl shadow-md">
+        <div className="p-2 bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] rounded-xl shadow-md">
           <Gift className="w-6 h-6 text-white" />
         </div>
         <div>
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white">
+          <h3 className="text-xl font-bold text-[var(--color-text)]">
             {t("giftCoupon.title")}
           </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-[var(--color-text-secondary)]">
             {t("giftCoupon.subtitle")}
           </p>
         </div>
@@ -98,8 +98,8 @@ const GiftCouponCard = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <label htmlFor='voucher' className='block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2'>
-            <Tag className="w-4 h-4 text-blue-500" />
+          <label htmlFor='voucher' className='block text-sm font-semibold text-[var(--color-text)] mb-3 flex items-center gap-2'>
+            <Tag className="w-4 h-4 text-[var(--color-accent)]" />
             {t("giftCoupon.label")}
           </label>
           
@@ -108,10 +108,10 @@ const GiftCouponCard = () => {
               type='text'
               id='voucher'
               name='code'
-              className={`block w-full rounded-xl bg-white dark:bg-gray-700 border-2 p-4 text-gray-800 dark:text-white placeholder-gray-500 focus:outline-none transition-all duration-300 ${
+              className={`block w-full rounded-xl bg-[var(--color-bg)] border-2 p-4 text-[var(--color-text)] placeholder-[var(--color-text-secondary)] focus:outline-none transition-all duration-300 ${
                 isFocused 
-                  ? 'border-blue-500 shadow-lg shadow-blue-500/20' 
-                  : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
+                  ? 'border-[var(--color-accent)] shadow-lg shadow-[var(--color-accent)]/20' 
+                  : 'border-[var(--color-border)] hover:border-[var(--color-border)]'
               } ${isCouponApplied ? 'bg-green-50 dark:bg-green-900/20 border-green-500' : ''}`}
               placeholder={t("giftCoupon.placeholder")}
               value={userInputCode}
@@ -146,8 +146,8 @@ const GiftCouponCard = () => {
               type='button'
               className={`flex w-full items-center justify-center gap-3 rounded-xl px-6 py-4 text-lg font-semibold text-white shadow-lg transition-all duration-300 ${
                 isLoading 
-                  ? 'bg-gray-400 cursor-not-allowed' 
-                  : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 focus:ring-4 focus:ring-blue-500/50'
+                  ? 'bg-[var(--color-border)] cursor-not-allowed' 
+                  : 'bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] hover:opacity-90 focus:ring-4 focus:ring-[var(--color-accent)]/50'
               }`}
               whileHover={!isLoading ? { scale: 1.02, y: -1 } : {}}
               whileTap={!isLoading ? { scale: 0.98 } : {}}
@@ -173,7 +173,7 @@ const GiftCouponCard = () => {
             <motion.button
               key="remove-button"
               type='button'
-              className='flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-red-500 to-pink-600 px-6 py-4 text-lg font-semibold text-white shadow-lg hover:from-red-600 hover:to-pink-700 focus:ring-4 focus:ring-red-500/50 transition-all duration-300'
+              className='flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-red-500 to-pink-600 px-6 py-4 text-lg font-semibold text-white shadow-lg hover:opacity-90 focus:ring-4 focus:ring-red-500/50 transition-all duration-300'
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleRemoveCoupon}
@@ -232,18 +232,6 @@ const GiftCouponCard = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Help Text */}
-      <motion.div
-        className="mt-4 text-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.6 }}
-      >
-        <p className="text-xs text-gray-500 dark:text-gray-400">
-          {t("giftCoupon.helpText")}
-        </p>
-      </motion.div>
     </motion.div>
   );
 };

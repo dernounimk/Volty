@@ -218,7 +218,7 @@ const ProductsList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-[var(--color-bg-gray)] to-[var(--color-bg)] dark:from-gray-900 dark:to-gray-800 py-8 px-4">
       <motion.div
         className="max-w-7xl mx-auto"
         initial={{ opacity: 0, y: 20 }}
@@ -228,7 +228,7 @@ const ProductsList = () => {
         {/* Header */}
         <div className="mb-8 text-center">
           <motion.h1 
-            className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2"
+            className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] bg-clip-text text-transparent mb-2"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -236,7 +236,7 @@ const ProductsList = () => {
             {t("productsList.title")}
           </motion.h1>
           <motion.p 
-            className="text-gray-600 dark:text-gray-300"
+            className="text-[var(--color-text-secondary)] dark:text-gray-300"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
@@ -247,7 +247,7 @@ const ProductsList = () => {
 
         {/* Filters Section */}
         <motion.div
-          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 mb-6"
+          className="bg-[var(--color-bg-opacity)] dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-lg border border-[var(--color-border)] dark:border-gray-700 p-6 mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
@@ -255,13 +255,13 @@ const ProductsList = () => {
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
             {/* Search Input */}
             <div className="relative flex-1 w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--color-text-secondary)] w-5 h-5" />
               <input
                 type="text"
                 placeholder={t("productsList.searchPlaceholder")}
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-800 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                className="w-full pl-10 pr-4 py-3 bg-[var(--color-bg)] dark:bg-gray-700 border border-[var(--color-border)] dark:border-gray-600 rounded-xl text-[var(--color-text)] dark:text-white placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-all duration-200"
               />
             </div>
 
@@ -270,7 +270,7 @@ const ProductsList = () => {
               <select
                 value={selectedCategory}
                 onChange={e => setSelectedCategory(e.target.value)}
-                className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 min-w-[180px]"
+                className="bg-[var(--color-bg)] dark:bg-gray-700 border border-[var(--color-border)] dark:border-gray-600 text-[var(--color-text)] dark:text-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-all duration-200 min-w-[180px]"
               >
                 <option value="">{t("productsList.allCategories")}</option>
                 {categories.map(cat => (
@@ -282,8 +282,8 @@ const ProductsList = () => {
                 onClick={() => setFilterDiscount(prev => !prev)}
                 className={`px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 ${
                   filterDiscount
-                    ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md"
-                    : "bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-500"
+                    ? "bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] text-[var(--color-on-accent)] shadow-md"
+                    : "bg-[var(--color-bg)] dark:bg-gray-700 border border-[var(--color-border)] dark:border-gray-600 text-[var(--color-text)] dark:text-gray-300 hover:border-[var(--color-accent)]"
                 }`}
               >
                 <Filter className="w-4 h-4" />
@@ -294,8 +294,8 @@ const ProductsList = () => {
                 onClick={() => setFilterFeature(prev => !prev)}
                 className={`px-4 py-3 rounded-xl font-medium transition-all duration-200 flex items-center gap-2 ${
                   filterFeature
-                    ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md"
-                    : "bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-500"
+                    ? "bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] text-[var(--color-on-accent)] shadow-md"
+                    : "bg-[var(--color-bg)] dark:bg-gray-700 border border-[var(--color-border)] dark:border-gray-600 text-[var(--color-text)] dark:text-gray-300 hover:border-[var(--color-accent)]"
                 }`}
               >
                 <Star className="w-4 h-4" />
@@ -307,34 +307,34 @@ const ProductsList = () => {
 
         {/* Products Table */}
         <motion.div
-          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
+          className="bg-[var(--color-bg-opacity)] dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-lg border border-[var(--color-border)] dark:border-gray-700 overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
           <div className="overflow-x-auto">
             <table className="min-w-full">
-              <thead className="bg-gray-50 dark:bg-gray-700">
+              <thead className="bg-[var(--color-bg-gray)] dark:bg-gray-700">
                 <tr>
-                  <th className="px-6 py-4 text-left font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left font-semibold text-[var(--color-text)] dark:text-gray-300 uppercase tracking-wider">
                     {t("productsList.headers.product")}
                   </th>
-                  <th className="px-6 py-4 text-left font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left font-semibold text-[var(--color-text)] dark:text-gray-300 uppercase tracking-wider">
                     {t("productsList.headers.price")}
                   </th>
-                  <th className="px-6 py-4 text-left font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left font-semibold text-[var(--color-text)] dark:text-gray-300 uppercase tracking-wider">
                     {t("productsList.headers.category")}
                   </th>
-                  <th className="px-6 py-4 text-center font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-center font-semibold text-[var(--color-text)] dark:text-gray-300 uppercase tracking-wider">
                     {t("productsList.headers.actions")}
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-600">
+              <tbody className="divide-y divide-[var(--color-border)] dark:divide-gray-600">
                 {Array.isArray(filteredProducts) && filteredProducts.map((product, index) => (
                   <motion.tr 
                     key={product._id} 
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+                    className="hover:bg-[var(--color-bg-gray)] dark:hover:bg-gray-700 transition-colors duration-200"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 * index }}
@@ -343,7 +343,7 @@ const ProductsList = () => {
                       <Link to={`/product/${product._id}`} className="flex items-center gap-4 group">
                         <div className="relative">
                           <img
-                            className="h-16 w-16 rounded-xl object-cover border border-gray-200 dark:border-gray-600 group-hover:scale-105 transition-transform duration-200"
+                            className="h-16 w-16 rounded-xl object-cover border border-[var(--color-border)] dark:border-gray-600 group-hover:scale-105 transition-transform duration-200"
                             src={
                               Array.isArray(product.images) && product.images.length
                                 ? product.images[0]
@@ -358,10 +358,10 @@ const ProductsList = () => {
                           )}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="text-lg font-semibold text-gray-800 dark:text-white group-hover:text-blue-600 transition-colors duration-200 truncate">
+                          <div className="text-lg font-semibold text-[var(--color-text)] dark:text-white group-hover:text-[var(--color-accent)] transition-colors duration-200 truncate">
                             {highlightText(product.name, searchTerm)}
                           </div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                          <div className="text-sm text-[var(--color-text-secondary)] dark:text-gray-400 mt-1">
                             {product.sizes?.length > 0 && `${product.sizes.length} ${t("productsList.sizes")}`}
                           </div>
                         </div>
@@ -377,13 +377,13 @@ const ProductsList = () => {
                             </div>
                             {product.priceBeforeDiscount != null &&
                               product.priceBeforeDiscount > product.priceAfterDiscount && (
-                                <div className="text-sm line-through text-gray-500 dark:text-gray-400">
+                                <div className="text-sm line-through text-[var(--color-text-secondary)] dark:text-gray-400">
                                   {product.priceBeforeDiscount} DA
                                 </div>
                               )}
                           </>
                         ) : (
-                          <div className="text-lg font-bold text-gray-800 dark:text-white">
+                          <div className="text-lg font-bold text-[var(--color-text)] dark:text-white">
                             {product.priceBeforeDiscount != null
                               ? `${product.priceBeforeDiscount} DA`
                               : t("productsList.priceUnavailable")}
@@ -417,7 +417,7 @@ const ProductsList = () => {
                           className={`p-2 rounded-xl transition-all duration-200 ${
                             product.isFeatured
                               ? "bg-yellow-400 hover:bg-yellow-500 text-white shadow-md"
-                              : "bg-gray-200 dark:bg-gray-600 hover:bg-yellow-400/60 text-gray-600 dark:text-gray-300"
+                              : "bg-[var(--color-bg-gray)] dark:bg-gray-600 hover:bg-yellow-400/60 text-[var(--color-text-secondary)] dark:text-gray-300"
                           }`}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
@@ -440,7 +440,7 @@ const ProductsList = () => {
                         {/* View */}
                         <motion.button
                           onClick={() => setViewingProduct(product)}
-                          className="p-2 rounded-xl bg-blue-500 hover:bg-blue-600 text-white transition-all duration-200 shadow-md"
+                          className="p-2 rounded-xl bg-[var(--color-accent)] hover:opacity-90 text-white transition-all duration-200 shadow-md"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           title={t("productsList.viewTitle")}
@@ -477,7 +477,7 @@ const ProductsList = () => {
                 {(!Array.isArray(products) || products.length === 0) && (
                   <tr>
                     <td colSpan={4} className="text-center py-12">
-                      <div className="text-gray-500 dark:text-gray-400 text-lg">
+                      <div className="text-[var(--color-text-secondary)] dark:text-gray-400 text-lg">
                         {t("productsList.noProducts")}
                       </div>
                     </td>
@@ -495,38 +495,38 @@ const ProductsList = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+          <div className="bg-[var(--color-bg-opacity)] dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 border border-[var(--color-border)] dark:border-gray-700 shadow-sm">
+            <div className="text-2xl font-bold text-[var(--color-text)] dark:text-white mb-2">
               {products.length}
             </div>
-            <div className="text-gray-600 dark:text-gray-400 text-sm">
+            <div className="text-[var(--color-text-secondary)] dark:text-gray-400 text-sm">
               {t("productsList.totalProducts")}
             </div>
           </div>
           
-          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+          <div className="bg-[var(--color-bg-opacity)] dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 border border-[var(--color-border)] dark:border-gray-700 shadow-sm">
+            <div className="text-2xl font-bold text-[var(--color-text)] dark:text-white mb-2">
               {products.filter(p => p.isFeatured).length}
             </div>
-            <div className="text-gray-600 dark:text-gray-400 text-sm">
+            <div className="text-[var(--color-text-secondary)] dark:text-gray-400 text-sm">
               {t("productsList.featuredProducts")}
             </div>
           </div>
           
-          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+          <div className="bg-[var(--color-bg-opacity)] dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 border border-[var(--color-border)] dark:border-gray-700 shadow-sm">
+            <div className="text-2xl font-bold text-[var(--color-text)] dark:text-white mb-2">
               {products.filter(p => p.priceAfterDiscount).length}
             </div>
-            <div className="text-gray-600 dark:text-gray-400 text-sm">
+            <div className="text-[var(--color-text-secondary)] dark:text-gray-400 text-sm">
               {t("productsList.discountedProducts")}
             </div>
           </div>
           
-          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+          <div className="bg-[var(--color-bg-opacity)] dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 border border-[var(--color-border)] dark:border-gray-700 shadow-sm">
+            <div className="text-2xl font-bold text-[var(--color-text)] dark:text-white mb-2">
               {filteredProducts.length}
             </div>
-            <div className="text-gray-600 dark:text-gray-400 text-sm">
+            <div className="text-[var(--color-text-secondary)] dark:text-gray-400 text-sm">
               {t("productsList.filteredProducts")}
             </div>
           </div>
@@ -603,16 +603,16 @@ const EditProductModal = ({
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col border border-gray-200 dark:border-gray-700"
+        className="bg-[var(--color-bg)] dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col border border-[var(--color-border)] dark:border-gray-700"
       >
         {/* Header */}
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-700 rounded-t-2xl">
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white">
+        <div className="p-6 border-b border-[var(--color-border)] dark:border-gray-700 flex justify-between items-center bg-gradient-to-r from-[var(--color-bg-gray)] to-[var(--color-bg-gray)] dark:from-gray-700 dark:to-gray-700 rounded-t-2xl">
+          <h3 className="text-xl font-bold text-[var(--color-text)] dark:text-white">
             {t("productEditForm.titleEdit")}
           </h3>
           <button
             onClick={() => setEditingProduct(null)}
-            className="p-2 rounded-xl text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
+            className="p-2 rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text)] dark:text-gray-400 dark:hover:text-gray-200 hover:bg-[var(--color-bg-gray)] dark:hover:bg-gray-700 transition-all"
           >
             <X size={24} />
           </button>
@@ -622,7 +622,7 @@ const EditProductModal = ({
         <div className="p-6 overflow-y-auto flex-1 space-y-6">
           {/* Product Name */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-semibold text-[var(--color-text)] dark:text-gray-300 mb-2">
               {t("productEditForm.name")} *
             </label>
             <input
@@ -631,14 +631,14 @@ const EditProductModal = ({
               onChange={(e) =>
                 setEditingProduct({ ...editingProduct, name: e.target.value })
               }
-              className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl py-3 px-4 text-gray-800 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              className="w-full bg-[var(--color-bg)] dark:bg-gray-700 border border-[var(--color-border)] dark:border-gray-600 rounded-xl py-3 px-4 text-[var(--color-text)] dark:text-white placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-all duration-200"
             />
           </div>
 
           {/* Prices */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-semibold text-[var(--color-text)] dark:text-gray-300 mb-2">
                 {t("productEditForm.priceBefore")} *
               </label>
               <div className="relative">
@@ -652,16 +652,16 @@ const EditProductModal = ({
                       priceBeforeDiscount: val === "" ? null : Number(val),
                     });
                   }}
-                  className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl py-3 px-4 pr-12 text-gray-800 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  className="w-full bg-[var(--color-bg)] dark:bg-gray-700 border border-[var(--color-border)] dark:border-gray-600 rounded-xl py-3 px-4 pr-12 text-[var(--color-text)] dark:text-white placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-all duration-200"
                   min="0"
                   step="0.01"
                 />
-                <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500">DA</span>
+                <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[var(--color-text-secondary)]">DA</span>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-semibold text-[var(--color-text)] dark:text-gray-300 mb-2">
                 {t("productEditForm.priceAfter")}
               </label>
               <div className="relative">
@@ -675,18 +675,18 @@ const EditProductModal = ({
                       priceAfterDiscount: val === "" ? null : Number(val),
                     });
                   }}
-                  className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl py-3 px-4 pr-12 text-gray-800 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  className="w-full bg-[var(--color-bg)] dark:bg-gray-700 border border-[var(--color-border)] dark:border-gray-600 rounded-xl py-3 px-4 pr-12 text-[var(--color-text)] dark:text-white placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-all duration-200"
                   min="0"
                   step="0.01"
                 />
-                <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500">DA</span>
+                <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[var(--color-text-secondary)]">DA</span>
               </div>
             </div>
           </div>
 
           {/* Category */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-semibold text-[var(--color-text)] dark:text-gray-300 mb-2">
               {t("productEditForm.category")} *
             </label>
             <select
@@ -700,7 +700,7 @@ const EditProductModal = ({
                   category: selectedCat || e.target.value
                 });
               }}
-              className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl py-3 px-4 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              className="w-full bg-[var(--color-bg)] dark:bg-gray-700 border border-[var(--color-border)] dark:border-gray-600 rounded-xl py-3 px-4 text-[var(--color-text)] dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-all duration-200"
               required
             >
               {categories.map((cat) => (
@@ -713,7 +713,7 @@ const EditProductModal = ({
 
           {/* Colors */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+            <label className="block text-sm font-semibold text-[var(--color-text)] dark:text-gray-300 mb-3">
               {t("productEditForm.colors")}
             </label>
             <div className="flex flex-wrap gap-3">
@@ -730,14 +730,14 @@ const EditProductModal = ({
                     onClick={() => toggleSelection("colors", colorObj)}
                     className={`p-3 rounded-xl border-2 flex flex-col items-center gap-2 transition-all duration-200 min-w-[80px] ${
                       isSelected
-                        ? "bg-gradient-to-r from-blue-500 to-purple-500 border-transparent text-white shadow-md scale-105"
-                        : "bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-500"
+                        ? "bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] border-transparent text-[var(--color-on-accent)] shadow-md scale-105"
+                        : "bg-[var(--color-bg)] dark:bg-gray-700 border-[var(--color-border)] dark:border-gray-600 text-[var(--color-text)] dark:text-gray-300 hover:border-[var(--color-accent)]"
                     }`}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     <div 
-                      className="w-8 h-8 border-2 border-gray-200 dark:border-gray-600 rounded-full shadow-sm"
+                      className="w-8 h-8 border-2 border-[var(--color-border)] dark:border-gray-600 rounded-full shadow-sm"
                       style={{ backgroundColor: colorObj.hex }}
                     />
                     <span className="text-xs font-medium">{colorObj.name}</span>
@@ -750,7 +750,7 @@ const EditProductModal = ({
           {/* Sizes */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+              <label className="block text-sm font-semibold text-[var(--color-text)] dark:text-gray-300">
                 {t("productEditForm.sizes")}
               </label>
               <button
@@ -762,7 +762,7 @@ const EditProductModal = ({
                     sizes: [],
                   }));
                 }}
-                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-200 text-sm font-medium shadow-sm"
+                className="px-4 py-2 bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] text-[var(--color-on-accent)] rounded-xl hover:opacity-90 transition-all duration-200 text-sm font-medium shadow-sm"
               >
                 {showNumbers 
                   ? t("productEditForm.showLetters") 
@@ -783,8 +783,8 @@ const EditProductModal = ({
                     className={`px-4 py-2 rounded-xl border-2 font-medium transition-all duration-200 ${
                       Array.isArray(editingProduct.sizes) && 
                       editingProduct.sizes.includes(sizeValue)
-                        ? "bg-gradient-to-r from-blue-500 to-purple-500 border-transparent text-white shadow-md scale-105"
-                        : "bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-500"
+                        ? "bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] border-transparent text-[var(--color-on-accent)] shadow-md scale-105"
+                        : "bg-[var(--color-bg)] dark:bg-gray-700 border-[var(--color-border)] dark:border-gray-600 text-[var(--color-text)] dark:text-gray-300 hover:border-[var(--color-accent)]"
                     }`}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -798,7 +798,7 @@ const EditProductModal = ({
 
           {/* Images */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-semibold text-[var(--color-text)] dark:text-gray-300 mb-2">
               {t("productEditForm.uploadImages")}
             </label>
             <input
@@ -811,7 +811,7 @@ const EditProductModal = ({
                   newImages: files,
                 });
               }}
-              className="w-full text-sm file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-gradient-to-r file:from-blue-500 file:to-purple-500 file:text-white hover:file:from-blue-600 hover:file:to-purple-600 transition-all duration-200"
+              className="w-full text-sm file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-gradient-to-r file:from-[var(--color-electric)] file:to-[var(--color-accent)] file:text-[var(--color-on-accent)] hover:file:opacity-90 transition-all duration-200"
             />
 
             {/* Current Images */}
@@ -821,7 +821,7 @@ const EditProductModal = ({
                   <img
                     src={img}
                     alt="product"
-                    className="w-20 h-20 object-cover rounded-xl border border-gray-200 dark:border-gray-600 group-hover:scale-105 transition-transform duration-200"
+                    className="w-20 h-20 object-cover rounded-xl border border-[var(--color-border)] dark:border-gray-600 group-hover:scale-105 transition-transform duration-200"
                   />
                   <button
                     type="button"
@@ -842,7 +842,7 @@ const EditProductModal = ({
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-semibold text-[var(--color-text)] dark:text-gray-300 mb-2">
               {t("productEditForm.description")}
             </label>
             <textarea
@@ -850,14 +850,14 @@ const EditProductModal = ({
               onChange={(e) =>
                 setEditingProduct({ ...editingProduct, description: e.target.value })
               }
-              className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl py-3 px-4 text-gray-800 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
+              className="w-full bg-[var(--color-bg)] dark:bg-gray-700 border border-[var(--color-border)] dark:border-gray-600 rounded-xl py-3 px-4 text-[var(--color-text)] dark:text-white placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-all duration-200 resize-none"
               rows="4"
             />
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
+        <div className="p-6 border-t border-[var(--color-border)] dark:border-gray-700 flex justify-end gap-3">
           <button
             onClick={() => setEditingProduct(null)}
             className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-xl font-medium transition-all duration-200"
@@ -866,7 +866,7 @@ const EditProductModal = ({
           </button>
           <button
             onClick={handleUpdateProduct}
-            className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-xl font-medium transition-all duration-200 shadow-md"
+            className="px-6 py-3 bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] hover:opacity-90 text-[var(--color-on-accent)] rounded-xl font-medium transition-all duration-200 shadow-md"
           >
             {t("productEditForm.saveChanges")}
           </button>
@@ -887,11 +887,11 @@ const ViewProductModal = ({ viewingProduct, setViewingProduct, categories, color
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700"
+        className="bg-[var(--color-bg)] dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-[var(--color-border)] dark:border-gray-700"
       >
         {/* Header */}
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-700 rounded-t-2xl">
-          <h3 className="text-2xl font-bold text-gray-800 dark:text-white text-center">
+        <div className="p-6 border-b border-[var(--color-border)] dark:border-gray-700 bg-gradient-to-r from-[var(--color-bg-gray)] to-[var(--color-bg-gray)] dark:from-gray-700 dark:to-gray-700 rounded-t-2xl">
+          <h3 className="text-2xl font-bold text-[var(--color-text)] dark:text-white text-center">
             {t("detailOf.productDetails")}
           </h3>
         </div>
@@ -907,7 +907,7 @@ const ViewProductModal = ({ viewingProduct, setViewingProduct, categories, color
                   : "/placeholder.jpg"
               }
               alt={viewingProduct.name || t("detailOf.noName")}
-              className="w-64 h-64 object-cover rounded-2xl border border-gray-200 dark:border-gray-600 shadow-md"
+              className="w-64 h-64 object-cover rounded-2xl border border-[var(--color-border)] dark:border-gray-600 shadow-md"
             />
           </div>
 
@@ -940,10 +940,10 @@ const ViewProductModal = ({ viewingProduct, setViewingProduct, categories, color
           {/* Description */}
           {viewingProduct.description?.trim() && (
             <div>
-              <h4 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+              <h4 className="text-lg font-semibold text-[var(--color-text)] dark:text-white mb-2">
                 {t("detailOf.description")}
               </h4>
-              <p className="text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 rounded-xl p-4">
+              <p className="text-[var(--color-text-secondary)] dark:text-gray-300 bg-[var(--color-bg-gray)] dark:bg-gray-700 rounded-xl p-4">
                 {viewingProduct.description}
               </p>
             </div>
@@ -952,7 +952,7 @@ const ViewProductModal = ({ viewingProduct, setViewingProduct, categories, color
           {/* Colors */}
           {viewingProduct.colors?.length > 0 && (
             <div>
-              <h4 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">
+              <h4 className="text-lg font-semibold text-[var(--color-text)] dark:text-white mb-3">
                 {t("detailOf.colors")}
               </h4>
               <div className="flex flex-wrap gap-3">
@@ -963,13 +963,13 @@ const ViewProductModal = ({ viewingProduct, setViewingProduct, categories, color
                   return colorData ? (
                     <div
                       key={idx}
-                      className="flex items-center gap-3 px-4 py-2 bg-white dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 shadow-sm"
+                      className="flex items-center gap-3 px-4 py-2 bg-[var(--color-bg)] dark:bg-gray-700 rounded-xl border border-[var(--color-border)] dark:border-gray-600 shadow-sm"
                     >
                       <div
-                        className="w-6 h-6 rounded-full border border-gray-300 dark:border-gray-500 shadow-sm"
+                        className="w-6 h-6 rounded-full border border-[var(--color-border)] dark:border-gray-500 shadow-sm"
                         style={{ backgroundColor: colorData.hex || '#ccc' }}
                       />
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <span className="text-sm font-medium text-[var(--color-text)] dark:text-gray-300">
                         {colorData.name}
                       </span>
                     </div>
@@ -982,14 +982,14 @@ const ViewProductModal = ({ viewingProduct, setViewingProduct, categories, color
           {/* Sizes */}
           {viewingProduct.sizes?.length > 0 && (
             <div>
-              <h4 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">
+              <h4 className="text-lg font-semibold text-[var(--color-text)] dark:text-white mb-3">
                 {t("detailOf.sizes")}
               </h4>
               <div className="flex flex-wrap gap-2">
                 {viewingProduct.sizes.map((size, idx) => (
                   <span
                     key={idx}
-                    className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl font-medium shadow-sm"
+                    className="px-4 py-2 bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] text-[var(--color-on-accent)] rounded-xl font-medium shadow-sm"
                   >
                     {size}
                   </span>
@@ -1000,7 +1000,7 @@ const ViewProductModal = ({ viewingProduct, setViewingProduct, categories, color
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-center">
+        <div className="p-6 border-t border-[var(--color-border)] dark:border-gray-700 flex justify-center">
           <button
             onClick={() => setViewingProduct(null)}
             className="px-8 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-xl font-medium transition-all duration-200"
@@ -1017,10 +1017,10 @@ const ViewProductModal = ({ viewingProduct, setViewingProduct, categories, color
 // Detail Item Component
 const DetailItem = ({ label, value, highlight = false }) => (
   <div className="flex flex-col">
-    <span className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+    <span className="text-sm font-medium text-[var(--color-text-secondary)] dark:text-gray-400 mb-1">
       {label}
     </span>
-    <span className={`font-semibold ${highlight ? 'text-yellow-600 dark:text-yellow-400' : 'text-gray-800 dark:text-white'}`}>
+    <span className={`font-semibold ${highlight ? 'text-yellow-600 dark:text-yellow-400' : 'text-[var(--color-text)] dark:text-white'}`}>
       {value}
     </span>
   </div>
@@ -1039,15 +1039,15 @@ const DeleteConfirmationModal = ({ showPopup, setShowPopup, handleDelete, t }) =
         exit={{ opacity: 0 }}
       >
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 w-96 border border-gray-200 dark:border-gray-700"
+          className="bg-[var(--color-bg)] dark:bg-gray-800 rounded-2xl shadow-2xl p-6 w-96 border border-[var(--color-border)] dark:border-gray-700"
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
           exit={{ scale: 0.8 }}
         >
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4 text-center">
+          <h3 className="text-xl font-bold text-[var(--color-text)] dark:text-white mb-4 text-center">
             {t("deleteConfirmTitle")}
           </h3>
-          <p className="text-gray-600 dark:text-gray-300 mb-6 text-center">
+          <p className="text-[var(--color-text-secondary)] dark:text-gray-300 mb-6 text-center">
             {t("productsList.deleteConfirmMessage")}
           </p>
           <div className="flex justify-center gap-4">
@@ -1167,16 +1167,16 @@ const ReviewsPopup = ({ product, onClose, isRTL, t }) => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-gray-200 dark:border-gray-700"
+        className="bg-[var(--color-bg)] dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-[var(--color-border)] dark:border-gray-700"
       >
         {/* Header */}
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-700 rounded-t-2xl">
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white">
+        <div className="p-6 border-b border-[var(--color-border)] dark:border-gray-700 flex justify-between items-center bg-gradient-to-r from-[var(--color-bg-gray)] to-[var(--color-bg-gray)] dark:from-gray-700 dark:to-gray-700 rounded-t-2xl">
+          <h3 className="text-xl font-bold text-[var(--color-text)] dark:text-white">
             إدارة التقييمات
           </h3>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
+            className="p-2 rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text)] dark:text-gray-400 dark:hover:text-gray-200 hover:bg-[var(--color-bg-gray)] dark:hover:bg-gray-700 transition-all"
           >
             <X size={24} />
           </button>
@@ -1185,14 +1185,14 @@ const ReviewsPopup = ({ product, onClose, isRTL, t }) => {
         {/* Content */}
         <div className="p-6 overflow-y-auto flex-1 space-y-6">
           {/* Product Summary */}
-          <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4">
+          <div className="bg-[var(--color-bg-gray)] dark:bg-gray-700 rounded-xl p-4">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="font-semibold text-gray-800 dark:text-white">{product.name}</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-300">متوسط التقييم: {product.averageRating?.toFixed(1) || 0}/5</p>
+                <h4 className="font-semibold text-[var(--color-text)] dark:text-white">{product.name}</h4>
+                <p className="text-sm text-[var(--color-text-secondary)] dark:text-gray-300">متوسط التقييم: {product.averageRating?.toFixed(1) || 0}/5</p>
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-800 dark:text-white">عدد التقييمات: {product.numReviews || 0}</p>
+                <p className="text-sm font-medium text-[var(--color-text)] dark:text-white">عدد التقييمات: {product.numReviews || 0}</p>
               </div>
             </div>
           </div>
@@ -1201,7 +1201,7 @@ const ReviewsPopup = ({ product, onClose, isRTL, t }) => {
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
             {/* Toggle Switch */}
             <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">حالة التقييمات:</span>
+              <span className="text-sm font-medium text-[var(--color-text)] dark:text-gray-300">حالة التقييمات:</span>
               <button
                 onClick={handleToggleReviews}
                 className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
@@ -1241,12 +1241,12 @@ const ReviewsPopup = ({ product, onClose, isRTL, t }) => {
                   key={review._id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600"
+                  className="bg-[var(--color-bg-gray)] dark:bg-gray-700 rounded-xl p-4 border border-[var(--color-border)] dark:border-gray-600"
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="font-semibold text-gray-800 dark:text-white">{review.name}</span>
+                        <span className="font-semibold text-[var(--color-text)] dark:text-white">{review.name}</span>
                         <div className="flex items-center text-yellow-500">
                           <Star className="w-4 h-4 fill-yellow-400" />
                           <span className="text-sm mr-1">{review.rating}/5</span>
@@ -1254,10 +1254,10 @@ const ReviewsPopup = ({ product, onClose, isRTL, t }) => {
                       </div>
                       
                       {review.comment && (
-                        <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">{review.comment}</p>
+                        <p className="text-[var(--color-text-secondary)] dark:text-gray-300 text-sm mb-2">{review.comment}</p>
                       )}
                       
-                      <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center gap-4 text-xs text-[var(--color-text-secondary)] dark:text-gray-400">
                         <span>{dayjs(review.createdAt).format("HH:mm YYYY/MM/DD")}</span>
                         {review.instagram && (
                           <a
@@ -1284,14 +1284,14 @@ const ReviewsPopup = ({ product, onClose, isRTL, t }) => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            <div className="text-center py-8 text-[var(--color-text-secondary)] dark:text-gray-400">
               لا توجد تقييمات
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-center">
+        <div className="p-6 border-t border-[var(--color-border)] dark:border-gray-700 flex justify-center">
           <button
             onClick={onClose}
             className="px-8 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-xl font-medium transition-all duration-200"
@@ -1333,15 +1333,15 @@ const DeleteReviewModal = ({ show, onClose, onConfirm, message }) => {
         exit={{ opacity: 0 }}
       >
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 w-96 border border-gray-200 dark:border-gray-700"
+          className="bg-[var(--color-bg)] dark:bg-gray-800 rounded-2xl shadow-2xl p-6 w-96 border border-[var(--color-border)] dark:border-gray-700"
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
           exit={{ scale: 0.8 }}
         >
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4 text-center">
+          <h3 className="text-xl font-bold text-[var(--color-text)] dark:text-white mb-4 text-center">
             تأكيد الحذف
           </h3>
-          <p className="text-gray-600 dark:text-gray-300 mb-6 text-center">
+          <p className="text-[var(--color-text-secondary)] dark:text-gray-300 mb-6 text-center">
             {message}
           </p>
           <div className="flex justify-center gap-4">

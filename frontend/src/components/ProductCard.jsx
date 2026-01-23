@@ -35,8 +35,8 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
       toast.success(t("removedFromFavorites"), {
         icon: '❤️',
         style: {
-          background: '#fef2f2',
-          color: '#dc2626',
+          background: 'var(--color-bg-gray)',
+          color: 'var(--color-accent)',
         },
       });
     } else {
@@ -44,8 +44,8 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
       toast.success(t("addedToFavorites"), {
         icon: '❤️',
         style: {
-          background: '#f0f9ff',
-          color: '#0369a1',
+          background: 'var(--color-bg-gray)',
+          color: 'var(--color-accent)',
         },
       });
     }
@@ -57,45 +57,6 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
       onFavoriteToggle();
     }
   }, [isFavorite, product, t, onFavoriteToggle]);
-
-  const addToCart = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    let cartItems = JSON.parse(localStorage.getItem("cart")) || [];
-    
-    if (!isInCart) {
-      cartItems.push({ ...product, quantity: 1 });
-      localStorage.setItem("cart", JSON.stringify(cartItems));
-      setIsInCart(true);
-      
-      toast.success(t("addedToCart"), {
-        icon: '🛒',
-        style: {
-          background: '#f0f9ff',
-          color: '#0369a1',
-        },
-      });
-      
-      // اهتزاز ناعم للتفاعل
-      if ('vibrate' in navigator) {
-        navigator.vibrate(30);
-      }
-    } else {
-      // إذا كان موجود بالفعل، إزالة من السلة
-      cartItems = cartItems.filter((item) => item._id !== product._id);
-      localStorage.setItem("cart", JSON.stringify(cartItems));
-      setIsInCart(false);
-      
-      toast.success(t("removedFromCart"), {
-        icon: '🗑️',
-        style: {
-          background: '#fef2f2',
-          color: '#dc2626',
-        },
-      });
-    }
-  }, [isInCart, product, t]);
 
   // حساب نسبة الخصم
   const discountPercentage = useMemo(() => {
@@ -120,11 +81,6 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
     return product.averageRating || 0;
   }, [product.averageRating]);
 
-  // الحصول على عدد المراجعات
-  const reviewCount = useMemo(() => {
-    return product.reviewCount || 0;
-  }, [product.reviewCount]);
-
   // السعر النهائي
   const finalPrice = useMemo(() => {
     return product.priceAfterDiscount ?? product.priceBeforeDiscount;
@@ -144,7 +100,7 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
       >
         <Link
           to={`/product/${product._id}`}
-          className="group flex flex-col bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:border-blue-300 dark:hover:border-blue-700 h-full relative"
+          className="group flex flex-col bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:border-[var(--color-accent)] h-full relative"
           dir={isRTL ? "rtl" : "ltr"}
         >
           {/* Badges Container */}
@@ -154,7 +110,7 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs sm:text-sm font-bold shadow-lg"
+                className="bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] text-[var(--color-on-accent)] px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg text-xs sm:text-sm font-bold shadow-lg"
               >
                 {discountPercentage}% OFF
               </motion.div>
@@ -162,7 +118,7 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
             
             {/* Stock Status */}
             {product.stock <= 5 && product.stock > 0 && (
-              <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-2 py-1 rounded-lg text-xs font-bold shadow-lg">
+              <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-white px-2 py-1 rounded-lg text-xs font-bold shadow-lg">
                 {t('lowStock')}
               </div>
             )}
@@ -177,7 +133,7 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
           </div>
 
           {/* Image Container */}
-          <div className="relative w-full h-48 sm:h-56 md:h-60 overflow-hidden bg-gray-100 dark:bg-gray-800">
+          <div className="relative w-full h-48 sm:h-56 md:h-60 overflow-hidden bg-[var(--color-bg-gray)]">
             <motion.img
               className="w-full h-full object-cover"
               src={mainImage}
@@ -195,8 +151,8 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
               whileTap={{ scale: 0.9 }}
               className={`absolute top-2 right-2 rounded-xl p-2 flex items-center justify-center transition-all duration-200 backdrop-blur-sm ${
                 isFavorite
-                  ? "bg-gradient-to-r from-pink-500 to-red-500 text-white shadow-lg"
-                  : "bg-white/90 dark:bg-black/50 text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-black/70"
+                  ? "bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] text-[var(--color-on-accent)] shadow-lg"
+                  : "bg-white/90 dark:bg-gray-800/90 text-[var(--color-text-secondary)] hover:bg-white dark:hover:bg-gray-700"
               }`}
             >
               <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
@@ -212,13 +168,12 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
                   className="absolute bottom-2 right-2 flex gap-2"
                 >
                   <motion.button
-                    onClick={addToCart}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     className={`rounded-xl p-2.5 flex items-center justify-center transition-all duration-200 ${
                       isInCart
                         ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg"
-                        : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg"
+                        : "bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] text-[var(--color-on-accent)] hover:shadow-lg"
                     }`}
                   >
                     {isInCart ? <Check size={18} /> : <ShoppingBag size={18} />}
@@ -227,7 +182,7 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
                   <motion.button
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="rounded-xl p-2.5 bg-white/90 dark:bg-black/50 text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-black/70 backdrop-blur-sm"
+                    className="rounded-xl p-2.5 bg-white/90 dark:bg-gray-800/90 text-[var(--color-text-secondary)] hover:bg-white dark:hover:bg-gray-700 backdrop-blur-sm"
                   >
                     <Eye size={18} />
                   </motion.button>
@@ -241,11 +196,11 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
             {/* Category & Name */}
             <div className="mb-3 flex-grow">
               {categoryName && (
-                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-1 truncate">
+                <p className="text-xs sm:text-sm text-[var(--color-text-secondary)] mb-1 truncate">
                   {categoryName}
                 </p>
               )}
-              <h5 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
+              <h5 className="text-sm sm:text-base font-semibold text-[var(--color-text)] mb-2 line-clamp-2 group-hover:text-[var(--color-accent)] transition-colors leading-tight">
                 {product.name}
               </h5>
             </div>
@@ -262,18 +217,15 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
                       size={12}
                       className={`${
                         full 
-                          ? "text-yellow-400 fill-yellow-400" 
+                          ? "text-amber-400 fill-amber-400" 
                           : half 
-                            ? "text-yellow-400 fill-yellow-400 fill-opacity-50" 
+                            ? "text-amber-400 fill-amber-400 fill-opacity-50" 
                             : "text-gray-300 dark:text-gray-600"
                       }`}
                     />
                   );
                 })}
               </div>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                ({reviewCount})
-              </span>
             </div>
 
             {/* Price & Actions */}
@@ -281,11 +233,11 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
               {/* Price */}
               <div className="flex flex-col">
                 <div className="flex items-center gap-1 sm:gap-2">
-                  <span className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
+                  <span className="text-lg sm:text-xl font-bold text-[var(--color-text)]">
                     {finalPrice?.toLocaleString()} DA
                   </span>
                   {discountPercentage > 0 && (
-                    <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 line-through opacity-70">
+                    <span className="text-xs sm:text-sm text-[var(--color-text-secondary)] line-through opacity-70">
                       {product.priceBeforeDiscount?.toLocaleString()} DA
                     </span>
                   )}
@@ -299,12 +251,11 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
 
               {/* Quick Add to Cart Button (Mobile) */}
               <motion.button
-                onClick={addToCart}
                 whileTap={{ scale: 0.9 }}
                 className={`lg:hidden rounded-xl p-2 flex items-center justify-center transition-all duration-200 ${
                   isInCart
                     ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg"
-                    : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg"
+                    : "bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] text-[var(--color-on-accent)] hover:shadow-lg"
                 }`}
               >
                 {isInCart ? <Check size={16} /> : <ShoppingCart size={16} />}
@@ -314,11 +265,11 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
             {/* Stock Indicator */}
             {product.stock !== undefined && (
               <div className="mt-3">
-                <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
+                <div className="flex items-center justify-between text-xs text-[var(--color-text-secondary)] mb-1">
                   <span>{t('stock')}:</span>
                   <span className={`font-medium ${
                     product.stock > 10 ? 'text-green-600' : 
-                    product.stock > 0 ? 'text-yellow-600' : 
+                    product.stock > 0 ? 'text-amber-600' : 
                     'text-red-600'
                   }`}>
                     {product.stock > 0 ? `${product.stock} ${t('inStock')}` : t('outOfStock')}
@@ -328,7 +279,7 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
                   <div 
                     className={`h-1.5 rounded-full transition-all duration-300 ${
                       product.stock > 10 ? 'bg-green-500' : 
-                      product.stock > 0 ? 'bg-yellow-500' : 
+                      product.stock > 0 ? 'bg-amber-500' : 
                       'bg-red-500'
                     }`}
                     style={{ 
@@ -357,11 +308,11 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
     >
       <Link
         to={`/product/${product._id}`}
-        className="group flex flex-col sm:flex-row bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:border-blue-300 dark:hover:border-blue-700 h-full"
+        className="group flex flex-col sm:flex-row bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:border-[var(--color-accent)] h-full"
         dir={isRTL ? "rtl" : "ltr"}
       >
         {/* Image Container */}
-        <div className="relative w-full sm:w-48 md:w-56 h-48 sm:h-auto overflow-hidden bg-gray-100 dark:bg-gray-800 flex-shrink-0">
+        <div className="relative w-full sm:w-48 md:w-56 h-48 sm:h-auto overflow-hidden bg-[var(--color-bg-gray)] flex-shrink-0">
           <motion.img
             className="w-full h-full object-cover"
             src={mainImage}
@@ -378,7 +329,7 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="absolute top-2 left-2 bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1.5 rounded-lg text-sm font-bold shadow-lg"
+              className="absolute top-2 left-2 bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] text-[var(--color-on-accent)] px-3 py-1.5 rounded-lg text-sm font-bold shadow-lg"
             >
               {discountPercentage}% OFF
             </motion.div>
@@ -391,13 +342,13 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
             <div className="flex-grow">
               {/* Category */}
               {categoryName && (
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                <p className="text-sm text-[var(--color-text-secondary)] mb-1">
                   {categoryName}
                 </p>
               )}
               
               {/* Product Name */}
-              <h5 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              <h5 className="text-lg sm:text-xl font-semibold text-[var(--color-text)] mb-2 group-hover:text-[var(--color-accent)] transition-colors">
                 {product.name}
               </h5>
               
@@ -413,18 +364,15 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
                         size={14}
                         className={`${
                           full 
-                            ? "text-yellow-400 fill-yellow-400" 
+                            ? "text-amber-400 fill-amber-400" 
                             : half 
-                              ? "text-yellow-400 fill-yellow-400 fill-opacity-50" 
+                              ? "text-amber-400 fill-amber-400 fill-opacity-50" 
                               : "text-gray-300 dark:text-gray-600"
                         }`}
                       />
                     );
                   })}
                 </div>
-                <span className="text-sm text-gray-500 dark:text-gray-400">
-                  ({reviewCount})
-                </span>
               </div>
             </div>
 
@@ -435,8 +383,8 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
               whileTap={{ scale: 0.9 }}
               className={`self-start rounded-xl p-2.5 flex items-center justify-center transition-all duration-200 ${
                 isFavorite
-                  ? "bg-gradient-to-r from-pink-500 to-red-500 text-white shadow-lg"
-                  : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                  ? "bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] text-[var(--color-on-accent)] shadow-lg"
+                  : "bg-[var(--color-bg-gray)] text-[var(--color-text-secondary)] hover:bg-[var(--color-border)]"
               }`}
             >
               <Heart size={20} fill={isFavorite ? "currentColor" : "none"} />
@@ -445,7 +393,7 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
 
           {/* Description */}
           {product.description && (
-            <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2 flex-grow text-sm sm:text-base">
+            <p className="text-[var(--color-text-secondary)] mb-4 line-clamp-2 flex-grow text-sm sm:text-base">
               {product.description}
             </p>
           )}
@@ -471,11 +419,11 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
             {/* Price */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
               <div className="flex items-center gap-2">
-                <span className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+                <span className="text-xl sm:text-2xl font-bold text-[var(--color-text)]">
                   {finalPrice?.toLocaleString()} DA
                 </span>
                 {discountPercentage > 0 && (
-                  <span className="text-base sm:text-lg text-gray-500 dark:text-gray-400 line-through opacity-70">
+                  <span className="text-base sm:text-lg text-[var(--color-text-secondary)] line-through opacity-70">
                     {product.priceBeforeDiscount?.toLocaleString()} DA
                   </span>
                 )}
@@ -490,13 +438,12 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
             {/* Actions */}
             <div className="flex items-center gap-2">
               <motion.button
-                onClick={addToCart}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className={`flex-1 sm:flex-none flex items-center justify-center gap-2 rounded-xl px-4 sm:px-6 py-3 font-semibold transition-all duration-200 ${
                   isInCart
                     ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg"
-                    : "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg"
+                    : "bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] text-[var(--color-on-accent)] hover:shadow-lg"
                 }`}
               >
                 {isInCart ? (
@@ -515,7 +462,7 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="hidden sm:flex items-center justify-center p-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                className="hidden sm:flex items-center justify-center p-3 rounded-xl bg-[var(--color-bg-gray)] text-[var(--color-text-secondary)] hover:bg-[var(--color-border)]"
               >
                 <Eye size={18} />
               </motion.button>
@@ -525,11 +472,11 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
           {/* Stock Info */}
           {product.stock !== undefined && (
             <div className="mt-4">
-              <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-1">
+              <div className="flex items-center justify-between text-sm text-[var(--color-text-secondary)] mb-1">
                 <span>{t('availability')}:</span>
                 <span className={`font-medium ${
                   product.stock > 10 ? 'text-green-600' : 
-                  product.stock > 0 ? 'text-yellow-600' : 
+                  product.stock > 0 ? 'text-amber-600' : 
                   'text-red-600'
                 }`}>
                   {product.stock > 0 ? `${product.stock} ${t('inStock')}` : t('outOfStock')}
@@ -539,7 +486,7 @@ const ProductCard = ({ product, onFavoriteToggle, viewMode = 'grid', categoryNam
                 <div 
                   className={`h-2 rounded-full transition-all duration-300 ${
                     product.stock > 10 ? 'bg-green-500' : 
-                    product.stock > 0 ? 'bg-yellow-500' : 
+                    product.stock > 0 ? 'bg-amber-500' : 
                     'bg-red-500'
                   }`}
                   style={{ 

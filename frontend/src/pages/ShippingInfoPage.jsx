@@ -165,7 +165,7 @@ const ShippingInfoPage = () => {
       : 0;
 
   return (
-    <div className="min-h-screen dark:from-gray-900 dark:to-blue-900 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
       {cart.length === 0 ? (
         <EmptyCartUI t={t} />
       ) : (
@@ -177,13 +177,13 @@ const ShippingInfoPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="inline-flex items-center gap-3 bg-white dark:bg-gray-800 px-6 py-3 rounded-2xl shadow-lg mb-6">
-              <Truck className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <div className="inline-flex items-center gap-3 bg-[var(--color-bg)] px-6 py-3 rounded-2xl shadow-lg mb-6 border border-[var(--color-border)]">
+              <Truck className="w-6 h-6 text-[var(--color-accent)]" />
+              <h1 className="text-2xl font-bold text-[var(--color-text)]">
                 {t("shippingInfo.title")}
               </h1>
             </div>
-            <p className="text-gray-600 dark:text-gray-300 text-lg">
+            <p className="text-[var(--color-text-secondary)] text-lg">
               {t("shippingInfo.subtitle")}
             </p>
           </motion.div>
@@ -191,7 +191,7 @@ const ShippingInfoPage = () => {
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Form Section */}
             <motion.div
-              className="w-full bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden border border-gray-200 dark:border-gray-700"
+              className="w-full bg-[var(--color-bg)] rounded-3xl shadow-xl overflow-hidden border border-[var(--color-border)]"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4 }}
@@ -222,7 +222,7 @@ const ShippingInfoPage = () => {
 
                   {/* Wilaya Selector */}
                   <div className="space-y-2">
-                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-semibold text-[var(--color-text)]">
                       {t("shippingInfo.wilaya")}
                     </label>
                     <WilayaSelector 
@@ -247,7 +247,7 @@ const ShippingInfoPage = () => {
 
                   {/* Note */}
                   <div className="space-y-2">
-                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                    <label className="block text-sm font-semibold text-[var(--color-text)] flex items-center gap-2">
                       <MessageSquare className="w-4 h-4" />
                       {t("shippingInfo.note")}
                     </label>
@@ -257,7 +257,7 @@ const ShippingInfoPage = () => {
                       onChange={handleChange}
                       rows="3"
                       placeholder={t("shippingInfo.placeholders.note")}
-                      className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-2xl py-3 px-4 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
+                      className="w-full bg-[var(--color-bg-gray)] border border-[var(--color-border)] rounded-2xl py-3 px-4 text-[var(--color-text)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-all duration-200 resize-none"
                     />
                   </div>
 
@@ -265,13 +265,13 @@ const ShippingInfoPage = () => {
                   <motion.button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-4 rounded-2xl shadow-lg transition-all duration-300 text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-[var(--color-on-accent)] font-semibold py-4 rounded-2xl shadow-lg transition-all duration-300 text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
                     whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
                   >
                     {isSubmitting ? (
                       <>
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-5 h-5 border-2 border-[var(--color-on-accent)] border-t-transparent rounded-full animate-spin"></div>
                         {t("shippingInfo.processing")}
                       </>
                     ) : (
@@ -292,16 +292,16 @@ const ShippingInfoPage = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4, delay: 0.2 }}
             >
-              <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700 p-6">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+              <div className="bg-[var(--color-bg)] rounded-3xl shadow-xl border border-[var(--color-border)] p-6">
+                <h3 className="text-xl font-bold text-[var(--color-text)] mb-6 flex items-center gap-2">
                   <ShoppingCart className="w-5 h-5" />
                   {t("shippingInfo.orderSummary")}
                 </h3>
                 <OrderSummaryOnly shippingCost={shippingCost} />
               </div>
 
-              <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-200 dark:border-gray-700 p-6">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+              <div className="bg-[var(--color-bg)] rounded-3xl shadow-xl border border-[var(--color-border)] p-6">
+                <h3 className="text-xl font-bold text-[var(--color-text)] mb-4">
                   {t("shippingInfo.cartItems")}
                 </h3>
                 <div className="space-y-4 max-h-96 overflow-y-auto custom-scrollbar">
@@ -328,7 +328,7 @@ const ShippingInfoPage = () => {
 /** Input Field Component */
 const InputField = ({ label, id, name, value, onChange, icon: Icon, placeholder }) => (
   <div className="space-y-2">
-    <label htmlFor={id} className="block text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+    <label htmlFor={id} className="block text-sm font-semibold text-[var(--color-text)] flex items-center gap-2">
       <Icon className="w-4 h-4" />
       {label}
     </label>
@@ -339,7 +339,7 @@ const InputField = ({ label, id, name, value, onChange, icon: Icon, placeholder 
       value={value}
       onChange={onChange}
       placeholder={placeholder}
-      className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-2xl py-3 px-4 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+      className="w-full bg-[var(--color-bg-gray)] border border-[var(--color-border)] rounded-2xl py-3 px-4 text-[var(--color-text)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-all duration-200"
     />
   </div>
 );
@@ -347,11 +347,11 @@ const InputField = ({ label, id, name, value, onChange, icon: Icon, placeholder 
 /** Delivery Place Radio Selector */
 const DeliveryPlaceSelector = ({ form, handleChange, t }) => (
   <div className="space-y-3">
-    <span className="block text-sm font-semibold text-gray-700 dark:text-gray-300">
+    <span className="block text-sm font-semibold text-[var(--color-text)]">
       {t("shippingInfo.deliveryPlace")}
     </span>
     <div className="grid grid-cols-2 gap-4">
-      <label className={`relative cursor-pointer ${form.deliveryPlace === "office" ? "ring-2 ring-blue-500" : ""}`}>
+      <label className={`relative cursor-pointer ${form.deliveryPlace === "office" ? "ring-2 ring-[var(--color-accent)]" : ""}`}>
         <input
           type="radio"
           name="deliveryPlace"
@@ -362,21 +362,21 @@ const DeliveryPlaceSelector = ({ form, handleChange, t }) => (
         />
         <div className={`p-4 rounded-2xl border-2 transition-all duration-200 ${
           form.deliveryPlace === "office" 
-            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20" 
-            : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
+            ? "border-[var(--color-accent)] bg-[var(--color-bg-gray)]" 
+            : "border-[var(--color-border)] hover:border-[var(--color-accent)]"
         }`}>
           <div className="text-center">
-            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-2">
-              <MapPin className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 bg-[var(--color-accent)] rounded-full flex items-center justify-center mx-auto mb-2">
+              <MapPin className="w-4 h-4 text-[var(--color-on-accent)]" />
             </div>
-            <span className="font-medium text-gray-900 dark:text-white">
+            <span className="font-medium text-[var(--color-text)]">
               {t("shippingInfo.office")}
             </span>
           </div>
         </div>
       </label>
       
-      <label className={`relative cursor-pointer ${form.deliveryPlace === "home" ? "ring-2 ring-purple-500" : ""}`}>
+      <label className={`relative cursor-pointer ${form.deliveryPlace === "home" ? "ring-2 ring-[var(--color-accent)]" : ""}`}>
         <input
           type="radio"
           name="deliveryPlace"
@@ -387,14 +387,14 @@ const DeliveryPlaceSelector = ({ form, handleChange, t }) => (
         />
         <div className={`p-4 rounded-2xl border-2 transition-all duration-200 ${
           form.deliveryPlace === "home" 
-            ? "border-purple-500 bg-purple-50 dark:bg-purple-900/20" 
-            : "border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500"
+            ? "border-[var(--color-accent)] bg-[var(--color-bg-gray)]" 
+            : "border-[var(--color-border)] hover:border-[var(--color-accent)]"
         }`}>
           <div className="text-center">
-            <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-2">
-              <Truck className="w-4 h-4 text-white" />
+            <div className="w-8 h-8 bg-[var(--color-accent)] rounded-full flex items-center justify-center mx-auto mb-2">
+              <Truck className="w-4 h-4 text-[var(--color-on-accent)]" />
             </div>
-            <span className="font-medium text-gray-900 dark:text-white">
+            <span className="font-medium text-[var(--color-text)]">
               {t("shippingInfo.home")}
             </span>
           </div>
@@ -412,17 +412,17 @@ const EmptyCartUI = ({ t }) => (
     transition={{ duration: 0.5 }}
   >
     <div className="relative">
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl blur-md opacity-75"></div>
-      <ShoppingCart className="relative h-24 w-24 text-white p-4 bg-gray-900 rounded-2xl" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] rounded-2xl blur-md opacity-75"></div>
+      <ShoppingCart className="relative h-24 w-24 text-[var(--color-on-accent)] p-4 bg-[var(--color-bg)] rounded-2xl border border-[var(--color-border)]" />
     </div>
-    <h3 className="text-3xl font-bold text-gray-900 dark:text-white">
+    <h3 className="text-3xl font-bold text-[var(--color-text)]">
       {t("shippingInfo.emptyCart.title")}
     </h3>
-    <p className="text-gray-600 dark:text-gray-300 text-center max-w-md text-lg">
+    <p className="text-[var(--color-text-secondary)] text-center max-w-md text-lg">
       {t("shippingInfo.emptyCart.subtitle")}
     </p>
     <Link
-      className="mt-4 rounded-2xl bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-4 text-white font-semibold transition-all duration-300 hover:shadow-lg hover:scale-105"
+      className="mt-4 rounded-2xl bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] px-8 py-4 text-[var(--color-on-accent)] font-semibold transition-all duration-300 hover:shadow-lg hover:scale-105"
       to="/"
     >
       {t("shippingInfo.emptyCart.startShopping")}

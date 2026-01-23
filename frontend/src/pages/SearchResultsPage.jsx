@@ -166,7 +166,7 @@ const SearchResultsPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           whileHover={{ y: -5 }}
-          className="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-2xl transition-all duration-300"
+          className="bg-[var(--color-bg)] rounded-3xl overflow-hidden border border-[var(--color-border)] shadow-lg hover:shadow-2xl transition-all duration-300"
         >
           {/* Product Image */}
           <div className="relative h-48 md:h-56 overflow-hidden">
@@ -178,14 +178,14 @@ const SearchResultsPage = () => {
             
             {/* Discount Badge */}
             {hasDiscount && (
-              <div className="absolute top-3 right-3 bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+              <div className="absolute top-3 right-3 bg-[var(--color-accent)] text-[var(--color-on-accent)] px-3 py-1 rounded-full text-sm font-bold shadow-lg">
                 -{discountPercentage}%
               </div>
             )}
 
             {/* Rating Badge */}
             {product.averageRating > 0 && (
-              <div className="absolute top-3 left-3 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm px-2 py-1 rounded-full flex items-center gap-1">
+              <div className="absolute top-3 left-3 bg-[var(--color-bg-opacity)] backdrop-blur-sm px-2 py-1 rounded-full flex items-center gap-1">
                 <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
                 <span className="text-xs font-bold">{product.averageRating.toFixed(1)}</span>
               </div>
@@ -195,30 +195,30 @@ const SearchResultsPage = () => {
           {/* Product Info */}
           <div className="p-4">
             <div className="flex justify-between items-start mb-2">
-              <h3 className="font-bold text-gray-900 dark:text-white line-clamp-1 flex-1">
+              <h3 className="font-bold text-[var(--color-text)] line-clamp-1 flex-1">
                 {product.name}
               </h3>
-              <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full whitespace-nowrap">
+              <span className="text-xs text-[var(--color-text-secondary)] bg-[var(--color-bg-gray)] px-2 py-1 rounded-full whitespace-nowrap">
                 {product.category?.name || t("search.uncategorized")}
               </span>
             </div>
 
-            <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
+            <p className="text-sm text-[var(--color-text-secondary)] mb-3 line-clamp-2">
               {product.description}
             </p>
 
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {hasDiscount && (
-                  <span className="text-sm line-through text-gray-500">
+                  <span className="text-sm line-through text-[var(--color-text-secondary)]">
                     {product.priceBeforeDiscount} DA
                   </span>
                 )}
-                <span className="text-xl font-bold text-blue-600 dark:text-blue-400">
+                <span className="text-xl font-bold text-[var(--color-accent)]">
                   {product.priceAfterDiscount} DA
                 </span>
               </div>
-              <button className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all">
+              <button className="p-2 bg-[var(--color-accent)] text-[var(--color-on-accent)] rounded-xl hover:shadow-lg transition-all">
                 <ShoppingBag className="w-4 h-4" />
               </button>
             </div>
@@ -239,10 +239,10 @@ const SearchResultsPage = () => {
             className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"
           >
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
+              <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-2">
                 {t("search.resultsFor")} "{debouncedTerm}"
               </h1>
-              <p className="text-gray-600 dark:text-gray-300">
+              <p className="text-[var(--color-text-secondary)]">
                 {isLoading ? t("search.loading") : `${filteredProducts.length} ${t("search.productsFound")}`}
               </p>
             </div>
@@ -253,7 +253,7 @@ const SearchResultsPage = () => {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="appearance-none bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-2xl pl-4 pr-10 py-2.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="appearance-none bg-[var(--color-bg)] border border-[var(--color-border)] rounded-2xl pl-4 pr-10 py-2.5 text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent"
                 >
                   <option value="relevance">{t("search.sort.relevance")}</option>
                   <option value="price-low">{t("search.sort.priceLow")}</option>
@@ -261,7 +261,7 @@ const SearchResultsPage = () => {
                   <option value="newest">{t("search.sort.newest")}</option>
                   <option value="rating">{t("search.sort.rating")}</option>
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5 pointer-events-none" />
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[var(--color-text-secondary)] w-5 h-5 pointer-events-none" />
               </div>
 
               {/* Filter Toggle Button */}
@@ -269,8 +269,8 @@ const SearchResultsPage = () => {
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl transition-all ${
                   showFilters 
-                    ? 'bg-blue-500 text-white' 
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                    ? 'bg-[var(--color-accent)] text-[var(--color-on-accent)]' 
+                    : 'bg-[var(--color-bg-gray)] text-[var(--color-text)]'
                 }`}
               >
                 <Filter className="w-5 h-5" />
@@ -287,13 +287,13 @@ const SearchResultsPage = () => {
             className="relative"
           >
             <form onSubmit={handleSearch}>
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[var(--color-text-secondary)] w-5 h-5" />
               <input
                 ref={searchInputRef}
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-12 py-3 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-all duration-300 shadow-sm"
+                className="w-full pl-12 pr-12 py-3 bg-[var(--color-bg)] border-2 border-[var(--color-border)] rounded-2xl text-[var(--color-text)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:border-[var(--color-accent)] transition-all duration-300 shadow-sm"
                 placeholder={t("search.placeholder")}
                 autoFocus
               />
@@ -304,7 +304,7 @@ const SearchResultsPage = () => {
                     setSearchTerm("");
                     searchInputRef.current?.focus();
                   }}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors duration-200"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors duration-200"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -320,12 +320,12 @@ const SearchResultsPage = () => {
             animate={{ opacity: 1, x: 0 }}
             className={`lg:w-64 flex-shrink-0 ${showFilters ? 'block' : 'hidden lg:block'}`}
           >
-            <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 sticky top-24">
+            <div className="bg-[var(--color-bg)] rounded-3xl p-6 shadow-lg border border-[var(--color-border)] sticky top-24">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t("search.filters")}</h2>
+                <h2 className="text-lg font-bold text-[var(--color-text)]">{t("search.filters")}</h2>
                 <button
                   onClick={clearFilters}
-                  className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                  className="text-sm text-[var(--color-accent)] hover:text-[var(--color-accent-hover)] transition-colors"
                 >
                   {t("search.clearAll")}
                 </button>
@@ -333,13 +333,13 @@ const SearchResultsPage = () => {
 
               {/* Price Range */}
               <div className="mb-6">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
+                <h3 className="font-semibold text-[var(--color-text)] mb-3">
                   {t("search.priceRange")}
                 </h3>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600 dark:text-gray-300">{priceRange[0]} DA</span>
-                    <span className="text-gray-600 dark:text-gray-300">{priceRange[1]} DA</span>
+                    <span className="text-[var(--color-text-secondary)]">{priceRange[0]} DA</span>
+                    <span className="text-[var(--color-text-secondary)]">{priceRange[1]} DA</span>
                   </div>
                   <input
                     type="range"
@@ -347,7 +347,7 @@ const SearchResultsPage = () => {
                     max={maxPrice}
                     value={priceRange[1]}
                     onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                    className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-blue-500"
+                    className="w-full h-2 bg-[var(--color-bg-gray)] rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[var(--color-accent)]"
                   />
                 </div>
               </div>
@@ -355,7 +355,7 @@ const SearchResultsPage = () => {
               {/* Categories */}
               {categories.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
+                  <h3 className="font-semibold text-[var(--color-text)] mb-3">
                     {t("search.categories")}
                   </h3>
                   <div className="space-y-2">
@@ -369,14 +369,14 @@ const SearchResultsPage = () => {
                         />
                         <div className={`w-5 h-5 rounded border-2 mr-3 flex items-center justify-center transition-all ${
                           selectedCategories.includes(category)
-                            ? 'bg-blue-500 border-blue-500'
-                            : 'border-gray-300 dark:border-gray-600'
+                            ? 'bg-[var(--color-accent)] border-[var(--color-accent)]'
+                            : 'border-[var(--color-border)]'
                         }`}>
                           {selectedCategories.includes(category) && (
-                            <div className="w-2 h-2 bg-white rounded-sm" />
+                            <div className="w-2 h-2 bg-[var(--color-on-accent)] rounded-sm" />
                           )}
                         </div>
-                        <span className="text-gray-700 dark:text-gray-300">{category}</span>
+                        <span className="text-[var(--color-text)]">{category}</span>
                       </label>
                     ))}
                   </div>
@@ -385,18 +385,18 @@ const SearchResultsPage = () => {
 
               {/* Active Filters */}
               {(priceRange[1] < maxPrice || selectedCategories.length > 0) && (
-                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                <div className="pt-4 border-t border-[var(--color-border)]">
+                  <h3 className="font-semibold text-[var(--color-text)] mb-2">
                     {t("search.activeFilters")}
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {priceRange[1] < maxPrice && (
-                      <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm">
+                      <span className="px-3 py-1 bg-[var(--color-bg-gray)] text-[var(--color-text)] rounded-full text-sm">
                         Up to {priceRange[1]} DA
                       </span>
                     )}
                     {selectedCategories.map(category => (
-                      <span key={category} className="px-3 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm">
+                      <span key={category} className="px-3 py-1 bg-[var(--color-bg-gray)] text-[var(--color-text)] rounded-full text-sm">
                         {category}
                       </span>
                     ))}
@@ -416,8 +416,8 @@ const SearchResultsPage = () => {
               <>
                 {/* Results Info */}
                 <div className="mb-6">
-                  <p className="text-gray-600 dark:text-gray-300">
-                    {t("search.showing")} <span className="font-bold text-gray-900 dark:text-white">{filteredProducts.length}</span> {t("search.of")} <span className="font-bold text-gray-900 dark:text-white">{products.length}</span> {t("search.products")}
+                  <p className="text-[var(--color-text-secondary)]">
+                    {t("search.showing")} <span className="font-bold text-[var(--color-text)]">{filteredProducts.length}</span> {t("search.of")} <span className="font-bold text-[var(--color-text)]">{products.length}</span> {t("search.products")}
                   </p>
                 </div>
 
@@ -442,8 +442,8 @@ const SearchResultsPage = () => {
                     animate={{ opacity: 1 }}
                     className="text-center py-12"
                   >
-                    <Sparkles className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-                    <p className="text-gray-600 dark:text-gray-300">
+                    <Sparkles className="w-12 h-12 text-[var(--color-accent)] mx-auto mb-4" />
+                    <p className="text-[var(--color-text-secondary)]">
                       {t("search.allResultsShown")}
                     </p>
                   </motion.div>
@@ -452,18 +452,18 @@ const SearchResultsPage = () => {
             ) : (
               /* No Results */
               <div className="text-center py-20">
-                <div className="inline-block p-6 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-gray-800 dark:to-gray-700 rounded-3xl mb-6">
-                  <Search className="w-16 h-16 text-gray-400" />
+                <div className="inline-block p-6 bg-[var(--color-bg-gray)] rounded-3xl mb-6">
+                  <Search className="w-16 h-16 text-[var(--color-text-secondary)]" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                <h2 className="text-2xl font-bold text-[var(--color-text)] mb-3">
                   {t("search.noResults")}
                 </h2>
-                <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-md mx-auto">
+                <p className="text-[var(--color-text-secondary)] mb-6 max-w-md mx-auto">
                   {t("search.noResultsDescription")}
                 </p>
                 <button
                   onClick={clearFilters}
-                  className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-semibold hover:shadow-lg transition-all duration-300"
+                  className="px-6 py-3 bg-[var(--color-accent)] text-[var(--color-on-accent)] rounded-2xl font-semibold hover:shadow-lg transition-all duration-300"
                 >
                   {t("search.clearFilters")}
                 </button>

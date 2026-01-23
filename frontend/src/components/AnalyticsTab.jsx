@@ -5,9 +5,9 @@ import { createPortal } from "react-dom";
 import { 
   Package, ShoppingCart, Star, CheckCircle, Clock, Ticket,
   Zap, ZapOff, TrendingUp, TicketPercent, List, X,
-  Home, BarChart3, DollarSign
+  Home, BarChart3, DollarSign, TrendingDown, Users, CreditCard
 } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from "recharts";
 import LoadingSpinner from "./LoadingSpinner";
 import { useTranslation } from "react-i18next";
 
@@ -33,6 +33,7 @@ export const AnalyticsTab = () => {
   const [showRevenuePopup, setShowRevenuePopup] = useState(false);
   const [selectedRange, setSelectedRange] = useState(30);
   const [selectedDate, setSelectedDate] = useState("");
+  const [viewMode, setViewMode] = useState("chart"); // 'chart' or 'table'
 
   const formatNumber = (value) => value?.toLocaleString("en-US") || "0";
 
@@ -84,7 +85,7 @@ export const AnalyticsTab = () => {
   }, []);
 
   if (isLoading) return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--color-bg-gradient-start)] to-[var(--color-bg-gradient-end)] dark:from-gray-900 dark:to-gray-800">
       <LoadingSpinner />
     </div>
   );
@@ -140,8 +141,26 @@ export const AnalyticsTab = () => {
     });
   })();
 
+  // حساب النسبة المئوية للتغيير
+  const calculateChangePercentage = () => {
+    if (filteredData.length < 2) return 0;
+    const current = filteredData[filteredData.length - 1];
+    const previous = filteredData[filteredData.length - 2];
+    const currentValue = revenueMode === "withDelivery" 
+      ? current.netRevenueWithDelivery 
+      : current.netRevenueWithoutDelivery;
+    const previousValue = revenueMode === "withDelivery"
+      ? previous.netRevenueWithDelivery
+      : previous.netRevenueWithoutDelivery;
+    
+    if (previousValue === 0) return 100;
+    return ((currentValue - previousValue) / previousValue) * 100;
+  };
+
+  const changePercentage = calculateChangePercentage();
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-[var(--color-bg-gradient-start)] to-[var(--color-bg-gradient-end)] py-8 px-4">
       <motion.div
         className="max-w-7xl mx-auto"
         initial={{ opacity: 0, y: 20 }}
@@ -151,7 +170,7 @@ export const AnalyticsTab = () => {
         {/* Header */}
         <div className="mb-8 text-center">
           <motion.h1 
-            className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+            className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] bg-clip-text text-transparent"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -159,7 +178,7 @@ export const AnalyticsTab = () => {
             {t("analytics.dashboard")}
           </motion.h1>
           <motion.p 
-            className="text-gray-600 dark:text-gray-300 mt-2"
+            className="text-[var(--color-text-secondary)] mt-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
@@ -168,87 +187,116 @@ export const AnalyticsTab = () => {
           </motion.p>
         </div>
 
-        {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <AnalyticsCard 
-            title={t("analytics.totalProducts")} 
-            value={analyticsData.products.total} 
-            icon={Package} 
-            color="blue"
-            formatNumber={formatNumber}
-          />
-          <AnalyticsCard 
-            title={t("analytics.featuredProducts")} 
-            value={analyticsData.products.featured} 
-            icon={Star} 
-            color="purple"
-            formatNumber={formatNumber}
-          />
-          <AnalyticsCard 
-            title={t("analytics.regularProducts")} 
-            value={analyticsData.products.regular} 
-            icon={Package} 
-            color="green"
-            formatNumber={formatNumber}
-          />
-          <AnalyticsCard 
-            title={t("analytics.totalOrders")} 
-            value={analyticsData.orders.total} 
-            icon={ShoppingCart} 
-            color="orange"
-            formatNumber={formatNumber}
-          />
-          <AnalyticsCard 
-            title={t("analytics.confirmedOrders")} 
-            value={analyticsData.orders.confirmed} 
-            icon={CheckCircle} 
-            color="green"
-            formatNumber={formatNumber}
-          />
-          <AnalyticsCard 
-            title={t("analytics.pendingOrders")} 
-            value={analyticsData.orders.pending} 
-            icon={Clock} 
-            color="yellow"
-            formatNumber={formatNumber}
-          />
+        {/* Stats Overview Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="bg-[var(--color-bg)] backdrop-blur-xl rounded-2xl p-6 border border-[var(--color-border)] shadow-sm hover:shadow-md transition-all duration-300">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[var(--color-text-secondary)] text-sm font-medium mb-1">
+                  {t("analytics.totalRevenue")}
+                </p>
+                <h3 className="text-2xl font-bold text-[var(--color-text)]">
+                  {formatNumber(revenueMode === "withDelivery" 
+                    ? analyticsData.revenue.netWithDelivery 
+                    : analyticsData.revenue.netWithoutDelivery
+                  )} DA
+                </h3>
+              </div>
+              <div className={`p-3 rounded-xl bg-gradient-to-r ${changePercentage >= 0 ? 'from-green-500 to-emerald-600' : 'from-red-500 to-rose-600'} text-white`}>
+                {changePercentage >= 0 ? <TrendingUp className="w-6 h-6" /> : <TrendingDown className="w-6 h-6" />}
+              </div>
+            </div>
+            <div className="mt-4 flex items-center text-sm">
+              <span className={`flex items-center ${changePercentage >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                {changePercentage >= 0 ? '↗' : '↘'} {Math.abs(changePercentage).toFixed(1)}%
+              </span>
+              <span className="text-[var(--color-text-secondary)] ml-2">
+                {changePercentage >= 0 ? t("analytics.increase") : t("analytics.decrease")}
+              </span>
+            </div>
+          </div>
+
+          <div className="bg-[var(--color-bg)] backdrop-blur-xl rounded-2xl p-6 border border-[var(--color-border)] shadow-sm hover:shadow-md transition-all duration-300">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[var(--color-text-secondary)] text-sm font-medium mb-1">
+                  {t("analytics.totalOrders")}
+                </p>
+                <h3 className="text-2xl font-bold text-[var(--color-text)]">
+                  {formatNumber(analyticsData.orders.total)}
+                </h3>
+              </div>
+              <div className="p-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 text-white">
+                <ShoppingCart className="w-6 h-6" />
+              </div>
+            </div>
+            <div className="mt-4">
+              <div className="flex justify-between text-sm text-[var(--color-text-secondary)]">
+                <span>{t("analytics.confirmed")}</span>
+                <span className="font-medium text-[var(--color-text)]">{analyticsData.orders.confirmed}</span>
+              </div>
+              <div className="flex justify-between text-sm text-[var(--color-text-secondary)] mt-1">
+                <span>{t("analytics.pending")}</span>
+                <span className="font-medium text-[var(--color-text)]">{analyticsData.orders.pending}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[var(--color-bg)] backdrop-blur-xl rounded-2xl p-6 border border-[var(--color-border)] shadow-sm hover:shadow-md transition-all duration-300">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[var(--color-text-secondary)] text-sm font-medium mb-1">
+                  {t("analytics.totalProducts")}
+                </p>
+                <h3 className="text-2xl font-bold text-[var(--color-text)]">
+                  {formatNumber(analyticsData.products.total)}
+                </h3>
+              </div>
+              <div className="p-3 rounded-xl bg-gradient-to-r from-blue-500 to-cyan-600 text-white">
+                <Package className="w-6 h-6" />
+              </div>
+            </div>
+            <div className="mt-4">
+              <div className="flex justify-between text-sm text-[var(--color-text-secondary)]">
+                <span>{t("analytics.featured")}</span>
+                <span className="font-medium text-[var(--color-text)]">{analyticsData.products.featured}</span>
+              </div>
+              <div className="flex justify-between text-sm text-[var(--color-text-secondary)] mt-1">
+                <span>{t("analytics.regular")}</span>
+                <span className="font-medium text-[var(--color-text)]">{analyticsData.products.regular}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[var(--color-bg)] backdrop-blur-xl rounded-2xl p-6 border border-[var(--color-border)] shadow-sm hover:shadow-md transition-all duration-300">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[var(--color-text-secondary)] text-sm font-medium mb-1">
+                  {t("analytics.coupons")}
+                </p>
+                <h3 className="text-2xl font-bold text-[var(--color-text)]">
+                  {formatNumber(analyticsData.coupons.total)}
+                </h3>
+              </div>
+              <div className="p-3 rounded-xl bg-gradient-to-r from-purple-500 to-violet-600 text-white">
+                <TicketPercent className="w-6 h-6" />
+              </div>
+            </div>
+            <div className="mt-4">
+              <div className="flex justify-between text-sm text-[var(--color-text-secondary)]">
+                <span>{t("analytics.active")}</span>
+                <span className="font-medium text-green-500">{analyticsData.coupons.active}</span>
+              </div>
+              <div className="flex justify-between text-sm text-[var(--color-text-secondary)] mt-1">
+                <span>{t("analytics.inactive")}</span>
+                <span className="font-medium text-red-500">{analyticsData.coupons.inactive}</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Second Row Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <AnalyticsCard 
-            title={t("analytics.totalCoupons")} 
-            value={analyticsData.coupons.total} 
-            icon={Ticket} 
-            color="pink"
-            formatNumber={formatNumber}
-          />
-          <AnalyticsCard 
-            title={t("analytics.activeCoupons")} 
-            value={analyticsData.coupons.active} 
-            icon={Zap} 
-            color="green"
-            formatNumber={formatNumber}
-          />
-          <AnalyticsCard 
-            title={t("analytics.inactiveCoupons")} 
-            value={analyticsData.coupons.inactive} 
-            icon={ZapOff} 
-            color="red"
-            formatNumber={formatNumber}
-          />
-        </div>
-
-        {/* Revenue Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <AnalyticsCard
-            title={t("analytics.totalDiscounts")}
-            value={analyticsData.revenue.totalDiscounts}
-            icon={TicketPercent}
-            unit={t("analytics.revenueUnit")}
-            color="red"
-            formatNumber={formatNumber}
-          />
+        {/* Revenue Summary */}
+        <div className="mb-8">
           <RevenueCard 
             revenueMode={revenueMode}
             setRevenueMode={setRevenueMode}
@@ -261,107 +309,277 @@ export const AnalyticsTab = () => {
 
         {/* Chart Section */}
         <motion.div
-          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-lg mb-8"
+          className="bg-[var(--color-bg)] backdrop-blur-xl rounded-2xl p-6 border border-[var(--color-border)] shadow-lg mb-8"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.4 }}
         >
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-            <h2 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-              <BarChart3 className="w-6 h-6 text-blue-600" />
-              {t("analytics.salesOverview")}
-            </h2>
-            <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-xl p-1">
-              <button
-                onClick={() => setRevenueMode("withoutDelivery")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  revenueMode === "withoutDelivery"
-                    ? "bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm"
-                    : "text-gray-600 dark:text-gray-300 hover:text-blue-600"
-                }`}
-              >
-                {t("analytics.withoutDelivery")}
-              </button>
-              <button
-                onClick={() => setRevenueMode("withDelivery")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  revenueMode === "withDelivery"
-                    ? "bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-400 shadow-sm"
-                    : "text-gray-600 dark:text-gray-300 hover:text-blue-600"
-                }`}
-              >
-                {t("analytics.withDelivery")}
-              </button>
+            <div>
+              <h2 className="text-xl font-bold text-[var(--color-text)] flex items-center gap-2">
+                <BarChart3 className="w-6 h-6 text-[var(--color-accent)]" />
+                {t("analytics.salesOverview")}
+              </h2>
+              <p className="text-[var(--color-text-secondary)] text-sm mt-1">
+                {t("analytics.last7Days")}
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 bg-[var(--color-bg-gray)] rounded-xl p-1">
+                <button
+                  onClick={() => setViewMode("chart")}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    viewMode === "chart"
+                      ? "bg-[var(--color-bg)] text-[var(--color-accent)] shadow-sm"
+                      : "text-[var(--color-text-secondary)] hover:text-[var(--color-accent)]"
+                  }`}
+                >
+                  {t("analytics.chart")}
+                </button>
+                <button
+                  onClick={() => setViewMode("table")}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    viewMode === "table"
+                      ? "bg-[var(--color-bg)] text-[var(--color-accent)] shadow-sm"
+                      : "text-[var(--color-text-secondary)] hover:text-[var(--color-accent)]"
+                  }`}
+                >
+                  {t("analytics.table")}
+                </button>
+              </div>
+              <div className="flex items-center gap-2 bg-[var(--color-bg-gray)] rounded-xl p-1">
+                <button
+                  onClick={() => setRevenueMode("withoutDelivery")}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    revenueMode === "withoutDelivery"
+                      ? "bg-[var(--color-bg)] text-[var(--color-accent)] shadow-sm"
+                      : "text-[var(--color-text-secondary)] hover:text-[var(--color-accent)]"
+                  }`}
+                >
+                  {t("analytics.withoutDelivery")}
+                </button>
+                <button
+                  onClick={() => setRevenueMode("withDelivery")}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    revenueMode === "withDelivery"
+                      ? "bg-[var(--color-bg)] text-[var(--color-accent)] shadow-sm"
+                      : "text-[var(--color-text-secondary)] hover:text-[var(--color-accent)]"
+                  }`}
+                >
+                  {t("analytics.withDelivery")}
+                </button>
+              </div>
             </div>
           </div>
 
-          <div dir="ltr" className="min-w-0">
-            <ResponsiveContainer width="100%" height={320}>
-              <LineChart data={filteredData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                <XAxis
-                  dataKey="date"
-                  stroke="#6b7280"
-                  tick={{ fontSize: 12 }}
-                  tickFormatter={(value) => {
-                    const date = new Date(value);
-                    const isArabic = i18n.language === "ar";
-                    const monthName = date.toLocaleDateString(
-                      isArabic ? "ar-EG" : "en-US",
-                      { month: "short" }
+          {viewMode === "chart" ? (
+            <div dir="ltr" className="min-w-0">
+              <ResponsiveContainer width="100%" height={400}>
+                <AreaChart data={filteredData}>
+                  <defs>
+                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--color-accent)" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="var(--color-accent)" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorOrders" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                  <XAxis
+                    dataKey="date"
+                    stroke="var(--color-text-secondary)"
+                    tick={{ fontSize: 12 }}
+                    tickFormatter={(value) => {
+                      const date = new Date(value);
+                      const isArabic = i18n.language === "ar";
+                      const monthName = date.toLocaleDateString(
+                        isArabic ? "ar-EG" : "en-US",
+                        { month: "short" }
+                      );
+                      const day = date.getDate();
+                      return `${day} ${monthName}`;
+                    }}
+                  />
+                  <YAxis
+                    stroke="var(--color-text-secondary)"
+                    tick={{ fontSize: 12 }}
+                    width={50}
+                    tickFormatter={(value) => formatNumber(value)}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "var(--color-bg)",
+                      border: "1px solid var(--color-border)",
+                      borderRadius: "12px",
+                      backdropFilter: "blur(16px)",
+                      fontSize: "14px",
+                      color: "var(--color-text)"
+                    }}
+                    formatter={(value, name) => {
+                      if (name === t("analytics.revenueLabel")) {
+                        return [formatNumber(value) + " DA", name];
+                      }
+                      return [formatNumber(value), name];
+                    }}
+                  />
+                  <Legend 
+                    wrapperStyle={{ 
+                      fontSize: "14px",
+                      paddingTop: "10px",
+                      color: "var(--color-text)"
+                    }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="orders"
+                    stroke="#f59e0b"
+                    fillOpacity={1}
+                    fill="url(#colorOrders)"
+                    name={t("analytics.ordersLabel")}
+                    strokeWidth={2}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey={
+                      revenueMode === "withDelivery"
+                        ? "netRevenueWithDelivery"
+                        : "netRevenueWithoutDelivery"
+                    }
+                    stroke="var(--color-accent)"
+                    fillOpacity={1}
+                    fill="url(#colorRevenue)"
+                    name={t("analytics.revenueLabel")}
+                    strokeWidth={2}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-[var(--color-border)]">
+                    <th className="py-3 px-4 text-left text-[var(--color-text-secondary)] font-semibold">
+                      {t("analytics.date")}
+                    </th>
+                    <th className="py-3 px-4 text-left text-[var(--color-text-secondary)] font-semibold">
+                      {t("analytics.orders")}
+                    </th>
+                    <th className="py-3 px-4 text-left text-[var(--color-text-secondary)] font-semibold">
+                      {t("analytics.revenueLabel")}
+                    </th>
+                    <th className="py-3 px-4 text-left text-[var(--color-text-secondary)] font-semibold">
+                      {t("analytics.trend")}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredData.map((entry, index) => {
+                    const date = new Date(entry.date);
+                    const formattedDate = date.toLocaleDateString("en-US", {
+                      day: "numeric",
+                      month: "short",
+                    });
+                    const revenueValue =
+                      revenueMode === "withDelivery"
+                        ? entry.netRevenueWithDelivery
+                        : entry.netRevenueWithoutDelivery;
+                    
+                    // حساب الاتجاه
+                    const prevEntry = index > 0 ? filteredData[index - 1] : null;
+                    const prevRevenue = prevEntry 
+                      ? revenueMode === "withDelivery"
+                        ? prevEntry.netRevenueWithDelivery
+                        : prevEntry.netRevenueWithoutDelivery
+                      : null;
+                    const trend = prevRevenue ? revenueValue > prevRevenue ? 'up' : 'down' : 'stable';
+
+                    return (
+                      <tr 
+                        key={index} 
+                        className="border-b border-[var(--color-border)] hover:bg-[var(--color-bg-gray)] transition-all"
+                      >
+                        <td className="py-3 px-4 text-[var(--color-text)]">{formattedDate}</td>
+                        <td className="py-3 px-4">
+                          <span className="font-medium text-[var(--color-text)]">
+                            {formatNumber(entry.orders)}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4">
+                          <span className="font-bold text-[var(--color-accent)]">
+                            {formatNumber(revenueValue)} DA
+                          </span>
+                        </td>
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-2">
+                            {trend === 'up' && <TrendingUp className="w-4 h-4 text-green-500" />}
+                            {trend === 'down' && <TrendingDown className="w-4 h-4 text-red-500" />}
+                            <span className={`text-sm ${trend === 'up' ? 'text-green-500' : trend === 'down' ? 'text-red-500' : 'text-[var(--color-text-secondary)]'}`}>
+                              {trend === 'up' ? '↑' : trend === 'down' ? '↓' : '→'}
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
                     );
-                    const day = date.getDate();
-                    return `${day} ${monthName}`;
-                  }}
-                />
-                <YAxis
-                  stroke="#6b7280"
-                  tick={{ fontSize: 12 }}
-                  width={50}
-                  tickFormatter={(value) => formatNumber(value)}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "rgba(255, 255, 255, 0.95)",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "12px",
-                    backdropFilter: "blur(16px)",
-                    fontSize: "14px",
-                  }}
-                  formatter={(value) => [formatNumber(value), ""]}
-                />
-                <Legend 
-                  wrapperStyle={{ 
-                    fontSize: "14px",
-                    paddingTop: "10px"
-                  }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="orders"
-                  stroke="#f59e0b"
-                  name={t("analytics.ordersLabel")}
-                  strokeWidth={3}
-                  dot={{ fill: "#f59e0b", strokeWidth: 2, r: 4 }}
-                  activeDot={{ r: 6, fill: "#f59e0b" }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey={
-                    revenueMode === "withDelivery"
-                      ? "netRevenueWithDelivery"
-                      : "netRevenueWithoutDelivery"
-                  }
-                  stroke="#8b5cf6"
-                  name={t("analytics.revenueLabel")}
-                  strokeWidth={3}
-                  dot={{ fill: "#8b5cf6", strokeWidth: 2, r: 4 }}
-                  activeDot={{ r: 6, fill: "#8b5cf6" }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </motion.div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-[var(--color-bg)] backdrop-blur-xl rounded-2xl p-6 border border-[var(--color-border)]">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white">
+                <CheckCircle className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-[var(--color-text-secondary)] text-sm">{t("analytics.confirmationRate")}</p>
+                <h4 className="text-2xl font-bold text-[var(--color-text)]">
+                  {analyticsData.orders.total > 0 
+                    ? ((analyticsData.orders.confirmed / analyticsData.orders.total) * 100).toFixed(1)
+                    : 0
+                  }%
+                </h4>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[var(--color-bg)] backdrop-blur-xl rounded-2xl p-6 border border-[var(--color-border)]">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-gradient-to-r from-red-500 to-rose-600 text-white">
+                <TicketPercent className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-[var(--color-text-secondary)] text-sm">{t("analytics.totalDiscounts")}</p>
+                <h4 className="text-2xl font-bold text-[var(--color-text)]">
+                  {formatNumber(analyticsData.revenue.totalDiscounts)} DA
+                </h4>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[var(--color-bg)] backdrop-blur-xl rounded-2xl p-6 border border-[var(--color-border)]">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-xl bg-gradient-to-r from-purple-500 to-violet-600 text-white">
+                <Star className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-[var(--color-text-secondary)] text-sm">{t("analytics.featuredRatio")}</p>
+                <h4 className="text-2xl font-bold text-[var(--color-text)]">
+                  {analyticsData.products.total > 0 
+                    ? ((analyticsData.products.featured / analyticsData.products.total) * 100).toFixed(1)
+                    : 0
+                  }%
+                </h4>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Revenue History Popup */}
         {showRevenuePopup &&
@@ -372,19 +590,19 @@ export const AnalyticsTab = () => {
               animate={{ opacity: 1 }}
             >
               <motion.div
-                className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col border border-gray-200 dark:border-gray-700"
+                className="bg-[var(--color-bg)] rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col border border-[var(--color-border)]"
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
               >
                 {/* Header */}
-                <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-700 rounded-t-2xl">
-                  <h3 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                    <DollarSign className="w-6 h-6 text-green-500" />
+                <div className="p-6 border-b border-[var(--color-border)] flex justify-between items-center bg-gradient-to-r from-[var(--color-bg-gradient-start)] to-[var(--color-bg-gradient-end)] rounded-t-2xl">
+                  <h3 className="text-xl font-bold text-[var(--color-text)] flex items-center gap-2">
+                    <DollarSign className="w-6 h-6 text-[var(--color-accent)]" />
                     {t("analytics.revenueHistory")}
                   </h3>
                   <button
                     onClick={() => setShowRevenuePopup(false)}
-                    className="p-2 rounded-xl text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
+                    className="p-2 rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-gray)] transition-all"
                     aria-label="close"
                   >
                     <X size={24} />
@@ -401,7 +619,7 @@ export const AnalyticsTab = () => {
                         setSelectedRange(Number(e.target.value));
                         setSelectedDate("");
                       }}
-                      className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-all"
                     >
                       <option value={7}>{t("analytics.last7Days")}</option>
                       <option value={14}>{t("analytics.last14Days")}</option>
@@ -411,7 +629,7 @@ export const AnalyticsTab = () => {
                     <select
                       value={selectedDate}
                       onChange={(e) => setSelectedDate(e.target.value)}
-                      className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)] rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-all"
                     >
                       <option value="">{t("analytics.allDates")}</option>
                       {dailyOrdersData.map((entry, idx) => {
@@ -431,17 +649,17 @@ export const AnalyticsTab = () => {
                   </div>
 
                   {/* Table */}
-                  <div className="overflow-y-auto max-h-[400px] border border-gray-200 dark:border-gray-700 rounded-xl">
+                  <div className="overflow-y-auto max-h-[400px] border border-[var(--color-border)] rounded-xl">
                     <table className="min-w-full text-sm">
-                      <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0">
+                      <thead className="bg-[var(--color-bg-gray)] sticky top-0">
                         <tr>
-                          <th className="py-3 px-4 text-left text-gray-700 dark:text-gray-300 font-semibold border-b border-gray-200 dark:border-gray-600">
+                          <th className="py-3 px-4 text-left text-[var(--color-text-secondary)] font-semibold border-b border-[var(--color-border)]">
                             {t("analytics.date")}
                           </th>
-                          <th className="py-3 px-4 text-left text-gray-700 dark:text-gray-300 font-semibold border-b border-gray-200 dark:border-gray-600">
+                          <th className="py-3 px-4 text-left text-[var(--color-text-secondary)] font-semibold border-b border-[var(--color-border)]">
                             {t("analytics.numberOfOrders")}
                           </th>
-                          <th className="py-3 px-4 text-left text-gray-700 dark:text-gray-300 font-semibold border-b border-gray-200 dark:border-gray-600">
+                          <th className="py-3 px-4 text-left text-[var(--color-text-secondary)] font-semibold border-b border-[var(--color-border)]">
                             {t("analytics.revenueLabel")}
                           </th>
                         </tr>
@@ -467,14 +685,16 @@ export const AnalyticsTab = () => {
                             return (
                               <tr 
                                 key={idx} 
-                                className="border-b border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-gray-700 transition-all"
+                                className="border-b border-[var(--color-border)] hover:bg-[var(--color-bg-gray)] transition-all"
                               >
-                                <td className="py-3 px-4 text-gray-600 dark:text-gray-400">{formattedDate}</td>
-                                <td className="py-3 px-4 text-gray-600 dark:text-gray-400 font-medium">
+                                <td className="py-3 px-4 text-[var(--color-text)]">{formattedDate}</td>
+                                <td className="py-3 px-4 text-[var(--color-text)] font-medium">
                                   {formatNumber(entry.orders)}
                                 </td>
-                                <td className="py-3 px-4 text-gray-600 dark:text-gray-400 font-medium">
-                                  {formatNumber(revenueValue)} {t("analytics.revenueUnit")}
+                                <td className="py-3 px-4">
+                                  <span className="font-bold text-[var(--color-accent)]">
+                                    {formatNumber(revenueValue)} DA
+                                  </span>
                                 </td>
                               </tr>
                             );
@@ -492,47 +712,10 @@ export const AnalyticsTab = () => {
   );
 };
 
-/* بطاقة عامة */
-const AnalyticsCard = ({ title, value, icon: Icon, unit, color = "blue", formatNumber }) => {
-  const colorClasses = {
-    blue: "from-blue-500 to-blue-600",
-    purple: "from-purple-500 to-purple-600",
-    green: "from-green-500 to-green-600",
-    orange: "from-orange-500 to-orange-600",
-    yellow: "from-yellow-500 to-yellow-600",
-    pink: "from-pink-500 to-pink-600",
-    red: "from-red-500 to-red-600"
-  };
-
-  return (
-    <motion.div
-      className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.02, y: -2 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="flex justify-between items-center">
-        <div className="flex-1 min-w-0">
-          <p className="text-gray-600 dark:text-gray-400 text-sm font-medium mb-1 truncate">
-            {title}
-          </p>
-          <h3 className="text-2xl font-bold text-gray-800 dark:text-white truncate">
-            {formatNumber(value)} {unit && <span className="text-sm">{unit}</span>}
-          </h3>
-        </div>
-        <div className={`p-3 rounded-xl bg-gradient-to-r ${colorClasses[color]} text-white shadow-lg flex-shrink-0 ml-4`}>
-          <Icon className="w-6 h-6" />
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
 /* بطاقة الإيرادات */
 const RevenueCard = ({ revenueMode, setRevenueMode, analyticsData, t, formatNumber, onShowPopup }) => (
   <motion.div
-    className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg"
+    className="bg-gradient-to-br from-[var(--color-electric)] to-[var(--color-accent)] rounded-2xl p-6 text-[var(--color-on-accent)] shadow-lg"
     initial={{ opacity: 0, scale: 0.95 }}
     animate={{ opacity: 1, scale: 1 }}
     whileHover={{ scale: 1.02 }}
@@ -540,7 +723,7 @@ const RevenueCard = ({ revenueMode, setRevenueMode, analyticsData, t, formatNumb
   >
     <div className="flex justify-between items-start mb-4">
       <div>
-        <p className="text-blue-100 text-sm font-medium mb-1">
+        <p className="text-[var(--color-on-accent)]/80 text-sm font-medium mb-1">
           {revenueMode === "withDelivery"
             ? t("analytics.netRevenueWithDelivery")
             : t("analytics.netRevenueWithoutDelivery")}
@@ -549,20 +732,20 @@ const RevenueCard = ({ revenueMode, setRevenueMode, analyticsData, t, formatNumb
           {revenueMode === "withDelivery"
             ? formatNumber(analyticsData.revenue.netWithDelivery)
             : formatNumber(analyticsData.revenue.netWithoutDelivery)}{" "}
-          <span className="text-lg">{t("analytics.revenueUnit")}</span>
+          <span className="text-lg">DA</span>
         </h3>
       </div>
-      <TrendingUp className="w-10 h-10 text-white opacity-80 flex-shrink-0" />
+      <TrendingUp className="w-10 h-10 text-[var(--color-on-accent)]/80 flex-shrink-0" />
     </div>
 
     <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
-      <div className="flex rounded-lg overflow-hidden border border-white/20 bg-white/10 backdrop-blur-sm">
+      <div className="flex rounded-lg overflow-hidden border border-[var(--color-on-accent)]/20 bg-[var(--color-on-accent)]/10 backdrop-blur-sm">
         <button
           onClick={() => setRevenueMode("withoutDelivery")}
           className={`px-4 py-2 text-sm font-medium transition-all ${
             revenueMode === "withoutDelivery"
-              ? "bg-white text-blue-600"
-              : "text-blue-100 hover:bg-white/20"
+              ? "bg-[var(--color-on-accent)] text-[var(--color-accent)]"
+              : "text-[var(--color-on-accent)]/80 hover:bg-[var(--color-on-accent)]/20"
           }`}
         >
           {t("analytics.withoutDelivery")}
@@ -571,8 +754,8 @@ const RevenueCard = ({ revenueMode, setRevenueMode, analyticsData, t, formatNumb
           onClick={() => setRevenueMode("withDelivery")}
           className={`px-4 py-2 text-sm font-medium transition-all ${
             revenueMode === "withDelivery"
-              ? "bg-white text-blue-600"
-              : "text-blue-100 hover:bg-white/20"
+              ? "bg-[var(--color-on-accent)] text-[var(--color-accent)]"
+              : "text-[var(--color-on-accent)]/80 hover:bg-[var(--color-on-accent)]/20"
           }`}
         >
           {t("analytics.withDelivery")}
@@ -581,7 +764,7 @@ const RevenueCard = ({ revenueMode, setRevenueMode, analyticsData, t, formatNumb
 
       <button
         onClick={onShowPopup}
-        className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 border border-white/30 text-white hover:bg-white/20 transition-all backdrop-blur-sm"
+        className="px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 border border-[var(--color-on-accent)]/30 text-[var(--color-on-accent)] hover:bg-[var(--color-on-accent)]/20 transition-all backdrop-blur-sm"
       >
         <List className="w-4 h-4" />
         {t("analytics.revenueHistory")}

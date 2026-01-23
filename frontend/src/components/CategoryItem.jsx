@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import useSettingStore from "../stores/useSettingStore";
-import { ArrowRight, ShoppingBag, Star, Clock, TrendingUp } from "lucide-react";
+import { ArrowRight, ShoppingBag, Star, Clock, TrendingUp, Zap } from "lucide-react";
 
 const CategoryItem = ({ category, href, index = 0 }) => {
   const { t, i18n } = useTranslation();
@@ -25,21 +25,21 @@ const CategoryItem = ({ category, href, index = 0 }) => {
   // رابط افتراضي إذا لم يتم توفيره
   const categoryHref = href || `/category/${fullCategory?.slug || fullCategory?._id}`;
 
-  // ألوان متدرجة مختلفة لكل بطاقة
+  // ألوان متدرجة متوافقة مع الهوية البصرية
   const gradientColors = [
-    'from-blue-500/20 to-purple-600/20',
-    'from-green-500/20 to-teal-600/20', 
-    'from-orange-500/20 to-red-600/20',
-    'from-purple-500/20 to-pink-600/20',
-    'from-teal-500/20 to-blue-600/20',
-    'from-amber-500/20 to-orange-600/20'
+    'from-[var(--color-electric)]/20 to-[var(--color-accent)]/30',
+    'from-[var(--color-electric)]/30 to-blue-600/30', 
+    'from-purple-600/20 to-[var(--color-accent)]/30',
+    'from-[var(--color-electric)]/20 to-purple-600/30',
+    'from-blue-600/20 to-[var(--color-accent)]/30',
+    'from-[var(--color-accent)]/20 to-purple-600/30'
   ];
   
   const selectedGradient = gradientColors[index % gradientColors.length];
 
   return (
     <motion.div
-      className="group relative overflow-hidden rounded-3xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 border border-gray-200/50 dark:border-gray-700/50"
+      className="group relative overflow-hidden rounded-3xl bg-[var(--color-bg-opacity)] backdrop-blur-xl shadow-xl hover:shadow-2xl transition-all duration-500 border border-[var(--color-border)]"
       whileHover={{ 
         scale: 1.03, 
         y: -8,
@@ -52,11 +52,11 @@ const CategoryItem = ({ category, href, index = 0 }) => {
           {/* طبقة تدرج لوني رئيسية */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10 opacity-70 group-hover:opacity-90 transition-opacity duration-500" />
           
-          {/* تأثير تدرج لوني تفاعلي */}
+          {/* تأثير تدرج لوني تفاعلي باستخدام ألوان الهوية */}
           <div className={`absolute inset-0 bg-gradient-to-r ${selectedGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-5`} />
           
-          {/* تأثير وميض */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 z-10" />
+          {/* تأثير وميض كهربائي */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--color-electric)]/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 z-10" />
           
           {/* صورة التصنيف */}
           <img
@@ -86,9 +86,9 @@ const CategoryItem = ({ category, href, index = 0 }) => {
                 )}
               </div>
               
-              {/* أيقونة متحركة */}
+              {/* أيقونة متحركة بتدرج الهوية */}
               <motion.div
-                className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg ml-4 flex-shrink-0"
+                className="w-12 h-12 bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg ml-4 flex-shrink-0 border border-white/20"
                 whileHover={{ 
                   scale: 1.15, 
                   rotate: isRTL ? -5 : 5,
@@ -104,7 +104,7 @@ const CategoryItem = ({ category, href, index = 0 }) => {
               <div className="flex items-center gap-4">
                 {/* عدد المنتجات */}
                 {fullCategory?.productCount !== undefined && (
-                  <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5">
+                  <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 border border-white/10">
                     <ShoppingBag className="w-4 h-4 text-white" />
                     <span className="text-white text-sm font-medium">
                       {t("category.productsCount", { count: fullCategory.productCount })}
@@ -114,10 +114,20 @@ const CategoryItem = ({ category, href, index = 0 }) => {
                 
                 {/* التصنيف المميز */}
                 {fullCategory?.featured && (
-                  <div className="flex items-center gap-2 bg-amber-500/20 backdrop-blur-sm rounded-full px-3 py-1.5">
-                    <Star className="w-4 h-4 text-amber-400" />
-                    <span className="text-amber-400 text-sm font-medium">
+                  <div className="flex items-center gap-2 bg-gradient-to-r from-amber-500/30 to-yellow-500/30 backdrop-blur-sm rounded-full px-3 py-1.5 border border-amber-400/20">
+                    <Star className="w-4 h-4 text-amber-300" />
+                    <span className="text-amber-300 text-sm font-medium">
                       {t("category.featured")}
+                    </span>
+                  </div>
+                )}
+
+                {/* تصنيف نشط/سريع */}
+                {fullCategory?.isFast && (
+                  <div className="flex items-center gap-2 bg-gradient-to-r from-green-500/30 to-emerald-600/30 backdrop-blur-sm rounded-full px-3 py-1.5 border border-green-400/20">
+                    <Zap className="w-4 h-4 text-green-400" />
+                    <span className="text-green-400 text-sm font-medium">
+                      {t("category.fastDelivery")}
                     </span>
                   </div>
                 )}
@@ -136,20 +146,44 @@ const CategoryItem = ({ category, href, index = 0 }) => {
           </div>
 
           {/* تأثير حدود تفاعلية */}
-          <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/40 rounded-3xl transition-all duration-500 z-15" />
+          <div className="absolute inset-0 border-2 border-transparent group-hover:border-[var(--color-electric)]/40 rounded-3xl transition-all duration-500 z-15" />
           
           {/* تأثير ضوء عند hover */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl z-5" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-electric)]/0 via-[var(--color-accent)]/10 to-[var(--color-electric)]/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl z-5" />
         </div>
       </Link>
 
       {/* تأثير ظل متحرك */}
       <div 
-        className="absolute inset-0 rounded-3xl shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"
+        className="absolute inset-0 rounded-3xl shadow-2xl opacity-0 group-hover:opacity-70 transition-opacity duration-500 -z-10"
         style={{
-          background: 'radial-gradient(ellipse at center, rgba(0,0,0,0.3) 0%, transparent 70%)'
+          background: `radial-gradient(ellipse at center, var(--color-electric)/20 0%, transparent 70%)`
         }}
       />
+
+      {/* نقاط مضيئة متحركة */}
+      <div className="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none">
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-[var(--color-electric)] rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              scale: [0, 1, 0],
+              opacity: [0, 0.8, 0],
+            }}
+            transition={{
+              duration: 2 + Math.random(),
+              repeat: Infinity,
+              delay: Math.random() * 2,
+              ease: "easeInOut",
+            }}
+          />
+        ))}
+      </div>
     </motion.div>
   );
 };

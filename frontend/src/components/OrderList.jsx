@@ -241,7 +241,7 @@ const OrderList = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
+      <div className="min-h-screen flex items-center justify-center">
         <LoadingSpinner />
       </div>
     );
@@ -249,19 +249,19 @@ const OrderList = () => {
 
   if (!Array.isArray(orders) || orders.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
+      <div className="min-h-screen py-8 px-4">
         <motion.div
-          className="max-w-2xl mx-auto bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 text-center"
+          className="max-w-2xl mx-auto bg-[var(--color-bg-opacity)] backdrop-blur-xl rounded-2xl shadow-lg border border-[var(--color-border)] p-8 text-center"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">{t("orders.noOrders")}</h3>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">لا توجد طلبات في النظام حالياً</p>
+          <Package className="w-16 h-16 text-[var(--color-text-secondary)] mx-auto mb-4" />
+          <h3 className="text-2xl font-bold text-[var(--color-text)] mb-4">{t("orders.noOrders")}</h3>
+          <p className="text-[var(--color-text-secondary)] mb-6">لا توجد طلبات في النظام حالياً</p>
           <button 
             onClick={fetchOrders}
-            className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-200 shadow-md"
+            className="bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] text-white px-6 py-3 rounded-xl hover:opacity-90 transition-all duration-200 shadow-md"
           >
             إعادة تحميل الطلبات
           </button>
@@ -271,7 +271,7 @@ const OrderList = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
+    <div className="min-h-screen py-8 px-4">
       <motion.div
         className="max-w-7xl mx-auto"
         initial={{ opacity: 0, y: 20 }}
@@ -281,7 +281,7 @@ const OrderList = () => {
         {/* Header */}
         <div className="mb-8 text-center">
           <motion.h1 
-            className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2"
+            className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] bg-clip-text text-transparent mb-2"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -289,7 +289,7 @@ const OrderList = () => {
             {t("orders.title")}
           </motion.h1>
           <motion.p 
-            className="text-gray-600 dark:text-gray-300"
+            className="text-[var(--color-text-secondary)]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
@@ -305,38 +305,38 @@ const OrderList = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+          <div className="bg-[var(--color-bg-opacity)] backdrop-blur-xl rounded-2xl p-6 border border-[var(--color-border)] shadow-sm">
+            <div className="text-2xl font-bold text-[var(--color-text)] mb-2">
               {orders.length}
             </div>
-            <div className="text-gray-600 dark:text-gray-400 text-sm">
+            <div className="text-[var(--color-text-secondary)] text-sm">
               إجمالي الطلبات
             </div>
           </div>
           
-          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+          <div className="bg-[var(--color-bg-opacity)] backdrop-blur-xl rounded-2xl p-6 border border-[var(--color-border)] shadow-sm">
+            <div className="text-2xl font-bold text-[var(--color-text)] mb-2">
               {orders.filter(o => o.isConfirmed).length}
             </div>
-            <div className="text-gray-600 dark:text-gray-400 text-sm">
+            <div className="text-[var(--color-text-secondary)] text-sm">
               الطلبات المؤكدة
             </div>
           </div>
           
-          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+          <div className="bg-[var(--color-bg-opacity)] backdrop-blur-xl rounded-2xl p-6 border border-[var(--color-border)] shadow-sm">
+            <div className="text-2xl font-bold text-[var(--color-text)] mb-2">
               {orders.filter(o => !o.isConfirmed).length}
             </div>
-            <div className="text-gray-600 dark:text-gray-400 text-sm">
+            <div className="text-[var(--color-text-secondary)] text-sm">
               الطلبات المعلقة
             </div>
           </div>
           
-          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+          <div className="bg-[var(--color-bg-opacity)] backdrop-blur-xl rounded-2xl p-6 border border-[var(--color-border)] shadow-sm">
+            <div className="text-2xl font-bold text-[var(--color-text)] mb-2">
               {filteredSortedOrders.length}
             </div>
-            <div className="text-gray-600 dark:text-gray-400 text-sm">
+            <div className="text-[var(--color-text-secondary)] text-sm">
               الطلبات المفلترة
             </div>
           </div>
@@ -344,7 +344,7 @@ const OrderList = () => {
 
         {/* Filters Section */}
         <motion.div
-          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 mb-6"
+          className="bg-[var(--color-bg-opacity)] backdrop-blur-xl rounded-2xl shadow-lg border border-[var(--color-border)] p-6 mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
@@ -352,13 +352,13 @@ const OrderList = () => {
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
             {/* Search Input */}
             <div className="relative flex-1 w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--color-text-secondary)] w-5 h-5" />
               <input
                 type="text"
                 placeholder={`${t("orders.searchBy")} ${searchFields[searchTypeIndex].label}`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-800 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                className="w-full pl-10 pr-4 py-3 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl text-[var(--color-text)] placeholder-[var(--color-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-all duration-200"
               />
             </div>
 
@@ -367,8 +367,8 @@ const OrderList = () => {
               {/* Select All */}
               <label className={`inline-flex gap-2 items-center cursor-pointer select-none rounded-xl px-4 py-3 transition-all duration-200 ${
                 selectAll 
-                  ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md" 
-                  : "bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-500"
+                  ? "bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] text-white shadow-md" 
+                  : "bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--color-accent)]"
               }`}>
                 <input
                   type="checkbox"
@@ -382,7 +382,7 @@ const OrderList = () => {
                   }}
                 />
                 <span className="absolute w-5 h-5 flex items-center justify-center pointer-events-none">
-                  <CheckCheck className={`${selectAll? 'text-blue-600': 'text-transparent'}`} />
+                  <CheckCheck className={`${selectAll? 'text-[var(--color-electric)]': 'text-transparent'}`} />
                 </span>
                 <span>{t("orders.selectAll")}</span>
               </label>
@@ -391,7 +391,7 @@ const OrderList = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 min-w-[180px]"
+                className="bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-all duration-200 min-w-[180px]"
               >
                 <option value="all">{t("orders.all")}</option>
                 <option value="confirmed">{t("orders.confirmed")}</option>
@@ -402,7 +402,7 @@ const OrderList = () => {
               <select
                 value={stateFilter}
                 onChange={(e) => setStateFilter(e.target.value)}
-                className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 min-w-[180px]"
+                className="bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)] rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] focus:border-transparent transition-all duration-200 min-w-[180px]"
               >
                 <option value="all">كل الولايات</option>
                 <option value="16 - الجزائر">16 - الجزائر</option>
@@ -422,8 +422,8 @@ const OrderList = () => {
                 onClick={() => setSortOrder(sortOrder === 'desc'? 'asc': 'desc')}
                 className={`flex items-center gap-2 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
                   sortOrder !== 'desc'
-                    ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md"
-                    : "bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-500"
+                    ? "bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] text-white shadow-md"
+                    : "bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--color-accent)]"
                 }`}
               >
                 <Filter className="w-4 h-4" />
@@ -433,7 +433,7 @@ const OrderList = () => {
               {/* Search Type Toggle */}
               <button
                 onClick={() => setSearchTypeIndex((prev) => (prev + 1) % searchFields.length)}
-                className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:from-blue-600 hover:to-purple-600 transition-all duration-200 shadow-md"
+                className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] text-white rounded-xl hover:opacity-90 transition-all duration-200 shadow-md"
                 title={t("orders.changeSearch")}
               >
                 {(() => {
@@ -446,7 +446,7 @@ const OrderList = () => {
           </div>
 
           {/* Results Count */}
-          <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+          <div className="mt-4 text-sm text-[var(--color-text-secondary)]">
             عرض {filteredSortedOrders.length} من أصل {orders.length} طلب
           </div>
         </motion.div>
@@ -454,7 +454,7 @@ const OrderList = () => {
         {/* Selection Actions */}
         {selectedOrders.length > 0 && (
           <motion.div 
-            className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4 rounded-2xl mb-6 shadow-lg"
+            className="bg-gradient-to-r from-[var(--color-electric)] to-[var(--color-accent)] text-white p-4 rounded-2xl mb-6 shadow-lg"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
@@ -469,7 +469,7 @@ const OrderList = () => {
                   onClick={toggleConfirmation}
                   className={`px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all duration-200 ${
                     hasMixedStatus
-                      ? "bg-gray-400 cursor-not-allowed"
+                      ? "bg-[var(--color-border)] cursor-not-allowed"
                       : allConfirmed
                         ? "bg-yellow-600 hover:bg-yellow-700"
                         : "bg-green-600 hover:bg-green-700"
@@ -498,7 +498,7 @@ const OrderList = () => {
                     setSelectAll(false);
                     setIsSelectionMode(false);
                   }}
-                  className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all duration-200"
+                  className="bg-[var(--color-bg-gray)] hover:bg-[var(--color-border)] text-[var(--color-text)] px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all duration-200"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -512,36 +512,36 @@ const OrderList = () => {
 
         {/* Orders Table */}
         <motion.div
-          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
+          className="bg-[var(--color-bg-opacity)] backdrop-blur-xl rounded-2xl shadow-lg border border-[var(--color-border)] overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
           <div className="overflow-x-auto">
             <table className="min-w-full">
-              <thead className="bg-gray-50 dark:bg-gray-700">
+              <thead className="bg-[var(--color-bg-gray)]">
                 <tr>
-                  <th className="px-6 py-4 text-left font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left font-semibold text-[var(--color-text)] uppercase tracking-wider">
                     {t("orders.headers.num")}
                   </th>
-                  <th className="px-6 py-4 text-left font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left font-semibold text-[var(--color-text)] uppercase tracking-wider">
                     {t("orders.headers.customer")}
                   </th>
-                  <th className="px-6 py-4 text-left font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left font-semibold text-[var(--color-text)] uppercase tracking-wider">
                     {t("orders.headers.phone")}
                   </th>
-                  <th className="px-6 py-4 text-left font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left font-semibold text-[var(--color-text)] uppercase tracking-wider">
                     {t("orders.headers.wilaya")}
                   </th>
-                  <th className="px-6 py-4 text-left font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left font-semibold text-[var(--color-text)] uppercase tracking-wider">
                     {t("orders.headers.status")}
                   </th>
-                  <th className="px-6 py-4 text-left font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left font-semibold text-[var(--color-text)] uppercase tracking-wider">
                     التاريخ
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-600">
+              <tbody className="divide-y divide-[var(--color-border)]">
                 {Array.isArray(filteredSortedOrders) && filteredSortedOrders.map((order, index) => (
                   <motion.tr 
                     key={order?._id}
@@ -554,8 +554,8 @@ const OrderList = () => {
                     onTouchMove={handleLongPressCancel}
                     className={`transition-all duration-200 cursor-pointer ${
                       selectedOrders.includes(order?._id) 
-                        ? 'bg-blue-50 dark:bg-blue-900/30' 
-                        : 'hover:bg-gray-50 dark:hover:bg-gray-700'
+                        ? 'bg-[var(--color-accent)]/10' 
+                        : 'hover:bg-[var(--color-bg-gray)]'
                     }`}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -565,34 +565,34 @@ const OrderList = () => {
                       <div className="flex items-center gap-3">
                         <div className={`w-3 h-3 rounded-full transition-all duration-200 ${
                           selectedOrders.includes(order?._id) 
-                            ? 'bg-blue-500' 
-                            : 'bg-gray-300 dark:bg-gray-600'
+                            ? 'bg-[var(--color-accent)]' 
+                            : 'bg-[var(--color-border)]'
                         }`} />
-                        <span className="font-mono text-sm font-semibold text-gray-800 dark:text-white">
+                        <span className="font-mono text-sm font-semibold text-[var(--color-text)]">
                           {searchTypeIndex === 0 ? highlightText(order?.orderNumber, searchQuery, true) : order?.orderNumber}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <User className="w-4 h-4 text-gray-400" />
-                        <span className="text-gray-800 dark:text-white">
+                        <User className="w-4 h-4 text-[var(--color-text-secondary)]" />
+                        <span className="text-[var(--color-text)]">
                           {searchTypeIndex === 1 ? highlightText(order?.fullName, searchQuery, true) : order?.fullName}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <Phone className="w-4 h-4 text-gray-400" />
-                        <span className="text-gray-800 dark:text-white">
+                        <Phone className="w-4 h-4 text-[var(--color-text-secondary)]" />
+                        <span className="text-[var(--color-text)]">
                           {searchTypeIndex === 2 ? highlightText(order?.phoneNumber, searchQuery, true) : order?.phoneNumber}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <MapPin className="w-4 h-4 text-gray-400" />
-                        <span className="text-gray-800 dark:text-white">{order?.wilaya}</span>
+                        <MapPin className="w-4 h-4 text-[var(--color-text-secondary)]" />
+                        <span className="text-[var(--color-text)]">{order?.wilaya}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -620,8 +620,8 @@ const OrderList = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <Calendar className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm text-gray-600 dark:text-gray-300">
+                        <Calendar className="w-4 h-4 text-[var(--color-text-secondary)]" />
+                        <span className="text-sm text-[var(--color-text-secondary)]">
                           {dayjs(order?.createdAt).format("DD/MM/YYYY")}
                         </span>
                       </div>
@@ -701,20 +701,20 @@ const OrderDetailsModal = ({ selectedOrder, setSelectedOrder, colorsList, naviga
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-gray-700"
+            className="bg-[var(--color-bg)] rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-[var(--color-border)]"
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0.8 }}
           >
             {/* Header */}
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-700 rounded-t-2xl">
-              <h3 className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+            <div className="p-6 border-b border-[var(--color-border)] flex justify-between items-center bg-gradient-to-r from-[var(--color-electric)]/10 to-[var(--color-accent)]/10 rounded-t-2xl">
+              <h3 className="text-xl font-bold text-[var(--color-text)] flex items-center gap-2">
                 <Package className="w-6 h-6" />
                 {t("orders.detailsTitle")}
               </h3>
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="p-2 rounded-xl text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
+                className="p-2 rounded-xl text-[var(--color-text-secondary)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-gray)] transition-all"
               >
                 <XCircle size={24} />
               </button>
@@ -775,8 +775,8 @@ const OrderDetailsModal = ({ selectedOrder, setSelectedOrder, colorsList, naviga
 
               {/* Additional Details */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4">
-                  <h4 className="font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                <div className="bg-[var(--color-bg-gray)] rounded-xl p-4">
+                  <h4 className="font-semibold text-[var(--color-text)] mb-3 flex items-center gap-2">
                     <Info className="w-4 h-4" />
                     معلومات إضافية
                   </h4>
@@ -799,12 +799,12 @@ const OrderDetailsModal = ({ selectedOrder, setSelectedOrder, colorsList, naviga
                 </div>
 
                 {/* Note */}
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4">
-                  <h4 className="font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                <div className="bg-[var(--color-bg-gray)] rounded-xl p-4">
+                  <h4 className="font-semibold text-[var(--color-text)] mb-3 flex items-center gap-2">
                     <MessageSquare className="w-4 h-4" />
                     {t("orders.fields.note")}
                   </h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                  <p className="text-sm text-[var(--color-text-secondary)]">
                     {selectedOrder.note || t("orders.fields.noNote")}
                   </p>
                 </div>
@@ -812,7 +812,7 @@ const OrderDetailsModal = ({ selectedOrder, setSelectedOrder, colorsList, naviga
 
               {/* Products */}
               <div>
-                <h4 className="font-semibold text-gray-800 dark:text-white mb-4 text-lg flex items-center gap-2">
+                <h4 className="font-semibold text-[var(--color-text)] mb-4 text-lg flex items-center gap-2">
                   <Package className="w-5 h-5" />
                   {t("orders.fields.products")}
                 </h4>
@@ -823,7 +823,7 @@ const OrderDetailsModal = ({ selectedOrder, setSelectedOrder, colorsList, naviga
                     return (
                       <motion.div
                         key={idx}
-                        className="flex gap-4 items-center bg-white dark:bg-gray-700 p-4 rounded-xl border border-gray-200 dark:border-gray-600 cursor-pointer hover:shadow-md transition-all duration-200"
+                        className="flex gap-4 items-center bg-[var(--color-bg)] p-4 rounded-xl border border-[var(--color-border)] cursor-pointer hover:shadow-md transition-all duration-200"
                         onClick={() => {
                           if (item?.product?._id) {
                             navigate(`/product/${item.product._id}`);
@@ -839,16 +839,16 @@ const OrderDetailsModal = ({ selectedOrder, setSelectedOrder, colorsList, naviga
                           <img
                             src={item.product.images[0]}
                             alt={item.product.name}
-                            className="w-20 h-20 rounded-xl object-cover border border-gray-300 dark:border-gray-500"
+                            className="w-20 h-20 rounded-xl object-cover border border-[var(--color-border)]"
                           />
                         ) : (
-                          <div className="w-20 h-20 rounded-xl bg-gray-200 dark:bg-gray-600 flex items-center justify-center border border-gray-300 dark:border-gray-500">
-                            <Package className="w-8 h-8 text-gray-400" />
+                          <div className="w-20 h-20 rounded-xl bg-[var(--color-bg-gray)] flex items-center justify-center border border-[var(--color-border)]">
+                            <Package className="w-8 h-8 text-[var(--color-text-secondary)]" />
                           </div>
                         )}
 
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-gray-800 dark:text-white text-lg leading-tight truncate">
+                          <p className="font-semibold text-[var(--color-text)] text-lg leading-tight truncate">
                             {item?.product?.name || t("orders.fields.product")}
                           </p>
                           
@@ -856,7 +856,7 @@ const OrderDetailsModal = ({ selectedOrder, setSelectedOrder, colorsList, naviga
                             <p className="text-lg font-bold text-green-600 dark:text-green-400">
                               {(item?.price || 0).toLocaleString()} {t("analytics.revenueUnit")}
                             </p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                            <p className="text-sm text-[var(--color-text-secondary)]">
                               × {item?.quantity || 1}
                             </p>
                           </div>
@@ -864,18 +864,18 @@ const OrderDetailsModal = ({ selectedOrder, setSelectedOrder, colorsList, naviga
                           {/* Size and Color */}
                           <div className="flex items-center gap-2 mt-3 flex-wrap">
                             {item?.selectedSize && (
-                              <span className="text-xs font-semibold bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-300 px-3 py-1 rounded-full">
+                              <span className="text-xs font-semibold bg-[var(--color-accent)]/10 text-[var(--color-accent)] px-3 py-1 rounded-full">
                                 {item.selectedSize}
                               </span>
                             )}
                             {colorObj && (
                               <div className="flex items-center gap-2">
                                 <span
-                                  className="w-4 h-4 rounded-full border border-gray-300"
+                                  className="w-4 h-4 rounded-full border border-[var(--color-border)]"
                                   style={{ backgroundColor: colorObj.hex }}
                                   title={colorObj.name}
                                 />
-                                <span className="text-xs text-gray-600 dark:text-gray-400">
+                                <span className="text-xs text-[var(--color-text-secondary)]">
                                   {colorObj.name}
                                 </span>
                               </div>
@@ -888,7 +888,7 @@ const OrderDetailsModal = ({ selectedOrder, setSelectedOrder, colorsList, naviga
                 </div>
                 
                 {(!Array.isArray(selectedOrder.products) || selectedOrder.products.length === 0) && (
-                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                  <div className="text-center py-8 text-[var(--color-text-secondary)]">
                     <Package className="w-12 h-12 mx-auto mb-3 opacity-50" />
                     {t("orders.noProducts")}
                   </div>
@@ -897,10 +897,10 @@ const OrderDetailsModal = ({ selectedOrder, setSelectedOrder, colorsList, naviga
             </div>
 
             {/* Footer */}
-            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-center">
+            <div className="p-6 border-t border-[var(--color-border)] flex justify-center">
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="px-8 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-xl font-medium transition-all duration-200"
+                className="px-8 py-3 bg-[var(--color-bg-gray)] hover:bg-[var(--color-border)] text-[var(--color-text)] rounded-xl font-medium transition-all duration-200"
               >
                 {t("orders.fields.close")}
               </button>
@@ -915,19 +915,19 @@ const OrderDetailsModal = ({ selectedOrder, setSelectedOrder, colorsList, naviga
 
 // Detail Card Component
 const DetailCard = ({ icon: Icon, label, value, onCopy, highlight = false }) => (
-  <div className="bg-white dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+  <div className="bg-[var(--color-bg)] rounded-xl p-4 border border-[var(--color-border)]">
     <div className="flex items-center gap-3 mb-2">
-      <Icon className={`w-5 h-5 ${highlight ? 'text-green-500' : 'text-gray-400'}`} />
-      <span className="text-sm font-medium text-gray-600 dark:text-gray-300">{label}</span>
+      <Icon className={`w-5 h-5 ${highlight ? 'text-green-500' : 'text-[var(--color-text-secondary)]'}`} />
+      <span className="text-sm font-medium text-[var(--color-text-secondary)]">{label}</span>
     </div>
     <div className="flex items-center justify-between">
-      <span className={`text-lg font-semibold ${highlight ? 'text-green-600 dark:text-green-400' : 'text-gray-800 dark:text-white'}`}>
+      <span className={`text-lg font-semibold ${highlight ? 'text-green-600 dark:text-green-400' : 'text-[var(--color-text)]'}`}>
         {value}
       </span>
       {onCopy && (
         <button
           onClick={onCopy}
-          className="p-2 text-gray-400 hover:text-blue-500 transition-colors duration-200"
+          className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors duration-200"
           title="نسخ"
         >
           <Copy className="w-4 h-4" />
@@ -950,17 +950,17 @@ const DeleteConfirmationModal = ({ showPopup, setShowPopup, selectedOrderId, sel
         exit={{ opacity: 0 }}
       >
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 w-96 border border-gray-200 dark:border-gray-700"
+          className="bg-[var(--color-bg)] rounded-2xl shadow-2xl p-6 w-96 border border-[var(--color-border)]"
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
           exit={{ scale: 0.8 }}
         >
           <div className="text-center mb-4">
             <Trash className="w-12 h-12 text-red-500 mx-auto mb-3" />
-            <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
+            <h3 className="text-xl font-bold text-[var(--color-text)] mb-2">
               {t("orders.confirmDelete")}
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-[var(--color-text-secondary)]">
               {selectedOrderId
                 ? t("orders.confirmSingle")
                 : t("orders.confirmMultiple", { count: selectedOrders.length })}
@@ -975,7 +975,7 @@ const DeleteConfirmationModal = ({ showPopup, setShowPopup, selectedOrderId, sel
             </button>
             <button
               onClick={() => { setShowPopup(false); setSelectedOrderId(null); }}
-              className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-xl font-medium transition-all duration-200"
+              className="px-6 py-3 bg-[var(--color-bg-gray)] hover:bg-[var(--color-border)] text-[var(--color-text)] rounded-xl font-medium transition-all duration-200"
             >
               {t("orders.confirmCancel")}
             </button>

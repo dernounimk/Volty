@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { useProductStore } from "../stores/useProductStore";
 import useSettingStore from "../stores/useSettingStore";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, ShoppingBag, Grid, List, Home, Sparkles, Filter, ChevronRight, X } from "lucide-react";
+import { ArrowLeft, Grid, List, Home, Sparkles, Filter, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "../components/ProductCard";
 import { useTranslation } from "react-i18next";
@@ -32,9 +32,7 @@ const CategoryPage = () => {
   });
   const [hasFetched, setHasFetched] = useState(false);
   const [sortBy, setSortBy] = useState("default");
-  const [showFilter, setShowFilter] = useState(false);
   const [localError, setLocalError] = useState(null);
-  const isRTL = i18n.dir() === 'rtl';
 
   useEffect(() => {
     if (categories.length === 0 && !categoriesLoading) {
@@ -178,112 +176,12 @@ const CategoryPage = () => {
     }
   }, [category, categories, fetchProductsByCategory]);
 
-  // Mobile Filter Modal
-  const MobileFilterModal = () => (
-    <AnimatePresence>
-      {showFilter && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowFilter(false)}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
-          />
-          <motion.div
-            initial={{ x: isRTL ? '100%' : '-100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: isRTL ? '100%' : '-100%' }}
-            transition={{ type: "spring", damping: 25 }}
-            className="fixed top-0 left-0 h-full w-80 max-w-full bg-white dark:bg-gray-900 shadow-2xl z-50 lg:hidden"
-          >
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                {t('filterAndSort')}
-              </h2>
-              <button
-                onClick={() => setShowFilter(false)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            
-            <div className="p-4 space-y-6 overflow-y-auto h-[calc(100vh-4rem)]">
-              {/* View Mode */}
-              <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
-                  {t('categoryPage.viewMode')}
-                </h3>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => handleViewModeChange('grid')}
-                    className={`p-3 rounded-xl flex flex-col items-center gap-2 ${
-                      viewMode === 'grid' 
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white' 
-                        : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
-                    }`}
-                  >
-                    <Grid className="w-5 h-5" />
-                    <span className="text-sm">{t('categoryPage.gridView')}</span>
-                  </button>
-                  <button
-                    onClick={() => handleViewModeChange('list')}
-                    className={`p-3 rounded-xl flex flex-col items-center gap-2 ${
-                      viewMode === 'list' 
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white' 
-                        : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
-                    }`}
-                  >
-                    <List className="w-5 h-5" />
-                    <span className="text-sm">{t('categoryPage.listView')}</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Sorting */}
-              <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
-                  {t('sort.sortBy')}
-                </h3>
-                <div className="space-y-2">
-                  {[
-                    { value: "default", label: t("sort.default") },
-                    { value: "price-low", label: t("sort.priceLow") },
-                    { value: "price-high", label: t("sort.priceHigh") },
-                    { value: "rating", label: t("sort.rating") },
-                    { value: "newest", label: t("sort.newest") }
-                  ].map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => {
-                        setSortBy(option.value);
-                        setShowFilter(false);
-                      }}
-                      className={`w-full text-left p-3 rounded-xl ${
-                        sortBy === option.value
-                          ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
-                          : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'
-                      }`}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
-  );
-
   // عرض حالة التحميل
   if (categoriesLoading || (!hasFetched && !categoryNotFound)) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
         <LoadingSpinner size="xl" />
-        <p className="mt-4 text-gray-600 dark:text-gray-300 animate-pulse">
+        <p className="mt-4 text-[var(--color-text-secondary)] animate-pulse">
           {t('loading')}...
         </p>
       </div>
@@ -300,27 +198,27 @@ const CategoryPage = () => {
           className="text-center max-w-md"
         >
           <div className="w-32 h-32 bg-gradient-to-r from-red-100 to-pink-100 dark:from-red-900/20 dark:to-pink-900/20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
-            <ShoppingBag className="w-12 h-12 text-red-500" />
+            <ArrowLeft className="w-12 h-12 text-red-500" />
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-text)] mb-4">
             {t('errorOccurred')}
           </h1>
           <p className="text-red-600 dark:text-red-400 mb-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
             {localError}
           </p>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">
+          <p className="text-[var(--color-text-secondary)] mb-6">
             {t('pleaseTryAgain')}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={handleRetry}
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105"
+              className="inline-flex items-center justify-center gap-2 bg-[var(--color-accent)] text-[var(--color-on-accent)] px-6 py-3 rounded-xl font-semibold hover:bg-[var(--color-accent-hover)] hover:shadow-lg transition-all duration-300 hover:scale-105"
             >
               {t('retry')}
             </button>
             <button
               onClick={handleBackClick}
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105"
+              className="inline-flex items-center justify-center gap-2 bg-[var(--color-bg-gray)] text-[var(--color-text)] px-6 py-3 rounded-xl font-semibold hover:bg-[var(--color-bg)] hover:shadow-lg transition-all duration-300 hover:scale-105"
             >
               <ArrowLeft size={20} />
               {t("back")}
@@ -345,25 +243,25 @@ const CategoryPage = () => {
             transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
             className="w-32 h-32 bg-gradient-to-r from-red-100 to-pink-100 dark:from-red-900/20 dark:to-pink-900/20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl"
           >
-            <ShoppingBag className="w-12 h-12 text-red-500" />
+            <ArrowLeft className="w-12 h-12 text-red-500" />
           </motion.div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-text)] mb-4">
             {t('categoryPage.notFound')}
           </h1>
-          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+          <p className="text-lg md:text-xl text-[var(--color-text-secondary)] mb-8 leading-relaxed">
             {t('categoryPage.notFoundMessage', { category: translatedCategoryName })}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={handleBackClick}
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105"
+              className="inline-flex items-center justify-center gap-2 bg-[var(--color-bg-gray)] text-[var(--color-text)] px-6 py-3 rounded-xl font-semibold hover:bg-[var(--color-bg)] hover:shadow-lg transition-all duration-300 hover:scale-105"
             >
               <ArrowLeft size={20} />
               {t("back")}
             </button>
             <Link
               to="/"
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105"
+              className="inline-flex items-center justify-center gap-2 bg-[var(--color-accent)] text-[var(--color-on-accent)] px-6 py-3 rounded-xl font-semibold hover:bg-[var(--color-accent-hover)] hover:shadow-lg transition-all duration-300 hover:scale-105"
             >
               <Home size={20} />
               {t("categoryPage.backToHome")}
@@ -385,7 +283,7 @@ const CategoryPage = () => {
         >
           <button
             onClick={handleBackClick}
-            className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            className="flex items-center gap-2 text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors"
           >
             <ArrowLeft size={20} />
             <span>{t("back")}</span>
@@ -401,7 +299,7 @@ const CategoryPage = () => {
           style={{
             backgroundImage: currentCategory?.imageUrl 
               ? `linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%), url(${currentCategory.imageUrl})`
-              : 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+              : `linear-gradient(135deg, var(--color-electric) 0%, var(--color-accent) 100%)`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             minHeight: '200px'
@@ -409,133 +307,84 @@ const CategoryPage = () => {
         >
           <div className="absolute inset-0" />
           
-          <div className="relative z-10 p-6 md:p-8 h-full">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-              {/* Category Info */}
-              <div className="flex-1">
-                <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-4">
-                  <Link 
-                    to="/" 
-                    className="text-white/90 hover:text-white transition-colors text-sm"
-                  >
-                    {t("home")}
-                  </Link>
-                  <ChevronRight className="w-4 h-4 text-white/70" />
-                  <span className="text-white font-medium">
-                    {translatedCategoryName}
-                  </span>
-                </div>
-                
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2">
-                  {translatedCategoryName}
-                </h1>
-                
-                {currentCategory?.description && (
-                  <p className="text-white/90 text-sm md:text-base max-w-2xl mb-3 line-clamp-2">
-                    {currentCategory.description}
-                  </p>
-                )}
-              </div>
-
-              {/* Integrated Controls - Desktop */}
-              <div className="hidden lg:flex items-center gap-4">
-                {/* Products Count */}
-                <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 text-white border border-white/30">
-                  <div className="flex items-center gap-2 mb-1">
-                    <ShoppingBag className="w-5 h-5" />
-                    <span className="text-sm font-medium">{t('products')}</span>
-                  </div>
-                  <div className="text-2xl font-bold">{displayedProducts.length}</div>
-                </div>
-
-                {/* View Mode */}
-                <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 border border-white/30">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Grid className="w-4 h-4 text-white" />
-                    <span className="text-sm font-medium text-white">{t('categoryPage.viewMode')}</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleViewModeChange('grid')}
-                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                        viewMode === 'grid' 
-                          ? 'bg-white text-blue-600 shadow-md' 
-                          : 'bg-white/20 text-white hover:bg-white/30'
-                      }`}
-                    >
-                      {t('categoryPage.gridView')}
-                    </button>
-                    <button
-                      onClick={() => handleViewModeChange('list')}
-                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                        viewMode === 'list' 
-                          ? 'bg-white text-blue-600 shadow-md' 
-                          : 'bg-white/20 text-white hover:bg-white/30'
-                      }`}
-                    >
-                      {t('categoryPage.listView')}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Sorting */}
-                <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 border border-white/30">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Filter className="w-4 h-4 text-white" />
-                    <span className="text-sm font-medium text-white">{t('sort.sortBy')}</span>
-                  </div>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="w-full bg-white/20 backdrop-blur-sm border border-white/30 text-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-white/50 focus:border-transparent appearance-none"
-                  >
-                    <option value="default" className="bg-gray-800 text-white">
-                      {t("sort.default")}
-                    </option>
-                    <option value="price-low" className="bg-gray-800 text-white">
-                      {t("sort.priceLow")}
-                    </option>
-                    <option value="price-high" className="bg-gray-800 text-white">
-                      {t("sort.priceHigh")}
-                    </option>
-                    <option value="rating" className="bg-gray-800 text-white">
-                      {t("sort.rating")}
-                    </option>
-                    <option value="newest" className="bg-gray-800 text-white">
-                      {t("sort.newest")}
-                    </option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Mobile Controls Summary */}
-              <div className="lg:hidden flex items-center justify-between bg-white/20 backdrop-blur-sm rounded-2xl p-4 border border-white/30">
-                <div className="flex items-center gap-4">
-                  <div className="text-white">
-                    <div className="flex items-center gap-2">
-                      <ShoppingBag className="w-4 h-4" />
-                      <span className="text-sm font-medium">{t('products')}</span>
-                    </div>
-                    <div className="text-xl font-bold">{displayedProducts.length}</div>
-                  </div>
-                  <div className="text-white">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Grid className="w-4 h-4" />
-                      <span className="text-sm font-medium">{t('view')}</span>
-                    </div>
-                    <span className="text-sm">
-                      {viewMode === 'grid' ? t('categoryPage.gridView') : t('categoryPage.listView')}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowFilter(true)}
-                  className="bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition-colors"
-                >
-                  {t('filter')}
-                </button>
-              </div>
+          <div className="relative z-10 p-6 md:p-8">
+            {/* Category Info */}
+            <div className="mb-8">
+              
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2">
+                {translatedCategoryName}
+              </h1>
+              
+              {currentCategory?.description && (
+                <p className="text-white/90 text-sm md:text-base max-w-2xl mb-3">
+                  {currentCategory.description}
+                </p>
+              )}
             </div>
+
+            {/* Controls - جميعها في نفس السطر تحت الهيدر */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+              className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/20 backdrop-blur-sm rounded-2xl border border-white/30 p-4"
+            >
+              {/* View Mode Toggle - أيقونات فقط */}
+              <div className="flex items-center gap-2">
+                <div className="flex bg-white/20 backdrop-blur-sm rounded-xl p-1 border border-white/30">
+                  <button
+                    onClick={() => handleViewModeChange('grid')}
+                    className={`p-2.5 rounded-lg transition-all ${
+                      viewMode === 'grid' 
+                        ? 'bg-white text-[var(--color-accent)] shadow-md' 
+                        : 'text-white hover:bg-white/20'
+                    }`}
+                    title={t('categoryPage.gridView')}
+                  >
+                    <Grid className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => handleViewModeChange('list')}
+                    className={`p-2.5 rounded-lg transition-all ${
+                      viewMode === 'list' 
+                        ? 'bg-white text-[var(--color-accent)] shadow-md' 
+                        : 'text-white hover:bg-white/20'
+                    }`}
+                    title={t('categoryPage.listView')}
+                  >
+                    <List className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Sorting Dropdown */}
+              <div className="relative flex items-center gap-3 w-full sm:w-auto">
+                <div className="absolute left-3 z-10 pointer-events-none">
+                  <Filter className="w-4 h-4 text-white" />
+                </div>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="flex-1 sm:w-48 bg-white/20 backdrop-blur-sm border border-white/30 text-white rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-white/50 focus:border-transparent appearance-none cursor-pointer"
+                >
+                  <option value="default" className="bg-[var(--color-bg)] text-[var(--color-text)]">
+                    {t("sort.default")}
+                  </option>
+                  <option value="price-low" className="bg-[var(--color-bg)] text-[var(--color-text)]">
+                    {t("sort.priceLow")}
+                  </option>
+                  <option value="price-high" className="bg-[var(--color-bg)] text-[var(--color-text)]">
+                    {t("sort.priceHigh")}
+                  </option>
+                  <option value="rating" className="bg-[var(--color-bg)] text-[var(--color-text)]">
+                    {t("sort.rating")}
+                  </option>
+                  <option value="newest" className="bg-[var(--color-bg)] text-[var(--color-text)]">
+                    {t("sort.newest")}
+                  </option>
+                </select>
+              </div>
+            </motion.div>
           </div>
         </motion.div>
 
@@ -568,15 +417,15 @@ const CategoryPage = () => {
                   >
                     <div className="relative w-24 h-24 sm:w-32 sm:h-32 mx-auto">
                       <motion.div
-                        className="w-full h-full bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-full flex items-center justify-center shadow-2xl border border-purple-200/50 dark:border-purple-700/30"
+                        className="w-full h-full bg-gradient-to-br from-[var(--color-bg-gray)] to-[var(--color-bg)] rounded-full flex items-center justify-center shadow-2xl border border-[var(--color-border)]"
                         whileHover={{ scale: 1.05 }}
                         transition={{ type: "spring", stiffness: 300 }}
                       >
-                        <ShoppingBag className="w-12 h-12 sm:w-16 sm:h-16 text-purple-500 dark:text-purple-400" />
+                        <Grid className="w-12 h-12 sm:w-16 sm:h-16 text-[var(--color-accent)]" />
                       </motion.div>
                       
                       <motion.div
-                        className="absolute -top-2 -right-2 w-6 h-6 sm:w-8 sm:h-8 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg"
+                        className="absolute -top-2 -right-2 w-6 h-6 sm:w-8 sm:h-8 bg-[var(--color-accent)] rounded-full flex items-center justify-center shadow-lg"
                         animate={{ 
                           scale: [1, 1.2, 1],
                           rotate: [0, 180, 360]
@@ -587,7 +436,7 @@ const CategoryPage = () => {
                           ease: "linear"
                         }}
                       >
-                        <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+                        <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-[var(--color-on-accent)]" />
                       </motion.div>
                     </div>
                   </motion.div>
@@ -597,13 +446,13 @@ const CategoryPage = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 }}
                   >
-                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-800 to-purple-600 dark:from-white dark:to-purple-400 bg-clip-text text-transparent mb-3 sm:mb-4">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-[var(--color-text)] to-[var(--color-accent)] bg-clip-text text-transparent mb-3 sm:mb-4">
                       {t('categoryPage.noProducts')}
                     </h2>
-                    <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 mb-2 max-w-md mx-auto leading-relaxed">
+                    <p className="text-base sm:text-lg text-[var(--color-text-secondary)] mb-2 max-w-md mx-auto leading-relaxed">
                       {t('categoryPage.noProductsDescription')}
                     </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 sm:mb-8">
+                    <p className="text-sm text-[var(--color-text-secondary)] mb-6 sm:mb-8">
                       {t('categoryPage.noProductsHint')}
                     </p>
                   </motion.div>
@@ -616,14 +465,14 @@ const CategoryPage = () => {
                   >
                     <button
                       onClick={handleBackClick}
-                      className="group inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105"
+                      className="group inline-flex items-center justify-center gap-2 bg-[var(--color-bg-gray)] text-[var(--color-text)] px-6 py-3 rounded-xl font-semibold hover:bg-[var(--color-bg)] hover:shadow-lg transition-all duration-300 hover:scale-105"
                     >
                       <ArrowLeft size={20} />
                       <span>{t("back")}</span>
                     </button>
                     <Link
                       to='/'
-                      className="group inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105"
+                      className="group inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[var(--color-electric)] via-[var(--color-accent)] to-pink-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105"
                     >
                       <Home size={20} />
                       <span>{t("categoryPage.exploreOtherCategories")}</span>
@@ -657,7 +506,7 @@ const CategoryPage = () => {
                         transition: { duration: 0.2 }
                       }}
                       className={viewMode === 'list' 
-                        ? 'bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow' 
+                        ? 'bg-[var(--color-bg)] rounded-xl sm:rounded-2xl shadow-lg border border-[var(--color-border)] hover:shadow-xl transition-shadow' 
                         : ''
                       }
                     >
@@ -674,9 +523,6 @@ const CategoryPage = () => {
           </>
         )}
       </div>
-
-      {/* Mobile Filter Modal */}
-      <MobileFilterModal />
     </div>
   );
 };
