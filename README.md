@@ -1,4 +1,4 @@
-#Volty
+# Volty
 
 Volty is a modern e-commerce web application designed to provide a fast, seamless, and user-friendly online shopping experience. The project follows a clear separation between frontend and backend for easier maintenance and scalability.
 
